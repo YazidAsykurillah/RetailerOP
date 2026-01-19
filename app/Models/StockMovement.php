@@ -18,6 +18,7 @@ class StockMovement extends Model
         'reference',
         'notes',
         'user_id',
+        'supplier_id',
     ];
 
     /**
@@ -34,6 +35,14 @@ class StockMovement extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the supplier for stock-in movements
+     */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     /**

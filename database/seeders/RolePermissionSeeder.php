@@ -17,9 +17,9 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create Permissions
-        Permission::create(['name' => 'manage users']);
-        Permission::create(['name' => 'manage products']);
-        Permission::create(['name' => 'manage orders']);
+        Permission::create(['name' => 'Manage Users']);
+        Permission::create(['name' => 'Manage Products']);
+        Permission::create(['name' => 'Manage Orders']);
 
         // Create Roles and Assign Permissions
 
@@ -30,16 +30,16 @@ class RolePermissionSeeder extends Seeder
 
         // Admin
         $admin = Role::create(['name' => 'Admin']);
-        $admin->givePermissionTo(['manage products', 'manage orders']);
+        $admin->givePermissionTo(['Manage Products', 'Manage Orders']);
 
-        // Customer
-        $customer = Role::create(['name' => 'Customer']);
-        // Customer mostly has no specific backend permissions, logic usually handled by policy or separate scope
+        // Cashier
+        $cashier = Role::create(['name' => 'Cashier']);
+        // Cashier mostly has no specific backend permissions, logic usually handled by policy or separate scope
 
         // Create a Demo Super Admin User
         $user = \App\Models\User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'admin@admin.com',
+            'email' => 'admin@example.com',
             'password' => bcrypt('password'), // Default password
         ]);
         $user->assignRole($superAdmin);
@@ -47,17 +47,17 @@ class RolePermissionSeeder extends Seeder
         // Create a Demo Admin User
         $user = \App\Models\User::factory()->create([
             'name' => 'Admin User',
-            'email' => 'manager@admin.com',
+            'email' => 'manager@example.com',
             'password' => bcrypt('password'),
         ]);
         $user->assignRole($admin);
 
-         // Create a Demo Customer User
+         // Create a Demo Cashier User
          $user = \App\Models\User::factory()->create([
-            'name' => 'Customer User',
-            'email' => 'customer@gmail.com',
+            'name' => 'Cashier User',
+            'email' => 'cashier@example.com',
             'password' => bcrypt('password'),
         ]);
-        $user->assignRole($customer);
+        $user->assignRole($cashier);
     }
 }

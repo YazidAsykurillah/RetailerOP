@@ -56,6 +56,17 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="supplier_id">Supplier</label>
+                        <select class="form-control select2" id="supplier_id" name="supplier_id" style="width: 100%;">
+                            <option value="">Select Supplier (Optional)</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">Select the supplier for this stock-in if applicable</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="notes">Notes</label>
                         <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes..."></textarea>
                     </div>
@@ -95,6 +106,13 @@ $(function() {
             cache: true
         },
         minimumInputLength: 1
+    });
+
+    // Initialize Select2 for supplier dropdown
+    $('#supplier_id').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Select Supplier (Optional)',
+        allowClear: true
     });
 
     // Update current stock when variant is selected

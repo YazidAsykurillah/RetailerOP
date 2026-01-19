@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProductVariant;
 use App\Models\Product;
+use App\Models\Supplier;
 use App\DataTables\StockDataTable;
 use App\DataTables\StockMovementsDataTable;
 use Illuminate\Http\Request;
@@ -38,7 +39,9 @@ class StockController extends Controller
             $selectedVariant = ProductVariant::with('product')->find($request->variant);
         }
 
-        return view('admin.stock.in', compact('selectedVariant'));
+        $suppliers = Supplier::active()->orderBy('name')->get();
+
+        return view('admin.stock.in', compact('selectedVariant', 'suppliers'));
     }
 
     /**
@@ -50,6 +53,7 @@ class StockController extends Controller
             'product_variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1',
             'reference' => 'nullable|string|max:255',
+            'supplier_id' => 'nullable|exists:suppliers,id',
             'notes' => 'nullable|string|max:1000',
         ]);
 
@@ -60,7 +64,8 @@ class StockController extends Controller
             'in',
             auth()->id(),
             $request->reference,
-            $request->notes
+            $request->notes,
+            $request->supplier_id
         );
 
         if ($request->ajax()) {

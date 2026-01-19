@@ -92,7 +92,7 @@ class ProductVariant extends Model
     /**
      * Update stock and record movement
      */
-    public function adjustStock($quantity, $type, $userId, $reference = null, $notes = null)
+    public function adjustStock($quantity, $type, $userId, $reference = null, $notes = null, $supplierId = null)
     {
         $stockBefore = $this->stock;
 
@@ -116,6 +116,7 @@ class ProductVariant extends Model
             'reference' => $reference,
             'notes' => $notes,
             'user_id' => $userId,
+            'supplier_id' => $supplierId,
         ]);
 
         return $this;

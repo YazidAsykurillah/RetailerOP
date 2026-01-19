@@ -312,10 +312,9 @@ return [
 
         // Sidebar items:
         [
-            'text' => 'Report',
-            'url' => 'users',
-            'icon' => 'fas fa-fw fa-book',
-            'can' => 'Manage Users',
+            'text' => 'Dashboard',
+            'url' => 'home',
+            'icon' => 'fas fa-fw fa-home'
         ],
         [
             'text' => 'User Management',
@@ -345,6 +344,11 @@ return [
             'text' => 'Brands',
             'url' => 'admin/brands',
             'icon' => 'fas fa-fw fa-tags',
+        ],
+        [
+            'text' => 'Suppliers',
+            'url' => 'admin/suppliers',
+            'icon' => 'fas fa-fw fa-truck',
         ],
         [
             'text' => 'Products',
