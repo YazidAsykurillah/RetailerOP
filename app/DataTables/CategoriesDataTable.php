@@ -40,7 +40,18 @@ class CategoriesDataTable extends DataTable
                     </button>
                 ';
             })
-            ->rawColumns(['status', 'action']);
+            ->rawColumns(['status', 'action'])
+            ->filter(function ($query) {
+                if (request()->has('search') && !empty(request()->input('search.value'))) {
+                    $keyword = request()->input('search.value');
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('categories.name', 'like', "%{$keyword}%")
+                          ->orWhereHas('parent', function ($parentQuery) use ($keyword) {
+                              $parentQuery->where('name', 'like', "%{$keyword}%");
+                          });
+                    });
+                }
+            });
     }
 
     /**

@@ -135,20 +135,29 @@
                     <div id="variant-attributes-error"></div>
                     <div class="row" id="variant-attributes-row">
                         @foreach($variantTypes as $type)
+                        @php
+                            // Get the current value for this variant type
+                            $currentValue = $variant->variantValues->first(function($v) use ($type) {
+                                return $v->variant_type_id === $type->id;
+                            });
+                        @endphp
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>{{ $type->name }}</label>
-                                <select name="variant_values[]" class="form-control">
-                                    <option value="">-- Select {{ $type->name }} --</option>
+                                <label for="variant_attr_{{ $type->id }}">{{ $type->name }}</label>
+                                <input type="hidden" name="variant_types[]" value="{{ $type->id }}">
+                                <input type="text" 
+                                       name="variant_values[]" 
+                                       id="variant_attr_{{ $type->id }}"
+                                       class="form-control" 
+                                       placeholder="Enter {{ strtolower($type->name) }} value"
+                                       value="{{ old('variant_values.'.$loop->index, $currentValue ? $currentValue->value : '') }}"
+                                       list="variant_suggestions_{{ $type->id }}">
+                                <datalist id="variant_suggestions_{{ $type->id }}">
                                     @foreach($type->values as $value)
-                                        <option value="{{ $value->id }}" {{ in_array($value->id, old('variant_values', $selectedValues)) ? 'selected' : '' }}>
-                                            {{ $value->value }}
-                                            @if($value->color_code)
-                                                <span style="background-color: {{ $value->color_code }};">■</span>
-                                            @endif
-                                        </option>
+                                        <option value="{{ $value->value }}">
                                     @endforeach
-                                </select>
+                                </datalist>
+                                <small class="text-muted">Type a value or select from suggestions</small>
                             </div>
                         </div>
                         @endforeach

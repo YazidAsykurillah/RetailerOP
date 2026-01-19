@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\VariantType;
+use App\Models\VariantValue;
 use App\DataTables\ProductVariantsDataTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,14 +44,21 @@ class ProductVariantController extends Controller
             'cost' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
-            'variant_values' => 'required|array',
-            'variant_values.*' => 'required|exists:variant_values,id',
+            'variant_types' => 'nullable|array',
+            'variant_types.*' => 'nullable|exists:variant_types,id',
+            'variant_values' => 'nullable|array',
+            'variant_values.*' => 'nullable|string|max:255',
             'is_active' => 'boolean',
         ]);
 
+        // Process text-based variant values and get/create VariantValue IDs
+        $variantValueIds = $this->processVariantValues(
+            $request->variant_types ?? [],
+            $request->variant_values ?? []
+        );
+
         // Check for duplicate variant combination
-        $variantValues = $request->variant_values ?? [];
-        if (ProductVariant::combinationExists($product->id, $variantValues)) {
+        if (!empty($variantValueIds) && ProductVariant::combinationExists($product->id, $variantValueIds)) {
             return response()->json([
                 'message' => 'A variant with this attribute combination already exists.',
                 'errors' => [
@@ -70,10 +78,9 @@ class ProductVariantController extends Controller
             'is_active' => $request->has('is_active'),
         ]);
 
-        // Attach variant values (filter out empty values)
-        $filteredValues = array_filter($variantValues, fn($v) => !empty($v));
-        if (!empty($filteredValues)) {
-            $variant->variantValues()->attach($filteredValues);
+        // Attach variant values
+        if (!empty($variantValueIds)) {
+            $variant->variantValues()->attach($variantValueIds);
         }
 
         return response()->json([
@@ -117,14 +124,21 @@ class ProductVariantController extends Controller
             'cost' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
-            'variant_values' => 'required|array',
-            'variant_values.*' => 'required|exists:variant_values,id',
+            'variant_types' => 'nullable|array',
+            'variant_types.*' => 'nullable|exists:variant_types,id',
+            'variant_values' => 'nullable|array',
+            'variant_values.*' => 'nullable|string|max:255',
             'is_active' => 'boolean',
         ]);
 
+        // Process text-based variant values and get/create VariantValue IDs
+        $variantValueIds = $this->processVariantValues(
+            $request->variant_types ?? [],
+            $request->variant_values ?? []
+        );
+
         // Check for duplicate variant combination (excluding current variant)
-        $variantValues = $request->variant_values ?? [];
-        if (ProductVariant::combinationExists($product->id, $variantValues, $variant->id)) {
+        if (!empty($variantValueIds) && ProductVariant::combinationExists($product->id, $variantValueIds, $variant->id)) {
             return response()->json([
                 'message' => 'A variant with this attribute combination already exists.',
                 'errors' => [
@@ -143,9 +157,8 @@ class ProductVariantController extends Controller
         $variant->is_active = $request->has('is_active');
         $variant->save();
 
-        // Sync variant values (filter out empty values)
-        $filteredValues = array_filter($variantValues, fn($v) => !empty($v));
-        $variant->variantValues()->sync($filteredValues);
+        // Sync variant values
+        $variant->variantValues()->sync($variantValueIds);
 
         return response()->json([
             'success' => true,
@@ -167,5 +180,41 @@ class ProductVariantController extends Controller
         $variant->delete();
 
         return response()->json(['success' => 'Variant deleted successfully.']);
+    }
+
+    /**
+     * Process text-based variant values and get/create VariantValue IDs.
+     *
+     * @param array $variantTypeIds Array of variant type IDs
+     * @param array $variantValues Array of text values corresponding to each type
+     * @return array Array of VariantValue IDs
+     */
+    private function processVariantValues(array $variantTypeIds, array $variantValues): array
+    {
+        $valueIds = [];
+
+        foreach ($variantTypeIds as $index => $typeId) {
+            $textValue = trim($variantValues[$index] ?? '');
+            
+            // Skip empty values
+            if (empty($textValue) || empty($typeId)) {
+                continue;
+            }
+
+            // Try to find existing value or create new one
+            $variantValue = VariantValue::firstOrCreate(
+                [
+                    'variant_type_id' => $typeId,
+                    'value' => $textValue,
+                ],
+                [
+                    'sort_order' => 0,
+                ]
+            );
+
+            $valueIds[] = $variantValue->id;
+        }
+
+        return $valueIds;
     }
 }
