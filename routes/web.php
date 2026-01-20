@@ -53,5 +53,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
         Route::get('/search-products', [App\Http\Controllers\Admin\StockController::class, 'searchProducts'])->name('search-products');
         Route::get('/{variant}/history', [App\Http\Controllers\Admin\StockController::class, 'history'])->name('history');
     });
+
+    // POS Routes
+    Route::prefix('pos')->name('pos.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Admin\POSController::class, 'index'])->name('index');
+        Route::get('/search-products', [App\Http\Controllers\Admin\POSController::class, 'searchProducts'])->name('search-products');
+        Route::get('/product/{id}', [App\Http\Controllers\Admin\POSController::class, 'getProductDetails'])->name('product-details');
+        Route::get('/by-category', [App\Http\Controllers\Admin\POSController::class, 'getByCategory'])->name('by-category');
+        Route::post('/checkout', [App\Http\Controllers\Admin\POSController::class, 'processTransaction'])->name('checkout');
+    });
+
+    // Transaction History Routes
+    Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show']);
+    Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');
 });
 
