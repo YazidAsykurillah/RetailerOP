@@ -845,9 +845,10 @@
         <a href="{{ url('/') }}" class="nav-logo">Siskha</a>
         
         <ul class="nav-links">
-            <li><a href="#categories">Collections</a></li>
-            <li><a href="#products">New Arrivals</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="{{ route('collections') }}">Collections</a></li>
+            <li><a href="{{ route('new-arrivals') }}">New Arrivals</a></li>
+            <li><a href="{{ route('about') }}">About</a></li>
+            <li><a href="{{ route('contact') }}">Contact</a></li>
         </ul>
 
         <div class="nav-auth">

@@ -6,6 +6,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Frontend Pages
+Route::get('/collections', function () {
+    return view('frontend.collections');
+})->name('collections');
+
+Route::get('/new-arrivals', function () {
+    return view('frontend.new-arrivals');
+})->name('new-arrivals');
+
+Route::get('/about', function () {
+    return view('frontend.about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('frontend.contact');
+})->name('contact');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
