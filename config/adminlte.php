@@ -544,6 +544,26 @@ return [
                 ],
             ],
         ],
+        'DatatablesResponsive' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/datatables-responsive/css/responsive.bootstrap4.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/datatables-responsive/js/dataTables.responsive.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/datatables-responsive/js/responsive.bootstrap4.min.js',
+                ],
+            ],
+        ],
         'Select2' => [
             'active' => true,
             'files' => [
