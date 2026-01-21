@@ -59,7 +59,8 @@ class SuppliersDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(1)
-            ->selectStyleSingle();
+            ->selectStyleSingle()
+            ->responsive(true);
     }
 
     /**

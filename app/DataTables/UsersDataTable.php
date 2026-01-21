@@ -54,6 +54,7 @@ class UsersDataTable extends DataTable
                     //->dom('Bfrtip')
                     ->orderBy(1)
                     ->selectStyleSingle()
+                    ->responsive(true)
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),

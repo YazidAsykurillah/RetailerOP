@@ -90,7 +90,8 @@ class StockMovementsDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(0, 'desc')
-            ->selectStyleSingle();
+            ->selectStyleSingle()
+            ->responsive(true);
     }
 
     /**

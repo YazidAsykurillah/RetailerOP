@@ -37,6 +37,7 @@ class PermissionsDataTable extends DataTable
                     ->minifiedAjax()
                     ->orderBy(1)
                     ->selectStyleSingle()
+                    ->responsive(true)
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),
