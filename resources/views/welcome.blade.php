@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Siskha Store - Where Elegance Meets Simplicity. Discover timeless fashion pieces crafted for the modern individual.">
+    <meta name="description" content="Siskha Store - Modern POS & Inventory Management System for retail businesses.">
     
-    <title>{{ config('app.name', 'Siskha Store') }} - Luxury Fashion</title>
+    <title>{{ config('app.name', 'Siskha Store') }} - POS & Inventory Management</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* Reset & Base */
@@ -25,18 +25,26 @@
             --color-primary: #1a3a5c;
             --color-primary-dark: #0d2840;
             --color-primary-light: #2a5a8c;
+            --color-accent: #3b82f6;
+            --color-accent-light: #60a5fa;
             --color-black: #0a0a0a;
             --color-white: #ffffff;
-            --color-gray-50: #fafafa;
-            --color-gray-100: #f8f9fa;
-            --color-gray-200: #e9ecef;
-            --color-gray-300: #dee2e6;
-            --color-gray-400: #ced4da;
-            --color-gray-600: #6c757d;
-            --color-gray-800: #343a40;
+            --color-gray-50: #f9fafb;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            --gradient-hero: linear-gradient(135deg, #1a3a5c 0%, #2a5a8c 50%, #3b82f6 100%);
             
             /* Typography */
-            --font-serif: 'Cormorant Garamond', Georgia, serif;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
             /* Spacing */
@@ -46,7 +54,6 @@
             --space-lg: 2rem;
             --space-xl: 3rem;
             --space-2xl: 5rem;
-            --space-3xl: 8rem;
             
             /* Transitions */
             --transition-fast: 0.2s ease;
@@ -61,7 +68,7 @@
         body {
             font-family: var(--font-sans);
             background-color: var(--color-white);
-            color: var(--color-black);
+            color: var(--color-gray-800);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -74,11 +81,6 @@
             transition: color var(--transition-fast);
         }
 
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
         /* Navigation */
         .nav {
             position: fixed;
@@ -86,62 +88,28 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            padding: var(--space-md) var(--space-xl);
+            padding: var(--space-sm) var(--space-lg);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-        }
-
-        .nav.scrolled {
-            background: rgba(255,255,255,0.98);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .nav-logo {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--color-primary-dark);
-        }
-
-        .nav-links {
             display: flex;
-            gap: var(--space-lg);
-            list-style: none;
+            align-items: center;
+            gap: var(--space-xs);
         }
 
-        .nav-links a {
-            font-size: 0.875rem;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--color-gray-800);
-            position: relative;
-            padding-bottom: 2px;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background-color: var(--color-primary);
-            transition: width var(--transition-smooth);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-links a:hover {
-            color: var(--color-primary);
+        .nav-logo svg {
+            width: 32px;
+            height: 32px;
         }
 
         .nav-auth {
@@ -150,655 +118,249 @@
             align-items: center;
         }
 
-        /* Mobile Menu Toggle */
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 44px;
-            height: 44px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            z-index: 1001;
-        }
-
-        .nav-toggle span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--color-primary-dark);
-            margin: 3px 0;
-            transition: all var(--transition-smooth);
-        }
-
-        .nav-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .nav-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .nav-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            max-width: 320px;
-            height: 100vh;
-            background: var(--color-white);
-            z-index: 999;
-            padding: 100px var(--space-xl) var(--space-xl);
-            transition: right var(--transition-smooth);
-            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .mobile-menu.active {
-            right: 0;
-        }
-
-        .mobile-menu-links {
-            list-style: none;
-            margin-bottom: var(--space-xl);
-        }
-
-        .mobile-menu-links li {
-            margin-bottom: var(--space-md);
-        }
-
-        .mobile-menu-links a {
-            font-family: var(--font-serif);
-            font-size: 1.5rem;
-            font-weight: 400;
-            color: var(--color-black);
-            transition: color var(--transition-fast);
-        }
-
-        .mobile-menu-links a:hover {
-            color: var(--color-primary);
-        }
-
-        .mobile-menu-auth {
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--color-gray-200);
-        }
-
-        .mobile-menu-auth .btn {
-            width: 100%;
-        }
-
-        /* Overlay */
-        .menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 998;
-            opacity: 0;
-            transition: opacity var(--transition-smooth);
-        }
-
-        .menu-overlay.active {
-            opacity: 1;
-        }
-
-        body.menu-open {
-            overflow: hidden;
-        }
-
         /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem 1.75rem;
-            font-size: 0.8125rem;
+            padding: 0.625rem 1.5rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            transition: all var(--transition-smooth);
+            transition: all var(--transition-fast);
         }
 
         .btn-outline {
             background: transparent;
             border: 1px solid var(--color-gray-300);
-            color: var(--color-gray-800);
+            color: var(--color-gray-700);
         }
 
         .btn-outline:hover {
             border-color: var(--color-primary);
             color: var(--color-primary);
+            background: var(--color-gray-50);
         }
 
         .btn-primary {
-            background: var(--color-primary-dark);
+            background: var(--gradient-primary);
             color: var(--color-white);
+            box-shadow: 0 2px 8px rgba(26, 58, 92, 0.25);
         }
 
         .btn-primary:hover {
-            background: var(--color-primary);
             transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(26, 58, 92, 0.3);
+            box-shadow: 0 4px 16px rgba(26, 58, 92, 0.35);
         }
 
         .btn-lg {
-            padding: 1rem 2.5rem;
-            font-size: 0.875rem;
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
         }
 
         /* Hero Section */
         .hero {
             min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px var(--space-lg) var(--space-2xl);
+            background: var(--gradient-hero);
             position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
         }
 
         .hero-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: var(--space-2xl);
-            padding-left: 8%;
-            background: var(--color-white);
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease forwards;
         }
 
-        .hero-eyebrow {
-            font-size: 0.75rem;
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            font-size: 0.875rem;
             font-weight: 500;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--color-primary);
+            color: var(--color-white);
             margin-bottom: var(--space-md);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .hero-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 300;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            color: var(--color-white);
             line-height: 1.1;
-            color: var(--color-black);
-            margin-bottom: var(--space-lg);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.4s;
+            margin-bottom: var(--space-md);
         }
 
         .hero-title span {
-            display: block;
-            font-style: italic;
-            font-weight: 400;
-            color: var(--color-primary-dark);
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .hero-tagline {
-            font-size: 1.125rem;
-            font-weight: 300;
-            color: var(--color-gray-600);
-            max-width: 420px;
-            line-height: 1.8;
-            margin-bottom: var(--space-xl);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.6s;
+        .hero-description {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            margin: 0 auto var(--space-xl);
+            line-height: 1.7;
         }
 
         .hero-cta {
             display: flex;
             gap: var(--space-sm);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.8s;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .hero-image {
-            position: relative;
-            overflow: hidden;
+        .hero-cta .btn-primary {
+            background: var(--color-white);
+            color: var(--color-primary-dark);
+        }
+
+        .hero-cta .btn-primary:hover {
             background: var(--color-gray-100);
         }
 
-        .hero-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            transform: scale(1.05);
-            animation: heroZoom 1.5s ease forwards;
+        .hero-cta .btn-outline {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: var(--color-white);
         }
 
-        .hero-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(26, 58, 92, 0.1) 0%, transparent 60%);
-            z-index: 1;
-            pointer-events: none;
+        .hero-cta .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-white);
         }
 
-        .hero-decoration {
-            position: absolute;
-            bottom: var(--space-xl);
-            left: var(--space-xl);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--color-gray-600);
+        /* Features Section */
+        .features {
+            padding: var(--space-2xl) var(--space-lg);
+            background: var(--color-white);
         }
 
-        .hero-decoration::before {
-            content: '';
-            width: 40px;
-            height: 1px;
-            background: var(--color-gray-300);
-        }
-
-        /* Section Commons */
-        .section {
-            padding: var(--space-3xl) 8%;
-        }
-
-        .section-header {
+        .features-header {
             text-align: center;
             margin-bottom: var(--space-2xl);
         }
 
-        .section-eyebrow {
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.25em;
+        .features-eyebrow {
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--color-primary);
             margin-bottom: var(--space-sm);
         }
 
-        .section-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 300;
-            color: var(--color-black);
-            margin-bottom: var(--space-md);
+        .features-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--color-gray-900);
+            margin-bottom: var(--space-sm);
         }
 
-        .section-subtitle {
-            font-size: 1rem;
-            font-weight: 300;
-            color: var(--color-gray-600);
+        .features-subtitle {
+            font-size: 1.125rem;
+            color: var(--color-gray-500);
             max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Categories Section */
-        .categories {
-            background: var(--color-gray-50);
-        }
-
-        .categories-grid {
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: var(--space-lg);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .category-card {
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            cursor: pointer;
-        }
-
-        .category-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform var(--transition-smooth);
-        }
-
-        .category-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to top, rgba(10, 10, 10, 0.7) 0%, transparent 60%);
-            z-index: 1;
-            transition: background var(--transition-smooth);
-        }
-
-        .category-card:hover::before {
-            background: linear-gradient(to top, rgba(26, 58, 92, 0.8) 0%, rgba(26, 58, 92, 0.2) 100%);
-        }
-
-        .category-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        .feature-card {
             padding: var(--space-lg);
-            z-index: 2;
-            color: var(--color-white);
-        }
-
-        .category-name {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 400;
-            margin-bottom: var(--space-xs);
-        }
-
-        .category-count {
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            opacity: 0.8;
-        }
-
-        .category-link {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            margin-top: var(--space-sm);
-            font-size: 0.8125rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--color-white);
-            opacity: 0;
-            transform: translateY(10px);
+            background: var(--color-gray-50);
+            border-radius: 16px;
+            border: 1px solid var(--color-gray-100);
             transition: all var(--transition-smooth);
         }
 
-        .category-card:hover .category-link {
-            opacity: 1;
-            transform: translateY(0);
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border-color: var(--color-primary-light);
         }
 
-        .category-link svg {
-            width: 16px;
-            height: 16px;
-            transition: transform var(--transition-fast);
-        }
-
-        .category-link:hover svg {
-            transform: translateX(4px);
-        }
-
-        /* Featured Products */
-        .featured-products {
-            background: var(--color-white);
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-lg);
-        }
-
-        .product-card {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .product-image {
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            background: var(--color-gray-100);
-            margin-bottom: var(--space-md);
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform var(--transition-smooth);
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.05);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: var(--space-sm);
-            left: var(--space-sm);
-            padding: 0.25rem 0.75rem;
-            font-size: 0.6875rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            background: var(--color-primary-dark);
-            color: var(--color-white);
-        }
-
-        .product-name {
-            font-family: var(--font-serif);
-            font-size: 1.125rem;
-            font-weight: 400;
-            color: var(--color-black);
-            margin-bottom: var(--space-xs);
-        }
-
-        .product-category {
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--color-gray-600);
-            margin-bottom: var(--space-xs);
-        }
-
-        .product-price {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-primary-dark);
-        }
-
-        /* About Section */
-        .about {
-            background: var(--color-primary-dark);
-            color: var(--color-white);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 80vh;
-        }
-
-        .about-image {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .about-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .about-content {
+        .feature-icon {
+            width: 56px;
+            height: 56px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            padding: var(--space-3xl);
-        }
-
-        .about-eyebrow {
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.6);
+            background: var(--gradient-primary);
+            border-radius: 12px;
             margin-bottom: var(--space-md);
         }
 
-        .about-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 300;
-            line-height: 1.2;
-            margin-bottom: var(--space-lg);
-        }
-
-        .about-text {
-            font-size: 1rem;
-            font-weight: 300;
-            line-height: 1.9;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: var(--space-xl);
-            max-width: 500px;
-        }
-
-        .about-stats {
-            display: flex;
-            gap: var(--space-2xl);
-            margin-top: var(--space-lg);
-            padding-top: var(--space-lg);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-item {
-            text-align: left;
-        }
-
-        .stat-number {
-            font-family: var(--font-serif);
-            font-size: 2.5rem;
-            font-weight: 300;
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
             color: var(--color-white);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-gray-900);
             margin-bottom: var(--space-xs);
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.6);
+        .feature-description {
+            font-size: 0.9375rem;
+            color: var(--color-gray-500);
+            line-height: 1.6;
         }
 
         /* Footer */
         .footer {
-            background: var(--color-black);
+            background: var(--color-gray-900);
             color: var(--color-white);
-            padding: var(--space-3xl) 8% var(--space-xl);
+            padding: var(--space-xl) var(--space-lg);
+            text-align: center;
         }
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: var(--space-2xl);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .footer-brand {
-            max-width: 300px;
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .footer-logo {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--color-white);
-            margin-bottom: var(--space-md);
-        }
-
-        .footer-tagline {
-            font-size: 0.9375rem;
-            font-weight: 300;
-            line-height: 1.7;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .footer-title {
-            font-size: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--color-white);
-            margin-bottom: var(--space-md);
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
             margin-bottom: var(--space-sm);
         }
 
-        .footer-links a {
-            font-size: 0.9375rem;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.6);
-            transition: color var(--transition-fast);
-        }
-
-        .footer-links a:hover {
-            color: var(--color-white);
-        }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: var(--space-lg);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         .footer-copy {
-            font-size: 0.8125rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .footer-social {
-            display: flex;
-            gap: var(--space-md);
-        }
-
-        .footer-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.6);
-            transition: all var(--transition-fast);
-        }
-
-        .footer-social a:hover {
-            border-color: var(--color-white);
-            color: var(--color-white);
-        }
-
-        .footer-social svg {
-            width: 18px;
-            height: 18px;
+            font-size: 0.875rem;
+            color: var(--color-gray-400);
         }
 
         /* Animations */
@@ -813,501 +375,179 @@
             }
         }
 
-        @keyframes heroZoom {
-            from { transform: scale(1.1); }
-            to { transform: scale(1); }
-        }
-
-        /* Scroll animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         /* Responsive */
-        @media (max-width: 1200px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .hero {
-                grid-template-columns: 1fr;
-                grid-template-rows: 50vh auto;
-            }
-
-            .hero-image {
-                order: -1;
-            }
-
-            .hero-content {
-                padding: var(--space-xl);
-                text-align: center;
-                align-items: center;
-            }
-
-            .hero-tagline {
-                max-width: 100%;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .nav-toggle {
-                display: flex;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
-            .menu-overlay {
-                display: block;
-            }
-
-            .nav-auth {
-                display: none;
-            }
-
-            .hero-decoration {
-                display: none;
-            }
-
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .category-card {
-                aspect-ratio: 16/9;
-            }
-
-            .about {
-                grid-template-columns: 1fr;
-            }
-
-            .about-image {
-                height: 50vh;
-            }
-
-            .about-content {
-                padding: var(--space-2xl);
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-xl);
-            }
-        }
-
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .nav {
-                padding: var(--space-sm) var(--space-md);
+                padding: var(--space-sm);
             }
 
             .nav-logo {
                 font-size: 1.25rem;
             }
 
-            .section {
-                padding: var(--space-2xl) var(--space-md);
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8125rem;
             }
 
-            .hero-content {
-                padding: var(--space-lg);
+            .hero {
+                padding: 100px var(--space-sm) var(--space-xl);
             }
 
-            .hero-title {
-                font-size: 2rem;
+            .hero-description {
+                font-size: 1.0625rem;
             }
 
-            .hero-tagline {
-                font-size: 1rem;
+            .features {
+                padding: var(--space-xl) var(--space-sm);
             }
 
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .about-stats {
-                flex-direction: column;
-                gap: var(--space-lg);
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-bottom {
-                flex-direction: column;
-                gap: var(--space-md);
-                text-align: center;
+            .feature-card {
+                padding: var(--space-md);
             }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav" id="navbar">
-        <a href="{{ url('/') }}" class="nav-logo">Siskha</a>
-        
-        <ul class="nav-links">
-            <li><a href="{{ route('collections') }}">Collections</a></li>
-            <li><a href="{{ route('new-arrivals') }}">New Arrivals</a></li>
-            <li><a href="{{ route('about') }}">About</a></li>
-            <li><a href="{{ route('contact') }}">Contact</a></li>
-        </ul>
-
+    <nav class="nav">
+        <div class="nav-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            SISKHA
+        </div>
         <div class="nav-auth">
             @if (Route::has('login'))
                 @auth
                     <a href="{{ url('/home') }}" class="btn btn-primary">Dashboard</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-primary">Sign In</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
                 @endauth
             @endif
         </div>
-
-        <!-- Mobile Menu Toggle -->
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </nav>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <ul class="mobile-menu-links">
-            <li><a href="{{ route('collections') }}">Collections</a></li>
-            <li><a href="{{ route('new-arrivals') }}">New Arrivals</a></li>
-            <li><a href="{{ route('about') }}">About</a></li>
-            <li><a href="{{ route('contact') }}">Contact</a></li>
-        </ul>
-        <div class="mobile-menu-auth">
-            @if (Route::has('login'))
-                @auth
-                    <a href="{{ url('/home') }}" class="btn btn-primary">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-primary">Sign In</a>
-                @endauth
-            @endif
-        </div>
-    </div>
-
-    <!-- Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay"></div>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <p class="hero-eyebrow">Luxury Fashion</p>
+            <div class="hero-badge">✨ Modern Retail Solution</div>
             <h1 class="hero-title">
-                Where Elegance
-                <span>Meets Simplicity</span>
+                POS & Inventory<br><span>Management System</span>
             </h1>
-            <p class="hero-tagline">
-                Discover timeless pieces crafted with precision and passion. 
-                Each design tells a story of sophistication, made for those 
-                who appreciate the art of understated luxury.
+            <p class="hero-description">
+                Streamline your retail operations with our comprehensive point-of-sale and inventory management platform. Built for efficiency, designed for growth.
             </p>
             <div class="hero-cta">
-                <a href="#categories" class="btn btn-primary">Explore Collection</a>
-                <a href="#about" class="btn btn-outline">Our Story</a>
-            </div>
-
-            <div class="hero-decoration">
-                <span>Est. 2026</span>
-            </div>
-        </div>
-
-        <div class="hero-image">
-            <img src="{{ asset('images/hero-fashion.png') }}" alt="Luxury Fashion - Premium fabrics and timeless design">
-        </div>
-    </section>
-
-    <!-- Categories Section -->
-    <section class="section categories" id="categories">
-        <div class="section-header fade-in">
-            <p class="section-eyebrow">Our Collections</p>
-            <h2 class="section-title">Curated Categories</h2>
-            <p class="section-subtitle">Explore our thoughtfully curated collections designed for every occasion</p>
-        </div>
-
-        <div class="categories-grid">
-            <div class="category-card fade-in">
-                <img src="{{ asset('images/category-women.png') }}" alt="Women's Collection">
-                <div class="category-content">
-                    <h3 class="category-name">Women</h3>
-                    <p class="category-count">120+ Items</p>
-                    <a href="#" class="category-link">
-                        View Collection
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="category-card fade-in">
-                <img src="{{ asset('images/category-men.png') }}" alt="Men's Collection">
-                <div class="category-content">
-                    <h3 class="category-name">Men</h3>
-                    <p class="category-count">85+ Items</p>
-                    <a href="#" class="category-link">
-                        View Collection
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="category-card fade-in">
-                <img src="{{ asset('images/category-accessories.png') }}" alt="Accessories Collection">
-                <div class="category-content">
-                    <h3 class="category-name">Accessories</h3>
-                    <p class="category-count">60+ Items</p>
-                    <a href="#" class="category-link">
-                        View Collection
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </a>
-                </div>
+                @if (Route::has('login'))
+                    @auth
+                        <a href="{{ url('/home') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Login to Dashboard</a>
+                    @endauth
+                @endif
             </div>
         </div>
     </section>
 
-    <!-- Featured Products Section -->
-    <section class="section featured-products" id="products">
-        <div class="section-header fade-in">
-            <p class="section-eyebrow">New Arrivals</p>
-            <h2 class="section-title">Latest Collection</h2>
-            <p class="section-subtitle">Fresh styles just arrived, handpicked for the season</p>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-header">
+            <div class="features-eyebrow">Features</div>
+            <h2 class="features-title">Everything You Need</h2>
+            <p class="features-subtitle">Powerful tools to manage your retail business efficiently</p>
         </div>
-
-        <div class="products-grid">
-            <div class="product-card fade-in">
-                <div class="product-image">
-                    <img src="{{ asset('images/category-men.png') }}" alt="Classic Navy Blazer">
-                    <span class="product-badge">New</span>
+        
+        <div class="features-grid">
+            <!-- POS -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
                 </div>
-                <p class="product-category">Menswear</p>
-                <h3 class="product-name">Classic Navy Blazer</h3>
+                <h3 class="feature-title">Point of Sale</h3>
+                <p class="feature-description">Fast and intuitive POS interface with product search, variants, discounts, and flexible payment options.</p>
             </div>
 
-            <div class="product-card fade-in">
-                <div class="product-image">
-                    <img src="{{ asset('images/category-women.png') }}" alt="Silk Evening Dress">
+            <!-- Inventory -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
                 </div>
-                <p class="product-category">Womenswear</p>
-                <h3 class="product-name">Silk Evening Dress</h3>
+                <h3 class="feature-title">Inventory Management</h3>
+                <p class="feature-description">Track stock levels, manage stock-in/out operations, and monitor inventory movement history.</p>
             </div>
 
-            <div class="product-card fade-in">
-                <div class="product-image">
-                    <img src="{{ asset('images/category-accessories.png') }}" alt="Leather Watch Set">
-                    <span class="product-badge">Bestseller</span>
+            <!-- Products -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
                 </div>
-                <p class="product-category">Accessories</p>
-                <h3 class="product-name">Leather Watch Set</h3>
+                <h3 class="feature-title">Product Catalog</h3>
+                <p class="feature-description">Manage products with categories, brands, variants, images, and flexible pricing options.</p>
             </div>
 
-            <div class="product-card fade-in">
-                <div class="product-image">
-                    <img src="{{ asset('images/hero-fashion.png') }}" alt="Cashmere Cardigan">
+            <!-- Suppliers -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 3h15v13H1z"></path>
+                        <path d="M16 8h4l3 3v5h-7V8z"></path>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
                 </div>
-                <p class="product-category">Knitwear</p>
-                <h3 class="product-name">Cashmere Cardigan</h3>
+                <h3 class="feature-title">Supplier Management</h3>
+                <p class="feature-description">Keep track of suppliers and link them to stock movements for better procurement tracking.</p>
             </div>
-        </div>
-    </section>
 
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-image">
-            <img src="{{ asset('images/hero-fashion.png') }}" alt="Siskha Store - Our Story">
-        </div>
-        <div class="about-content fade-in">
-            <p class="about-eyebrow">Our Story</p>
-            <h2 class="about-title">Crafting Elegance Since 2026</h2>
-            <p class="about-text">
-                At Siskha, we believe that true luxury lies in simplicity. Every piece in our collection 
-                is thoughtfully designed to transcend seasons and trends, offering timeless elegance 
-                that speaks to the discerning individual.
-            </p>
-            <p class="about-text">
-                Our commitment to quality craftsmanship and sustainable practices ensures that each 
-                garment not only looks exceptional but feels exceptional—made to be cherished for years to come.
-            </p>
-            <div class="about-stats">
-                <div class="stat-item">
-                    <p class="stat-number">250+</p>
-                    <p class="stat-label">Products</p>
+            <!-- Transactions -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
                 </div>
-                <div class="stat-item">
-                    <p class="stat-number">15K+</p>
-                    <p class="stat-label">Customers</p>
+                <h3 class="feature-title">Transaction History</h3>
+                <p class="feature-description">Complete transaction records with detailed receipts, filters, and printable invoices.</p>
+            </div>
+
+            <!-- Users & Roles -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                 </div>
-                <div class="stat-item">
-                    <p class="stat-number">100%</p>
-                    <p class="stat-label">Quality</p>
-                </div>
+                <h3 class="feature-title">Users & Permissions</h3>
+                <p class="feature-description">Role-based access control with customizable permissions for secure multi-user operation.</p>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <h3 class="footer-logo">Siskha</h3>
-                <p class="footer-tagline">
-                    Where elegance meets simplicity. Discover timeless fashion 
-                    pieces crafted for the modern individual.
-                </p>
-            </div>
-
-            <div class="footer-column">
-                <h4 class="footer-title">Collections</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Women</a></li>
-                    <li><a href="#">Men</a></li>
-                    <li><a href="#">Accessories</a></li>
-                    <li><a href="#">Latest Arrivals</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h4 class="footer-title">Company</h4>
-                <ul class="footer-links">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Store Locations</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h4 class="footer-title">Support</h4>
-                <ul class="footer-links">
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p class="footer-copy">&copy; {{ date('Y') }} Siskha Store. All rights reserved.</p>
-            <div class="footer-social">
-                <a href="#" aria-label="Instagram">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                </a>
-                <a href="#" aria-label="Facebook">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
-                    </svg>
-                </a>
-                <a href="#" aria-label="Twitter">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                </a>
-            </div>
+        <div class="footer-content">
+            <div class="footer-logo">SISKHA</div>
+            <p class="footer-copy">&copy; {{ date('Y') }} SISKHA. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // Fade in on scroll
-        const fadeElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        fadeElements.forEach(el => observer.observe(el));
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Mobile Menu Toggle
-        const navToggle = document.getElementById('navToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const body = document.body;
-
-        function toggleMenu() {
-            navToggle.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            menuOverlay.classList.toggle('active');
-            body.classList.toggle('menu-open');
-        }
-
-        function closeMenu() {
-            navToggle.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            menuOverlay.classList.remove('active');
-            body.classList.remove('menu-open');
-        }
-
-        navToggle.addEventListener('click', toggleMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-
-        // Close menu when clicking a link
-        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-links a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', closeMenu);
-        });
-
-        // Close menu on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeMenu();
-            }
-        });
-    </script>
 </body>
 </html>

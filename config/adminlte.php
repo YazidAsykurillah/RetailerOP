@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Siskha Store',
+    'title' => 'SISKHA',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Siskha</b>Store',
+    'logo' => '<b>SISKHA</b>',
     'logo_img' => 'images/logo-icon.png',
     'logo_img_class' => 'brand-image elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Siskha Store',
+    'logo_img_alt' => 'SISKHA',
 
     /*
     |--------------------------------------------------------------------------
@@ -87,7 +87,7 @@ return [
         'enabled' => true,
         'img' => [
             'path' => 'images/logo-icon.png',
-            'alt' => 'Siskha Store',
+            'alt' => 'SISKHA',
             'class' => '',
             'width' => 80,
             'height' => 80,
@@ -114,7 +114,7 @@ return [
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'images/logo-icon.png',
-            'alt' => 'Siskha Store',
+            'alt' => 'SISKHA',
             'effect' => 'animation__shake',
             'width' => 80,
             'height' => 80,
