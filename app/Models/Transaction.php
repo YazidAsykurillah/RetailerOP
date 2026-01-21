@@ -72,6 +72,14 @@ class Transaction extends Model
     }
 
     /**
+     * Get the customer
+     */
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    /**
      * Get transaction items
      */
     public function items()

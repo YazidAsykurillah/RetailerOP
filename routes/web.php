@@ -25,6 +25,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::resource('products.variants', App\Http\Controllers\Admin\ProductVariantController::class)->except(['show']);
     Route::resource('variant-types', App\Http\Controllers\Admin\VariantTypeController::class)->except(['show']);
     Route::resource('variant-types.values', App\Http\Controllers\Admin\VariantValueController::class)->except(['show']);
+    Route::resource('customer-groups', App\Http\Controllers\Admin\CustomerGroupController::class);
+    Route::resource('customers', App\Http\Controllers\Admin\CustomerController::class);
 
     // Stock Management Routes
     Route::prefix('stock')->name('stock.')->group(function() {

@@ -163,6 +163,7 @@ class POSController extends Controller
             'grand_total' => 'required|numeric|min:0',
             'payment_method' => 'required|in:cash,card,transfer,other',
             'amount_paid' => 'required|numeric|min:0',
+            'customer_id' => 'nullable|exists:customers,id',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string|max:1000',
@@ -208,6 +209,7 @@ class POSController extends Controller
                 'amount_paid' => $request->amount_paid,
                 'change' => $request->amount_paid - $request->grand_total,
                 'notes' => $request->notes,
+                'customer_id' => $request->customer_id,
                 'user_id' => auth()->id(),
             ]);
 

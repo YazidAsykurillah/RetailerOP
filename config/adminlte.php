@@ -351,6 +351,22 @@ return [
             'icon' => 'fas fa-fw fa-truck',
         ],
         [
+            'text' => 'Customers',
+            'icon' => 'fas fa-fw fa-users',
+            'submenu' => [
+                [
+                    'text' => 'Customer Groups',
+                    'url' => 'admin/customer-groups',
+                    'icon' => 'fas fa-fw fa-user-friends',
+                ],
+                [
+                    'text' => 'Customers',
+                    'url' => 'admin/customers',
+                    'icon' => 'fas fa-fw fa-user',
+                ],
+            ],
+        ],
+        [
             'text' => 'Products',
             'url' => 'admin/products',
             'icon' => 'fas fa-fw fa-box',

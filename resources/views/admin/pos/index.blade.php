@@ -241,9 +241,20 @@
     
     <!-- Customer Panel (Hidden by default) -->
     <div class="customer-panel" id="customer-panel">
-        <input type="text" class="customer-input" id="customer-name" placeholder="Customer Name">
-        <input type="text" class="customer-input" id="customer-phone" placeholder="Phone Number">
-        <input type="text" class="customer-input" id="notes" placeholder="Notes" style="width: 300px;">
+        <div class="form-group mb-2">
+            <select id="customer-select" class="form-control" style="width: 100%;">
+                <option value="">Select Customer (Optional)</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="customer-input w-100 mb-2" id="customer-name" placeholder="Customer Name (Walk-in)">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="customer-input w-100 mb-2" id="customer-phone" placeholder="Phone Number">
+            </div>
+        </div>
+        <textarea id="notes" class="form-control" rows="2" placeholder="Transaction Notes"></textarea>
     </div>
 
     <div class="transaction-body">
@@ -379,16 +390,68 @@
 $(function() {
     let rowCounter = 0;
     let selectedPaymentMethod = 'cash';
+    let selectedCustomerId = null;
 
     // Initialize AutoNumeric for Amount Paid input
-    const autoNumericOptions = {
+    const amountPaidAN = new AutoNumeric('#amount-paid', {
         digitGroupSeparator: '.',
         decimalCharacter: ',',
         decimalPlaces: 0,
         minimumValue: '0',
         modifyValueOnWheel: false
-    };
-    const amountPaidAN = new AutoNumeric('#amount-paid', autoNumericOptions);
+    });
+    
+    // Initialize Customer Select2
+    $('#customer-select').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Search Customer (Name/Phone)',
+        allowClear: true,
+        ajax: {
+            url: '{{ route("admin.customers.index") }}',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return { 
+                    search: { value: params.term }, // DataTables search format
+                    start: 0,
+                    length: 10,
+                    columns: [
+                        {data: 'name', name: 'name', searchable: true, orderable: true, search: {value: '', regex: false}},
+                        {data: 'phone', name: 'phone', searchable: true, orderable: false, search: {value: '', regex: false}}
+                    ]
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: $.map(data.data, function(item) {
+                        return {
+                            id: item.id,
+                            text: item.name + (item.phone ? ' (' + item.phone + ')' : ''),
+                            customer: item
+                        }
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1
+    });
+
+    // Handle Customer Selection
+    $('#customer-select').on('select2:select', function(e) {
+        let customer = e.params.data.customer;
+        selectedCustomerId = customer.id;
+        $('#customer-name').val(customer.name).prop('readonly', true);
+        $('#customer-phone').val(customer.phone || '').prop('readonly', true);
+        
+        // Future: specific customer discount logic here
+    });
+
+    $('#customer-select').on('select2:clear', function(e) {
+        selectedCustomerId = null;
+        $('#customer-name').val('').prop('readonly', false);
+        $('#customer-phone').val('').prop('readonly', false);
+    });
 
     // Add first empty row on page load
     addNewRow();
@@ -718,6 +781,7 @@ $(function() {
                 grand_total: total,
                 payment_method: selectedPaymentMethod,
                 amount_paid: amountPaid,
+                customer_id: selectedCustomerId,
                 customer_name: $('#customer-name').val(),
                 customer_phone: $('#customer-phone').val(),
                 notes: $('#notes').val()
