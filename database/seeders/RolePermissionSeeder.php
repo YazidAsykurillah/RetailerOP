@@ -39,7 +39,7 @@ class RolePermissionSeeder extends Seeder
         // Create a Demo Super Admin User
         $user = \App\Models\User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'admin@example.com',
+            'email' => 'superadmin@example.com',
             'password' => bcrypt('password'), // Default password
         ]);
         $user->assignRole($superAdmin);
@@ -47,7 +47,7 @@ class RolePermissionSeeder extends Seeder
         // Create a Demo Admin User
         $user = \App\Models\User::factory()->create([
             'name' => 'Admin User',
-            'email' => 'manager@example.com',
+            'email' => 'admin@example.com',
             'password' => bcrypt('password'),
         ]);
         $user->assignRole($admin);

@@ -224,6 +224,34 @@
     .customer-input::placeholder {
         color: rgba(255,255,255,0.5);
     }
+    .col-number {
+        flex: 0 0 45px;
+        max-width: 45px;
+        text-align: center;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    /* Fix for Select2 Bootstrap 4 Theme Apply Clear */
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__clear {
+        position: absolute;
+        right: 25px; /* Adjust to not overlap with arrow */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 99;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #dc3545;
+        cursor: pointer;
+        display: block !important;
+    }
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+        z-index: 1; /* Ensure arrow is behind clear button if they overlap, though spacing handles it */
+    }
+    /* Fix for Select2 Hover Visibility */
+    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+        background-color: #e9ecef !important; /* Light gray background */
+        color: #212529 !important; /* Dark text to keep contrast */
+    }
 </style>
 @stop
 
@@ -243,7 +271,7 @@
     <div class="customer-panel" id="customer-panel">
         <div class="form-group mb-2">
             <select id="customer-select" class="form-control" style="width: 100%;">
-                <option value="">Select Customer (Optional)</option>
+                <option></option>
             </select>
         </div>
         <div class="row">
@@ -258,6 +286,17 @@
     </div>
 
     <div class="transaction-body">
+        <!-- Header Row -->
+        <div class="row mb-2 font-weight-bold text-muted d-none d-md-flex align-items-center">
+            <div class="col-number">#</div>
+            <div class="col">Product</div>
+            <div class="col-md-1 text-center">Qty</div>
+            <div class="col-md-2">Price</div>
+            <div class="col-md-1 text-center">Disc %</div>
+            <div class="col-md-2 text-right">Subtotal</div>
+            <div class="col-md-1 text-center">Action</div>
+        </div>
+
         <!-- Item Rows Container -->
         <div id="items-container">
             <!-- First empty row will be added by JS -->
@@ -355,10 +394,10 @@
 <template id="item-row-template">
     <div class="item-row" data-row-id="">
         <div class="row align-items-center">
-            <div class="col-md-1 text-center">
+            <div class="col-number">
                 <span class="row-number"></span>
             </div>
-            <div class="col-md-4">
+            <div class="col">
                 <select class="form-control variant-select" style="width: 100%;">
                     <option value="">Select product...</option>
                 </select>

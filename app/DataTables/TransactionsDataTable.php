@@ -25,7 +25,7 @@ class TransactionsDataTable extends DataTable
                 return $row->customer_name ?: '<span class="text-muted">Walk-in Customer</span>';
             })
             ->addColumn('grand_total_formatted', function ($row) {
-                return '<span class="font-weight-bold">Rp ' . number_format($row->grand_total, 0, ',', '.') . '</span>';
+                return '<span class="font-weight-bold">' . number_format($row->grand_total, 0, ',', '.') . '</span>';
             })
             ->addColumn('payment_method_badge', function ($row) {
                 $colors = [

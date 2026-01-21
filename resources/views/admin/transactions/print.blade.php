@@ -13,7 +13,7 @@
         body {
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            width: 80mm;
+            width: 100mm;
             margin: 0 auto;
             padding: 10px;
             background: white;
@@ -64,10 +64,19 @@
         }
         .items .qty {
             text-align: center;
-            width: 30px;
+            width: 10%;
         }
-        .items .price, .items .subtotal {
+        .items .price {
             text-align: right;
+            width: 25%;
+        }
+        .items .discount {
+            text-align: right;
+            width: 20%;
+        }
+        .items .subtotal {
+            text-align: right;
+            width: 25%;
         }
         .item-row td {
             padding-top: 5px;
@@ -205,9 +214,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Item</th>
+                        <th style="width: 20%;">Item</th>
                         <th class="qty">Qty</th>
                         <th class="price">Price</th>
+                        <th class="discount">Disc</th>
                         <th class="subtotal">Total</th>
                     </tr>
                 </thead>
@@ -222,6 +232,7 @@
                         </td>
                         <td class="qty">{{ $item->quantity }}</td>
                         <td class="price">{{ number_format($item->price, 0, ',', '.') }}</td>
+                        <td class="discount">{{ number_format($item->discount, 0, ',', '.') }}</td>
                         <td class="subtotal">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
