@@ -23,6 +23,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::resource('suppliers', App\Http\Controllers\Admin\SupplierController::class);
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
     Route::resource('products.variants', App\Http\Controllers\Admin\ProductVariantController::class)->except(['show']);
+    Route::get('products/{product}/variants/{variant}/print-barcode', [App\Http\Controllers\Admin\ProductVariantController::class, 'printBarcode'])->name('products.variants.print-barcode');
     Route::resource('variant-types', App\Http\Controllers\Admin\VariantTypeController::class)->except(['show']);
     Route::resource('variant-types.values', App\Http\Controllers\Admin\VariantValueController::class)->except(['show']);
     Route::resource('customer-groups', App\Http\Controllers\Admin\CustomerGroupController::class);
@@ -43,6 +44,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::prefix('pos')->name('pos.')->group(function() {
         Route::get('/', [App\Http\Controllers\Admin\POSController::class, 'index'])->name('index');
         Route::get('/search-products', [App\Http\Controllers\Admin\POSController::class, 'searchProducts'])->name('search-products');
+        Route::get('/find-by-sku', [App\Http\Controllers\Admin\POSController::class, 'findBySku'])->name('find-by-sku');
         Route::get('/product/{id}', [App\Http\Controllers\Admin\POSController::class, 'getProductDetails'])->name('product-details');
         Route::get('/by-category', [App\Http\Controllers\Admin\POSController::class, 'getByCategory'])->name('by-category');
         Route::post('/checkout', [App\Http\Controllers\Admin\POSController::class, 'processTransaction'])->name('checkout');

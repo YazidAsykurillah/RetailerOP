@@ -262,6 +262,14 @@
         <h5 class="m-0">
             <i class="fas fa-list"></i> Transaction Items
         </h5>
+        <div class="mr-auto ml-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                </div>
+                <input type="text" id="barcode-input" class="form-control" placeholder="Scan Barcode (Enter)" autofocus autocomplete="off">
+            </div>
+        </div>
         <button type="button" class="customer-toggle" id="customer-toggle">
             <i class="fas fa-user"></i> Customer Info
         </button>
@@ -431,6 +439,115 @@ $(function() {
     let selectedPaymentMethod = 'cash';
     let selectedCustomerId = null;
 
+    // Barcode Scanner Logic
+    $('#barcode-input').on('keypress', function(e) {
+        if (e.which == 13) { // Enter key
+            e.preventDefault();
+            const sku = $(this).val().trim();
+            if (!sku) return;
+
+            // Clear input immediately for next scan
+            $(this).val('');
+
+            $.ajax({
+                url: '{{ route("admin.pos.find-by-sku") }}',
+                method: 'GET',
+                data: { sku: sku },
+                success: function(response) {
+                    if (response.success) {
+                        addProductToCart(response.variant);
+                        toastr.success('Added: ' + response.variant.full_name ?? response.variant.product_name);
+                    }
+                },
+                error: function(xhr) {
+                    let message = 'Product not found';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    toastr.error(message);
+                    
+                    // Specific sound or visual cue could be added here
+                }
+            });
+        }
+    });
+
+    // Keep focus on barcode input
+    // $(document).on('click', function(e) {
+    //     if (!$(e.target).closest('input, select, button, .select2').length) {
+    //         $('#barcode-input').focus();
+    //     }
+    // });
+    
+    // Function to add product to cart (or increment if exists)
+    function addProductToCart(variant) {
+        let foundRow = null;
+        
+        // Check if item exists
+        $('.item-row').each(function() {
+            if ($(this).data('variant-id') == variant.id) {
+                foundRow = $(this);
+                return false;
+            }
+        });
+
+        if (foundRow) {
+            // Increment quantity
+            const qtyInput = foundRow.find('.qty-input');
+            let newQty = parseInt(qtyInput.val()) + 1;
+            const stock = foundRow.data('stock');
+            
+            if (newQty <= stock) {
+                qtyInput.val(newQty);
+                updateRowSubtotal(foundRow);
+            } else {
+                toastr.warning('Maximum stock reached for ' + variant.product_name);
+            }
+        } else {
+            // Add new row if current row is empty and it's the only row, use it.
+            // Otherwise append new.
+            let targetRow = null;
+            const $validRows = $('.item-row').filter(function() { return $(this).data('variant-id'); });
+            const $allRows = $('.item-row');
+
+            if ($validRows.length < $allRows.length) {
+                 // Try to find an empty row
+                 $('.item-row').each(function() {
+                     if (!$(this).data('variant-id')) {
+                         targetRow = $(this);
+                         return false;
+                     }
+                 });
+            }
+
+            if (!targetRow) {
+                addNewRow();
+                targetRow = $('.item-row').last();
+            }
+            
+            // Populate row
+            populateRow(targetRow, variant);
+        }
+        updateSummary();
+    }
+
+    function populateRow($row, variant) {
+         $row.data('variant-id', variant.id);
+         $row.data('product-name', variant.product_name);
+         $row.data('variant-name', variant.variant_name);
+         $row.data('price', variant.price);
+         $row.data('stock', variant.stock);
+         
+         // Update Select2 data manually
+         const $select = $row.find('.variant-select');
+         const option = new Option(variant.product_name + ' - ' + variant.variant_name, variant.id, true, true);
+         $select.append(option).trigger('change');
+         
+         $row.find('.price-display').val(formatNumber(variant.price));
+         $row.find('.qty-input').attr('max', variant.stock).val(1);
+         updateRowSubtotal($row);
+    }
+
     // Initialize AutoNumeric for Amount Paid input
     const amountPaidAN = new AutoNumeric('#amount-paid', {
         digitGroupSeparator: '.',
@@ -556,7 +673,7 @@ $(function() {
 
     function formatProductSelection(product) {
         if (!product.id) return product.text;
-        return product.variant_name;
+        return product.variant_name || product.text;
     }
 
     // Handle variant selection

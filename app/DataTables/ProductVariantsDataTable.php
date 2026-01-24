@@ -50,6 +50,12 @@ class ProductVariantsDataTable extends DataTable
             })
             ->addColumn('action', function ($row) {
                 return '
+                    <a href="' . route('admin.products.variants.print-barcode', [$row->product_id, $row->id]) . '" 
+                       class="btn btn-xs btn-dark" 
+                       title="Print Barcode" 
+                       onclick="event.preventDefault(); let qty = prompt(\'Enter quantity to print:\', 1); if(qty) { window.open(this.href + \'?qty=\' + qty, \'_blank\'); }">
+                        <i class="fas fa-barcode"></i>
+                    </a>
                     <a href="' . route('admin.products.variants.edit', [$row->product_id, $row->id]) . '" class="btn btn-xs btn-primary" title="Edit">
                         <i class="fas fa-edit"></i>
                     </a>

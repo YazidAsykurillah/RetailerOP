@@ -86,6 +86,47 @@ class POSController extends Controller
     }
 
     /**
+     * Find product by SKU for barcode scanner.
+     */
+    public function findBySku(Request $request)
+    {
+        $sku = $request->get('sku');
+
+        if (!$sku) {
+            return response()->json(['success' => false, 'message' => 'SKU is required'], 400);
+        }
+
+        $variant = ProductVariant::with(['product.primaryImage'])
+            ->where('sku', $sku)
+            ->whereHas('product', function ($q) {
+                $q->where('is_active', true);
+            })
+            ->where('is_active', true)
+            ->first();
+
+        if (!$variant) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+
+        if ($variant->stock <= 0) {
+            return response()->json(['success' => false, 'message' => 'Product is out of stock'], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'variant' => [
+                'id' => $variant->id,
+                'product_name' => $variant->product->name ?? 'Unknown Product',
+                'variant_name' => $variant->name ?: 'Default',
+                'sku' => $variant->sku,
+                'price' => (float) $variant->price,
+                'stock' => $variant->stock,
+                'image' => $variant->product->primary_image_url ?? asset('images/no-image.png'),
+            ]
+        ]);
+    }
+
+    /**
      * Get product variant details.
      */
     public function getProductDetails($id)

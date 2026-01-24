@@ -183,6 +183,24 @@ class ProductVariantController extends Controller
     }
 
     /**
+     * Print barcode for the specified variant.
+     */
+    public function printBarcode(\Illuminate\Http\Request $request, Product $product, $variantId)
+    {
+        // Explicitly find the variant
+        $variant = ProductVariant::where('product_id', $product->id)
+            ->where('id', $variantId)
+            ->firstOrFail();
+
+        $qty = $request->input('qty', 1);
+
+        $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+        $barcode = $generator->getBarcode($variant->sku, $generator::TYPE_CODE_128);
+
+        return view('admin.products.variants.print-barcode', compact('product', 'variant', 'barcode', 'qty'));
+    }
+
+    /**
      * Process text-based variant values and get/create VariantValue IDs.
      *
      * @param array $variantTypeIds Array of variant type IDs
