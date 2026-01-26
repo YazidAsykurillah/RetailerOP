@@ -46,13 +46,13 @@
             }
             .label-container {
                 border: none;
-                width: 100mm; /* Fixed width for label */
-                max-width: 100mm;
+                width: 80mm; /* Fixed width for label */
+                max-width: 80mm;
                 padding: 5px; /* Small padding */
                 overflow: hidden; /* Prevent spillover */
             }
             @page {
-                size: 100mm auto; /* Set paper size */
+                size: 80mm auto; /* Set paper size */
                 margin: 0; /* Remove default page margins */
             }
             body {
@@ -64,7 +64,7 @@
         .label-container {
             border: 2px dashed #ccc;
             padding: 5px;
-            width: 100mm;
+            width: 80mm;
             margin: 0 auto 10px auto; /* Add bottom margin for screen view */
             text-align: center;
             /* Avoid breaking inside a label */
