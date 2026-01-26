@@ -17,6 +17,7 @@
 </div>
 
 {{-- Product Overview --}}
+@if(\Auth::user()->can('Manage Products'))
 <div class="row">
     <div class="col-12">
         <h4 class="mb-2"><i class="fas fa-box"></i> Product Overview</h4>
@@ -78,8 +79,10 @@
         </div>
     </div>
 </div>
+@endif
 
 {{-- Stock Overview --}}
+@if(\Auth::user()->can('Access Inventory'))
 <div class="row">
     <div class="col-12">
         <h4 class="mb-2"><i class="fas fa-warehouse"></i> Stock Overview</h4>
@@ -141,8 +144,10 @@
         </div>
     </div>
 </div>
+@endif
 
 {{-- Transaction Overview --}}
+@if(\Auth::user()->can('Access Pos'))
 <div class="row">
     <div class="col-12">
         <h4 class="mb-2"><i class="fas fa-cash-register"></i> Transaction Overview</h4>
@@ -204,9 +209,11 @@
         </div>
     </div>
 </div>
+@endif
 
 {{-- Additional Information --}}
 <div class="row">
+    @if(\Auth::user()->can('Access Inventory'))
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
@@ -238,6 +245,8 @@
             </div>
         </div>
     </div>
+    @endif
+    @if(\Auth::user()->can('Manage Users'))
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
@@ -267,6 +276,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 @stop
 

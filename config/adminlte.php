@@ -334,25 +334,32 @@ return [
             'icon' => 'fas fa-fw fa-key',
             'can' => 'Manage Permissions ',
         ],
-        ['header' => 'STORE MANAGEMENT'],
+        [
+            'header' => 'STORE MANAGEMENT',
+            'can'=>'Access Store Management'
+        ],
         [
             'text' => 'Categories',
             'url' => 'admin/categories',
             'icon' => 'fas fa-fw fa-folder-open',
+            'can'=>'Manage Categories',
         ],
         [
             'text' => 'Brands',
             'url' => 'admin/brands',
             'icon' => 'fas fa-fw fa-tags',
+            'can'=>'Manage Brands',
         ],
         [
             'text' => 'Suppliers',
             'url' => 'admin/suppliers',
             'icon' => 'fas fa-fw fa-truck',
+            'can'=>'Manage Suppliers',
         ],
         [
             'text' => 'Customers',
             'icon' => 'fas fa-fw fa-users',
+            'can'=>'Manage Customers',
             'submenu' => [
                 [
                     'text' => 'Customer Groups',
@@ -370,38 +377,51 @@ return [
             'text' => 'Products',
             'url' => 'admin/products',
             'icon' => 'fas fa-fw fa-box',
+            'can'=>'Manage Products',
         ],
         [
             'text' => 'Variant Types',
             'url' => 'admin/variant-types',
             'icon' => 'fas fa-fw fa-palette',
+            'can'=>'Manage Variant Types',
         ],
-        ['header' => 'INVENTORY'],
+        [
+            'header' => 'INVENTORY',
+            'can'=>'Access Inventory',
+        ],
         [
             'text' => 'Stock Overview',
             'url' => 'admin/stock',
             'icon' => 'fas fa-fw fa-warehouse',
+            'can'=>'Access Inventory',
         ],
         [
             'text' => 'Stock In',
             'url' => 'admin/stock/in',
             'icon' => 'fas fa-fw fa-arrow-down',
+            'can'=>'Access Inventory',
         ],
         [
             'text' => 'Stock Out',
             'url' => 'admin/stock/out',
             'icon' => 'fas fa-fw fa-arrow-up',
+            'can'=>'Access Inventory',
         ],
-        ['header' => 'POS / SALES'],
+        [
+            'header' => 'POS / SALES',
+            'can'=>'Access Pos',
+        ],
         [
             'text' => 'New Transaction',
             'url' => 'admin/pos',
             'icon' => 'fas fa-fw fa-cash-register',
+            'can'=>'Access Pos',
         ],
         [
             'text' => 'Transaction History',
             'url' => 'admin/transactions',
             'icon' => 'fas fa-fw fa-receipt',
+            'can'=>'Access Pos',
         ],
         ['header' => 'account_settings'],
         [
