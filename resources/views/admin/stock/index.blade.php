@@ -47,19 +47,57 @@
     </div>
 </div>
 
+</div>
+<!-- Filters -->
+<div class="card card-outline card-primary">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-filter"></i> Filters
+        </h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <form id="filter-form">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            <option value="in_stock" {{ request('status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
+                            <option value="low_stock" {{ request('low_stock') == '1' || request('status') == 'low_stock' ? 'selected' : '' }}>Low Stock</option>
+                            <option value="out_of_stock" {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Filter
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="reset-filter">
+                                <i class="fas fa-times"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Stock List</h3>
-                <div class="card-tools">
-                    <a class="btn btn-success btn-sm" href="{{ route('admin.stock.in') }}">
-                        <i class="fas fa-arrow-down"></i> Stock In
-                    </a>
-                    <a class="btn btn-warning btn-sm" href="{{ route('admin.stock.out') }}">
-                        <i class="fas fa-arrow-up"></i> Stock Out
-                    </a>
-                </div>
+                
             </div>
             <div class="card-body">
                 @if ($message = Session::get('success'))
@@ -80,4 +118,28 @@
 
 @section('js')
     {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+    <script>
+    $(function() {
+        // Apply filters
+        $('#filter-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var table = window.LaravelDataTables['stock-table'];
+            
+            // Add filter parameters to the table's ajax request
+            table.ajax.url('{{ route("admin.stock.index") }}?' + $(this).serialize()).load();
+        });
+
+        // Reset filters
+        $('#reset-filter').on('click', function() {
+            $('#filter-form')[0].reset();
+            // Also clear select manually if needed
+            $('#status').val('');
+            
+            var table = window.LaravelDataTables['stock-table'];
+            // Reset to base URL without params
+            table.ajax.url('{{ route("admin.stock.index") }}').load();
+        });
+    });
+    </script>
 @stop
