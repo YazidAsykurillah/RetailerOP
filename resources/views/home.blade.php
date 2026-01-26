@@ -17,7 +17,7 @@
 </div>
 
 {{-- Product Overview --}}
-@if(\Auth::user()->can('Manage Products'))
+@if(\Auth::user()->can("Manage Products"))
 <div class="row">
     <div class="col-12">
         <h4 class="mb-2"><i class="fas fa-box"></i> Product Overview</h4>
