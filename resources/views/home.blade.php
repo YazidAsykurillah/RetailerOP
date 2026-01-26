@@ -156,9 +156,9 @@
             <div class="icon">
                 <i class="fas fa-receipt"></i>
             </div>
-            <span class="small-box-footer">
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </span>
+            </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -170,9 +170,9 @@
             <div class="icon">
                 <i class="fas fa-calendar-day"></i>
             </div>
-            <span class="small-box-footer">
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </span>
+            </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -184,9 +184,9 @@
             <div class="icon">
                 <i class="fas fa-dollar-sign"></i>
             </div>
-            <span class="small-box-footer">
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </span>
+            </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -198,9 +198,9 @@
             <div class="icon">
                 <i class="fas fa-coins"></i>
             </div>
-            <span class="small-box-footer">
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </span>
+            </a>
         </div>
     </div>
 </div>

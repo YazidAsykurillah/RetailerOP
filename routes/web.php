@@ -50,6 +50,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
         Route::post('/checkout', [App\Http\Controllers\Admin\POSController::class, 'processTransaction'])->name('checkout');
     });
 
+    // Account Settings Routes
+    Route::get('/settings', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/settings', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/settings/password', [App\Http\Controllers\Admin\ProfileController::class, 'editPassword'])->name('profile.password.edit');
+    Route::put('/settings/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show']);
     Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');
