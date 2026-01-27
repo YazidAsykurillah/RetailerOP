@@ -10,6 +10,7 @@ use App\Models\Brand;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\StockMovement;
+use App\Models\Purchase;
 
 class HomeController extends Controller
 {
@@ -63,6 +64,12 @@ class HomeController extends Controller
             ->take(5)
             ->sum('quantity');
 
+        // Purchase Statistics
+        $totalPurchases = Purchase::count();
+        $pendingPurchases = Purchase::where('status', 'pending')->count();
+        $completedPurchases = Purchase::where('status', 'completed')->count();
+        $totalPurchaseCost = Purchase::sum('total_amount');
+
         return view('home', compact(
             'totalProducts',
             'activeProducts',
@@ -78,7 +85,11 @@ class HomeController extends Controller
             'todayRevenue',
             'totalUsers',
             'recentStockIn',
-            'recentStockOut'
+            'recentStockOut',
+            'totalPurchases',
+            'pendingPurchases',
+            'completedPurchases',
+            'totalPurchaseCost'
         ));
     }
 }

@@ -386,6 +386,16 @@ return [
             'can'=>'Manage Variant Types',
         ],
         [
+            'header' => 'PURCHASING',
+            'can'=>'Manage Purchases',
+        ],
+        [
+            'text' => 'Purchases',
+            'url' => 'admin/purchases',
+            'icon' => 'fas fa-fw fa-shopping-cart',
+            'can'=>'Manage Purchases',
+        ],
+        [
             'header' => 'INVENTORY',
             'can'=>'Access Inventory',
         ],

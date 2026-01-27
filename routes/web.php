@@ -21,6 +21,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('brands', App\Http\Controllers\Admin\BrandController::class);
     Route::resource('suppliers', App\Http\Controllers\Admin\SupplierController::class);
+    
+    // Purchase Management Routes
+    Route::get('purchases/search-products', [App\Http\Controllers\Admin\PurchaseController::class, 'searchProducts'])->name('purchases.search-products');
+    Route::post('purchases/{purchase}/receive', [App\Http\Controllers\Admin\PurchaseController::class, 'receiveItems'])->name('purchases.receive');
+    Route::resource('purchases', App\Http\Controllers\Admin\PurchaseController::class);
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
     Route::resource('products.variants', App\Http\Controllers\Admin\ProductVariantController::class)->except(['show']);
     Route::get('products/{product}/variants/{variant}/print-barcode', [App\Http\Controllers\Admin\ProductVariantController::class, 'printBarcode'])->name('products.variants.print-barcode');

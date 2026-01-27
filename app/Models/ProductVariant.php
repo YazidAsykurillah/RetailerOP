@@ -167,4 +167,11 @@ class ProductVariant extends Model
         
         return false;
     }
+    /**
+     * Get all purchases containing this variant
+     */
+    public function purchaseDetails()
+    {
+        return $this->hasMany(PurchaseDetail::class);
+    }
 }

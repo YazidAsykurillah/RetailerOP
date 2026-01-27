@@ -81,6 +81,71 @@
 </div>
 @endif
 
+{{-- Purchase Overview --}}
+@if(\Auth::user()->can('Manage Purchases'))
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-2"><i class="fas fa-shopping-cart"></i> Purchase Overview</h4>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-indigo">
+            <div class="inner">
+                <h3>{{ number_format($totalPurchases) }}</h3>
+                <p>Total Purchases</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <a href="{{ route('admin.purchases.index') }}" class="small-box-footer">
+                View Purchases <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ number_format($pendingPurchases) }}</h3>
+                <p>Pending Purchases</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <a href="{{ route('admin.purchases.index') }}" class="small-box-footer">
+                View Pending <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ number_format($completedPurchases) }}</h3>
+                <p>Completed Purchases</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <a href="{{ route('admin.purchases.index') }}" class="small-box-footer">
+                View Completed <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>Rp {{ number_format($totalPurchaseCost, 0, ',', '.') }}</h3>
+                <p>Total Cost</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <a href="{{ route('admin.purchases.index') }}" class="small-box-footer">
+                View Purchases <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- Stock Overview --}}
 @if(\Auth::user()->can('Access Inventory'))
 <div class="row">

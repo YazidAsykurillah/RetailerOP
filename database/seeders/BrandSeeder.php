@@ -23,7 +23,7 @@ class BrandSeeder extends Seeder
             ['name' => 'Calvin Klein', 'description' => 'Between Love and Madness Lies Obsession'],
             ['name' => 'Tommy Hilfiger', 'description' => 'Classic American Cool'],
             ['name' => 'Gucci', 'description' => 'Quality is Remembered Long After Price is Forgotten'],
-            ['name' => 'Prada', 'description' => 'Luxury Fashion'],  
+            ['name' => 'Prada', 'description' => 'Luxury Fashion'],
         ];
 
         foreach ($brands as $index => $brand) {

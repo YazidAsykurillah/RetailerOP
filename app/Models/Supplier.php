@@ -35,6 +35,14 @@ class Supplier extends Model
     }
 
     /**
+     * Get all purchases from this supplier
+     */
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    /**
      * Scope for active suppliers
      */
     public function scopeActive($query)
