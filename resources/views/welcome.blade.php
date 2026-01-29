@@ -6,6 +6,7 @@
     <meta name="description" content="Siskha Store - Modern POS & Inventory Management System for retail businesses.">
     
     <title>{{ config('app.name', 'Siskha Store') }} - POS & Inventory Management</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -256,7 +257,7 @@
         /* Features Section */
         .features {
             padding: var(--space-2xl) var(--space-lg);
-            background: var(--color-white);
+            background: var(--color-gray-50); /* Slight contrast */
         }
 
         .features-header {
@@ -269,72 +270,103 @@
             font-weight: 600;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: var(--color-primary);
+            color: var(--color-accent);
             margin-bottom: var(--space-sm);
         }
 
         .features-title {
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
-            font-weight: 700;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
             color: var(--color-gray-900);
             margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
         }
 
         .features-subtitle {
             font-size: 1.125rem;
             color: var(--color-gray-500);
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1280px;
             margin: 0 auto;
         }
 
         .feature-card {
-            padding: var(--space-lg);
-            background: var(--color-gray-50);
-            border-radius: 16px;
-            border: 1px solid var(--color-gray-100);
-            transition: all var(--transition-smooth);
+            padding: 2.5rem 2rem;
+            background: var(--color-white);
+            border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Soft, subtle shadow */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--color-accent), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-            border-color: var(--color-primary-light);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
         }
 
         .feature-icon {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--gradient-primary);
-            border-radius: 12px;
-            margin-bottom: var(--space-md);
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            color: var(--color-accent);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--color-accent);
+            color: var(--color-white);
+            transform: rotate(-10deg) scale(1.1);
         }
 
         .feature-icon svg {
-            width: 28px;
-            height: 28px;
-            color: var(--color-white);
+            width: 32px;
+            height: 32px;
+            stroke-width: 2;
         }
 
         .feature-title {
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--color-gray-900);
-            margin-bottom: var(--space-xs);
+            margin-bottom: 0.75rem;
         }
 
         .feature-description {
-            font-size: 0.9375rem;
+            font-size: 1rem;
             color: var(--color-gray-500);
             line-height: 1.6;
         }
@@ -500,6 +532,44 @@
                 <p class="feature-description">Manage products with categories, brands, variants, images, and flexible pricing options.</p>
             </div>
 
+            <!-- Transactions -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Transaction History</h3>
+                <p class="feature-description">Complete transaction records with detailed receipts, filters, and printable invoices.</p>
+            </div>
+
+             <!-- Purchases -->
+             <div class="feature-card">
+                 <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
+                 </div>
+                 <h3 class="feature-title">Purchases</h3>
+                 <p class="feature-description">Manage procurement with purchase orders, supplier coordination, and incoming stock handling.</p>
+             </div>
+
+            <!-- Customers -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Customers</h3>
+                <p class="feature-description">CRM capabilities to track customer data, purchase history, and build loyalty.</p>
+            </div>
+
             <!-- Suppliers -->
             <div class="feature-card">
                 <div class="feature-icon">
@@ -512,18 +582,6 @@
                 </div>
                 <h3 class="feature-title">Supplier Management</h3>
                 <p class="feature-description">Keep track of suppliers and link them to stock movements for better procurement tracking.</p>
-            </div>
-
-            <!-- Transactions -->
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                </div>
-                <h3 class="feature-title">Transaction History</h3>
-                <p class="feature-description">Complete transaction records with detailed receipts, filters, and printable invoices.</p>
             </div>
 
             <!-- Users & Roles -->
