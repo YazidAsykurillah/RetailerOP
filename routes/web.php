@@ -27,6 +27,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::post('purchases/{purchase}/receive', [App\Http\Controllers\Admin\PurchaseController::class, 'receiveItems'])->name('purchases.receive');
     Route::resource('purchases', App\Http\Controllers\Admin\PurchaseController::class);
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    Route::get('products/{product}/variants/import', [App\Http\Controllers\Admin\ProductVariantController::class, 'import'])->name('products.variants.import');
+    Route::post('products/{product}/variants/import', [App\Http\Controllers\Admin\ProductVariantController::class, 'processImport'])->name('products.variants.process-import');
+    Route::get('products/variants/download-template', [App\Http\Controllers\Admin\ProductVariantController::class, 'downloadTemplate'])->name('products.variants.download-template');
+    
     Route::resource('products.variants', App\Http\Controllers\Admin\ProductVariantController::class)->except(['show']);
     Route::get('products/{product}/variants/{variant}/print-barcode', [App\Http\Controllers\Admin\ProductVariantController::class, 'printBarcode'])->name('products.variants.print-barcode');
     Route::resource('variant-types', App\Http\Controllers\Admin\VariantTypeController::class)->except(['show']);

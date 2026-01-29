@@ -201,6 +201,56 @@ class ProductVariantController extends Controller
     }
 
     /**
+     * Show the import form.
+     */
+    public function import(Product $product)
+    {
+        return view('admin.products.variants.import', compact('product'));
+    }
+
+    /**
+     * Process the import.
+     */
+    public function processImport(Request $request, Product $product)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            $updateExisting = $request->has('update_existing');
+            
+            \Maatwebsite\Excel\Facades\Excel::import(
+                new \App\Imports\ProductVariantImport($product, $updateExisting),
+                $request->file('file')
+            );
+
+            return redirect()->route('admin.products.variants.index', $product->id)
+                ->with('success', 'Variants imported successfully.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $messages = [];
+            foreach ($failures as $failure) {
+                $messages[] = 'Row ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return back()->with('error', 'Validation failed: ' . implode('<br>', $messages));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download import template
+     */
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ProductVariantTemplateExport, 
+            'variant_import_template.xlsx'
+        );
+    }
+
+    /**
      * Process text-based variant values and get/create VariantValue IDs.
      *
      * @param array $variantTypeIds Array of variant type IDs

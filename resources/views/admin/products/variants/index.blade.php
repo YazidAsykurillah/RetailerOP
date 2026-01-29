@@ -24,7 +24,7 @@
                     </div>
                     <div class="col">
                         <h5 class="mb-0">{{ $product->name }}</h5>
-                        <small class="text-muted">SKU: {{ $product->sku }} | Base Price: Rp {{ number_format($product->base_price, 0, ',', '.') }}</small>
+                        <small class="text-muted">SKU: {{ $product->sku }} | Base Price: {{ number_format($product->base_price, 0, ',', '.') }}</small>
                     </div>
                     <div class="col-auto">
                         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">
@@ -40,6 +40,9 @@
             <div class="card-header">
                 <h3 class="card-title">Product Variants</h3>
                 <div class="card-tools">
+                    <a class="btn btn-info mr-2" href="{{ route('admin.products.variants.import', $product->id) }}">
+                        <i class="fas fa-file-import"></i> Import Variants
+                    </a>
                     <a class="btn btn-success" href="{{ route('admin.products.variants.create', $product->id) }}">
                         <i class="fas fa-plus"></i> Add Variant
                     </a>
