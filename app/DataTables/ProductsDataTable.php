@@ -100,9 +100,18 @@ class ProductsDataTable extends DataTable
      */
     public function query(Product $model): QueryBuilder
     {
-        return $model->newQuery()
-            ->with(['category', 'brand', 'variants.variantValues', 'primaryImage'])
-            ->orderBy('created_at', 'desc');
+        $query = $model->newQuery()
+            ->with(['category', 'brand', 'variants.variantValues', 'primaryImage']);
+
+        if (request()->has('category_id') && request('category_id')) {
+            $query->where('category_id', request('category_id'));
+        }
+
+        if (request()->has('brand_id') && request('brand_id')) {
+            $query->where('brand_id', request('brand_id'));
+        }
+
+        return $query->orderBy('created_at', 'desc');
     }
 
     /**

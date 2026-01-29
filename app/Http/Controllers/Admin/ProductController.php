@@ -19,7 +19,9 @@ class ProductController extends Controller
      */
     public function index(ProductsDataTable $dataTable)
     {
-        return $dataTable->render('admin.products.index');
+        $categories = Category::active()->orderBy('name')->get();
+        $brands = Brand::active()->orderBy('name')->get();
+        return $dataTable->render('admin.products.index', compact('categories', 'brands'));
     }
 
     /**
@@ -199,5 +201,55 @@ class ProductController extends Controller
         $product->forceDelete();
 
         return response()->json(['success' => 'Product deleted permanently.']);
+    }
+
+    /**
+     * Show the product import form.
+     */
+    public function import()
+    {
+        return view('admin.products.import');
+    }
+
+    /**
+     * Process the product import.
+     */
+    public function processImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            $updateExisting = $request->has('update_existing');
+            
+            \Maatwebsite\Excel\Facades\Excel::import(
+                new \App\Imports\ProductImport($updateExisting),
+                $request->file('file')
+            );
+
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Products imported successfully.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $messages = [];
+            foreach ($failures as $failure) {
+                $messages[] = 'Row ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return back()->with('error', 'Validation failed: ' . implode('<br>', $messages));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download product import template.
+     */
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ProductTemplateExport, 
+            'product_import_template.xlsx'
+        );
     }
 }

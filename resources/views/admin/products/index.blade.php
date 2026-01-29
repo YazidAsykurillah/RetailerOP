@@ -9,10 +9,67 @@
 @section('content')
 <div class="row">
     <div class="col-lg-12 margin-tb">
+        <div class="card card-outline card-primary collapsed-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-filter"></i> Filters
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" style="display: none;">
+                <form id="filter-form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select class="form-control" id="category_id" name="category_id">
+                                    <option value="">All Categories</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Brand</label>
+                                <select class="form-control" id="brand_id" name="brand_id">
+                                    <option value="">All Brands</option>
+                                    @foreach($brands as $brand)
+                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Filter
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="reset-filter">
+                                        <i class="fas fa-times"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Product List</h3>
                 <div class="card-tools">
+                    <a class="btn btn-info mr-2" href="{{ route('admin.products.import') }}">
+                        <i class="fas fa-file-import"></i> Import Products
+                    </a>
                     <a class="btn btn-success" href="{{ route('admin.products.create') }}">
                         <i class="fas fa-plus"></i> Create New Product
                     </a>
@@ -29,6 +86,10 @@
                 <div class="table-responsive">
                     {{ $dataTable->table() }}
                 </div>
+            </div>
+            <!-- Loading Overlay -->
+            <div class="overlay" id="loading-overlay" style="display: none;">
+                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
             </div>
         </div>
     </div>
@@ -61,6 +122,32 @@
             });
 
             var table = window.LaravelDataTables["products-table"];
+            var overlay = $('#loading-overlay');
+
+            // Apply filters
+            $('#filter-form').on('submit', function(e) {
+                e.preventDefault();
+                overlay.show();
+                table.draw();
+            });
+
+            // Reset filters
+            $('#reset-filter').on('click', function() {
+                $('#filter-form')[0].reset();
+                overlay.show();
+                table.draw();
+            });
+
+            // Add filter parameters to the table's request
+            table.on('preXhr.dt', function (e, settings, data) {
+                data.category_id = $('#category_id').val();
+                data.brand_id = $('#brand_id').val();
+            });
+
+            // Hide overlay when table is drawn
+            table.on('draw.dt', function () {
+                overlay.hide();
+            });
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
