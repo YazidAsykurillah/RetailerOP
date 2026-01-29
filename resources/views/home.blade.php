@@ -189,7 +189,7 @@
             <div class="icon">
                 <i class="fas fa-times-circle"></i>
             </div>
-            <a href="{{ route('admin.stock.index') }}" class="small-box-footer">
+            <a href="{{ route('admin.stock.index', ['status' => 'out_of_stock']) }}" class="small-box-footer">
                 View Stock <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
