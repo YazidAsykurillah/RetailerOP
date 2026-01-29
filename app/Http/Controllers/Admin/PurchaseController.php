@@ -16,14 +16,12 @@ class PurchaseController extends Controller
 {
     public function index(PurchasesDataTable $dataTable)
     {
-        $suppliers = Supplier::active()->get();
-        return $dataTable->render('purchases.index', compact('suppliers'));
+        return $dataTable->render('admin.purchases.index');
     }
 
     public function create()
     {
-        $suppliers = Supplier::active()->get();
-        return view('purchases.create', compact('suppliers'));
+        return view('admin.purchases.create');
     }
 
     public function store(Request $request)
@@ -93,7 +91,7 @@ class PurchaseController extends Controller
     public function show(Purchase $purchase)
     {
         $purchase->load(['supplier', 'user', 'details.productVariant.product']);
-        return view('purchases.show', compact('purchase'));
+        return view('admin.purchases.show', compact('purchase'));
     }
 
     public function edit(Purchase $purchase)
@@ -104,7 +102,7 @@ class PurchaseController extends Controller
 
         $purchase->load(['details.productVariant.product']);
         $suppliers = Supplier::active()->get();
-        return view('purchases.edit', compact('purchase', 'suppliers'));
+        return view('admin.purchases.edit', compact('purchase', 'suppliers'));
     }
 
     public function update(Request $request, Purchase $purchase)

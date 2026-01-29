@@ -104,8 +104,16 @@
 @section('js')
     <script>
         @section('plugins.AutoNumeric', true)
+        @section('plugins.Select2', true)
 
         $(document).ready(function() {
+             // Initialize Select2 for Supplier
+            $('#supplier_id').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select Supplier',
+                allowClear: true
+            });
+
             let itemIndex = 0;
             const isEditable = {{ $isEditable ? 'true' : 'false' }};
             const existingItems = @json($purchase->details);

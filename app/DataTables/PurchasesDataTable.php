@@ -18,7 +18,7 @@ class PurchasesDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
-            ->addColumn('date', function ($row) {
+            ->editColumn('date', function ($row) {
                 return $row->date->format('d M Y');
             })
             ->addColumn('supplier_name', function ($row) {
@@ -79,7 +79,11 @@ class PurchasesDataTable extends DataTable
             $query->whereDate('date', '<=', $this->request()->get('date_to'));
         }
 
-        return $query->orderBy('date', 'desc')->orderBy('id', 'desc');
+        if ($this->request()->has('status') && $this->request()->get('status')) {
+            $query->where('status', $this->request()->get('status'));
+        }
+
+        return $query;
     }
 
     /**
@@ -91,7 +95,7 @@ class PurchasesDataTable extends DataTable
             ->setTableId('purchases-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(0, 'desc')
+            ->orderBy(2, 'desc')
             ->selectStyleSingle()
             ->responsive(true);
     }
@@ -102,9 +106,9 @@ class PurchasesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('DT_RowIndex', '#')->width(50),
+            Column::computed('DT_RowIndex', '#')->width(30)->addClass('text-center')->orderable(false),
             Column::make('reference_number')->title('Ref No'),
-            Column::computed('date')->title('Date'),
+            Column::make('date')->title('Date')->orderable(true)->searchable(true),
             Column::computed('supplier_name')->title('Supplier'),
             Column::computed('status_badge')->title('Status')->addClass('text-center'),
             Column::computed('total_amount_display')->title('Total')->addClass('text-right'),

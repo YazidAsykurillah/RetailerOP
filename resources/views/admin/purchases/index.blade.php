@@ -36,15 +36,31 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Supplier</label>
+                            <label>
+                                Supplier 
+                                <a href="javascript:void(0)" id="clear-supplier" class="text-danger ml-2" style="display:none;" title="Clear Selection">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </label>
                             <select class="form-control" id="supplier_id" name="supplier_id">
                                 <option value="">All Suppliers</option>
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control" name="status">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="partial">Partial</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>&nbsp;</label>
@@ -104,7 +120,44 @@
 @section('js')
     {{ $dataTable->scripts() }}
     <script>
+    @section('plugins.Select2', true)
+
     $(function() {
+        // Initialize Select2
+        $('#supplier_id').select2({
+            theme: 'bootstrap4',
+            placeholder: 'All Suppliers',
+            allowClear: false,
+            ajax: {
+                url: '{{ route("admin.suppliers.search") }}',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // Handle Clear Button Visibility
+        function toggleClearButton() {
+            if ($('#supplier_id').val()) {
+                $('#clear-supplier').show();
+            } else {
+                $('#clear-supplier').hide();
+            }
+        }
+
+        $('#supplier_id').on('change', toggleClearButton);
+        $('#clear-supplier').on('click', function() {
+            $('#supplier_id').val('').trigger('change');
+        });
+        
+        // Initial check
+        toggleClearButton();
+
         // Apply filters
         $('#filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -118,6 +171,7 @@
         // Reset filters
         $('#reset-filter').on('click', function() {
             $('#filter-form')[0].reset();
+            $('#supplier_id').val('').trigger('change'); // Reset Select2 to empty
             var table = window.LaravelDataTables['purchases-table'];
             table.ajax.url('{{ route("admin.purchases.index") }}').load();
         });

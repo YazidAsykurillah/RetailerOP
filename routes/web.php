@@ -20,6 +20,7 @@ Route::group(['middleware' => ['auth']], function() {
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('brands', App\Http\Controllers\Admin\BrandController::class);
+    Route::get('suppliers/search', [App\Http\Controllers\Admin\SupplierController::class, 'search'])->name('suppliers.search');
     Route::resource('suppliers', App\Http\Controllers\Admin\SupplierController::class);
     
     // Purchase Management Routes

@@ -17,9 +17,6 @@
                             <label for="supplier_id">Supplier</label>
                             <select name="supplier_id" id="supplier_id" class="form-control" required>
                                 <option value="">Select Supplier</option>
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -79,8 +76,27 @@
 @section('js')
     <script>
         @section('plugins.AutoNumeric', true)
+        @section('plugins.Select2', true)
 
         $(document).ready(function() {
+            // Initialize Select2 for Supplier
+            $('#supplier_id').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select Supplier',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("admin.suppliers.search") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true
+                }
+            });
+
             let itemIndex = 0;
             const autoNumericOptions = {
                 currencySymbol: '', // Removed as per request

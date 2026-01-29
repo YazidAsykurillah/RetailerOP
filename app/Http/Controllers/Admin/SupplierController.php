@@ -99,4 +99,18 @@ class SupplierController extends Controller
 
         return response()->json(['success' => 'Supplier deleted successfully.']);
     }
+    public function search(Request $request)
+    {
+        $term = $request->term;
+        $suppliers = Supplier::where('name', 'like', "%{$term}%")
+            ->where('is_active', true)
+            ->get();
+
+        return response()->json($suppliers->map(function ($supplier) {
+            return [
+                'id' => $supplier->id,
+                'text' => $supplier->name
+            ];
+        }));
+    }
 }
