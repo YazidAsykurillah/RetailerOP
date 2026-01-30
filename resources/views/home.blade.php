@@ -16,65 +16,132 @@
     </div>
 </div>
 
-{{-- Product Overview --}}
-@if(\Auth::user()->can("Manage Products"))
+{{-- Transaction Overview --}}
+@if(\Auth::user()->can('Access Pos'))
 <div class="row">
     <div class="col-12">
-        <h4 class="mb-2"><i class="fas fa-box"></i> Product Overview</h4>
+        <h4 class="mb-2"><i class="fas fa-cash-register"></i> Transaction Overview</h4>
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ number_format($totalProducts) }}</h3>
-                <p>Total Products</p>
+                <h3>{{ number_format($todayTransactions) }}</h3>
+                <p>Today's Transactions</p>
             </div>
             <div class="icon">
-                <i class="fas fa-boxes"></i>
+                <i class="fas fa-calendar-day"></i>
             </div>
-            <a href="{{ route('admin.products.index') }}" class="small-box-footer">
-                View Products <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-purple">
+            <div class="inner">
+                <h3>{{ number_format($totalTransactions) }}</h3>
+                <p>Total Transactions</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-olive">
+            <div class="inner">
+                <h3>Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
+                <p>Today's Revenue</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+                View Transactions <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>{{ number_format($activeProducts) }}</h3>
-                <p>Active Products</p>
+                <h3>Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
+                <p>Total Revenue</p>
             </div>
             <div class="icon">
-                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-dollar-sign"></i>
             </div>
-            <a href="{{ route('admin.products.index') }}" class="small-box-footer">
-                View Products <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    
+</div>
+@endif
+
+{{-- Stock Overview --}}
+@if(\Auth::user()->can('Access Inventory'))
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-2"><i class="fas fa-warehouse"></i> Stock Overview</h4>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ number_format($lowStockCount) }}</h3>
+                <p>Low Stock Items</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <a href="{{ route('admin.stock.index', ['low_stock' => 1]) }}" class="small-box-footer">
+                View Low Stock <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-primary">
+        <div class="small-box bg-danger">
             <div class="inner">
-                <h3>{{ number_format($totalCategories) }}</h3>
-                <p>Categories</p>
+                <h3>{{ number_format($outOfStockCount) }}</h3>
+                <p>Out of Stock</p>
             </div>
             <div class="icon">
-                <i class="fas fa-tags"></i>
+                <i class="fas fa-times-circle"></i>
             </div>
-            <a href="{{ route('admin.categories.index') }}" class="small-box-footer">
-                View Categories <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.stock.index', ['status' => 'out_of_stock']) }}" class="small-box-footer">
+                View Stock <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-secondary">
+        <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ number_format($totalBrands) }}</h3>
-                <p>Brands</p>
+                <h3>{{ number_format($totalVariants) }}</h3>
+                <p>Product Variants</p>
             </div>
             <div class="icon">
-                <i class="fas fa-copyright"></i>
+                <i class="fas fa-cubes"></i>
             </div>
-            <a href="{{ route('admin.brands.index') }}" class="small-box-footer">
-                View Brands <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.stock.index') }}" class="small-box-footer">
+                View Stock <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-teal">
+            <div class="inner">
+                <h3>Rp {{ number_format($totalStockValue, 0, ',', '.') }}</h3>
+                <p>Stock Value</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <a href="{{ route('admin.stock.index') }}" class="small-box-footer">
+                View Stock <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -146,135 +213,74 @@
 </div>
 @endif
 
-{{-- Stock Overview --}}
-@if(\Auth::user()->can('Access Inventory'))
-<div class="row">
-    <div class="col-12">
-        <h4 class="mb-2"><i class="fas fa-warehouse"></i> Stock Overview</h4>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>{{ number_format($totalVariants) }}</h3>
-                <p>Product Variants</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-cubes"></i>
-            </div>
-            <a href="{{ route('admin.stock.index') }}" class="small-box-footer">
-                View Stock <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>{{ number_format($lowStockCount) }}</h3>
-                <p>Low Stock Items</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <a href="{{ route('admin.stock.index', ['low_stock' => 1]) }}" class="small-box-footer">
-                View Low Stock <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ number_format($outOfStockCount) }}</h3>
-                <p>Out of Stock</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-times-circle"></i>
-            </div>
-            <a href="{{ route('admin.stock.index', ['status' => 'out_of_stock']) }}" class="small-box-footer">
-                View Stock <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-teal">
-            <div class="inner">
-                <h3>Rp {{ number_format($totalStockValue, 0, ',', '.') }}</h3>
-                <p>Stock Value</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-money-bill-wave"></i>
-            </div>
-            <a href="{{ route('admin.stock.index') }}" class="small-box-footer">
-                View Stock <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-</div>
-@endif
 
-{{-- Transaction Overview --}}
-@if(\Auth::user()->can('Access Pos'))
+{{-- Product Overview --}}
+@if(\Auth::user()->can("Manage Products"))
 <div class="row">
     <div class="col-12">
-        <h4 class="mb-2"><i class="fas fa-cash-register"></i> Transaction Overview</h4>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-purple">
-            <div class="inner">
-                <h3>{{ number_format($totalTransactions) }}</h3>
-                <p>Total Transactions</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-receipt"></i>
-            </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
+        <h4 class="mb-2"><i class="fas fa-box"></i> Product Overview</h4>
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ number_format($todayTransactions) }}</h3>
-                <p>Today's Transactions</p>
+                <h3>{{ number_format($totalProducts) }}</h3>
+                <p>Total Products</p>
             </div>
             <div class="icon">
-                <i class="fas fa-calendar-day"></i>
+                <i class="fas fa-boxes"></i>
             </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.products.index') }}" class="small-box-footer">
+                View Products <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
-                <p>Total Revenue</p>
+                <h3>{{ number_format($activeProducts) }}</h3>
+                <p>Active Products</p>
             </div>
             <div class="icon">
-                <i class="fas fa-dollar-sign"></i>
+                <i class="fas fa-check-circle"></i>
             </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.products.index') }}" class="small-box-footer">
+                View Products <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-olive">
+        <div class="small-box bg-primary">
             <div class="inner">
-                <h3>Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
-                <p>Today's Revenue</p>
+                <h3>{{ number_format($totalCategories) }}</h3>
+                <p>Categories</p>
             </div>
             <div class="icon">
-                <i class="fas fa-coins"></i>
+                <i class="fas fa-tags"></i>
             </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.categories.index') }}" class="small-box-footer">
+                View Categories <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-secondary">
+            <div class="inner">
+                <h3>{{ number_format($totalBrands) }}</h3>
+                <p>Brands</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-copyright"></i>
+            </div>
+            <a href="{{ route('admin.brands.index') }}" class="small-box-footer">
+                View Brands <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
 </div>
 @endif
+
+
+
 
 {{-- Additional Information --}}
 <div class="row">
