@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use App\DataTables\SuppliersDataTable;
+use App\DataTables\SupplierPurchasesDataTable;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
@@ -15,6 +16,14 @@ class SupplierController extends Controller
     public function index(SuppliersDataTable $dataTable)
     {
         return $dataTable->render('admin.suppliers.index');
+    }
+
+    /**
+     * Display the specified supplier.
+     */
+    public function show(Supplier $supplier, SupplierPurchasesDataTable $dataTable)
+    {
+        return $dataTable->render('admin.suppliers.show', compact('supplier'));
     }
 
     /**

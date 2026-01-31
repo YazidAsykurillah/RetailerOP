@@ -97,7 +97,27 @@ class PurchasesDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(2, 'desc')
             ->selectStyleSingle()
-            ->responsive(true);
+            ->responsive(true)
+            ->parameters([
+                'footerCallback' => 'function (row, data, start, end, display) {
+                    var api = this.api();
+                    var intVal = function (i) {
+                        return typeof i === "string" ?
+                            i.replace(/[\$,]/g, "") * 1 :
+                            typeof i === "number" ?
+                                i : 0;
+                    };
+                    var total = api
+                        .column(5, { page: "current" })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    $(api.column(5).footer()).html(
+                        new Intl.NumberFormat("en-US", {minimumFractionDigits: 2}).format(total)
+                    );
+                }'
+            ]);
     }
 
     /**
@@ -106,17 +126,18 @@ class PurchasesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('DT_RowIndex', '#')->width(30)->addClass('text-center')->orderable(false),
-            Column::make('reference_number')->title('Ref No'),
-            Column::make('date')->title('Date')->orderable(true)->searchable(true),
-            Column::computed('supplier_name')->title('Supplier'),
-            Column::computed('status_badge')->title('Status')->addClass('text-center'),
-            Column::computed('total_amount_display')->title('Total')->addClass('text-right'),
+            Column::computed('DT_RowIndex', '#')->width(30)->addClass('text-center')->orderable(false)->footer(''),
+            Column::make('reference_number')->title('Ref No')->footer(''),
+            Column::make('date')->title('Date')->orderable(true)->searchable(true)->footer(''),
+            Column::computed('supplier_name')->title('Supplier')->footer(''),
+            Column::computed('status_badge')->title('Status')->addClass('text-center')->footer(''),
+            Column::computed('total_amount_display')->title('Total')->addClass('text-right')->footer(''),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(150)
-                ->addClass('text-center'),
+                ->addClass('text-center')
+                ->footer(''),
         ];
     }
 

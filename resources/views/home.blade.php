@@ -22,7 +22,7 @@
     <div class="col-12">
         <h4 class="mb-2"><i class="fas fa-cash-register"></i> Transaction Overview</h4>
     </div>
-    <div class="col-lg-3 col-6">
+    <div class="col-lg-6 col-6">
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>{{ number_format($todayTransactions) }}</h3>
@@ -31,26 +31,13 @@
             <div class="icon">
                 <i class="fas fa-calendar-day"></i>
             </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+            <a href="{{ route('admin.transactions.index', ['date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d')]) }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-purple">
-            <div class="inner">
-                <h3>{{ number_format($totalTransactions) }}</h3>
-                <p>Total Transactions</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-receipt"></i>
-            </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
+    
+    <div class="col-lg-6 col-6">
         <div class="small-box bg-olive">
             <div class="inner">
                 <h3>Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
@@ -59,21 +46,7 @@
             <div class="icon">
                 <i class="fas fa-coins"></i>
             </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
-                View Transactions <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
-                <p>Total Revenue</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
-            <a href="{{ route('admin.transactions.index') }}" class="small-box-footer">
+            <a href="{{ route('admin.transactions.index', ['date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d')]) }}" class="small-box-footer">
                 View Transactions <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>

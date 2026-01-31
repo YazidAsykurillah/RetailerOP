@@ -108,7 +108,7 @@
             @endif
 
             <div class="table-responsive">
-                {{ $dataTable->table() }}
+                {{ $dataTable->table([], true) }}
             </div>
         </div>
     </div>

@@ -18,9 +18,7 @@ class SuppliersDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
-            ->addColumn('stock_movements_count', function ($row) {
-                return $row->stock_movements_count ?? 0;
-            })
+
             ->addColumn('status', function ($row) {
                 return $row->is_active
                     ? '<span class="badge badge-success">Active</span>'
@@ -28,6 +26,9 @@ class SuppliersDataTable extends DataTable
             })
             ->addColumn('action', function ($row) {
                 return '
+                    <a href="' . route('admin.suppliers.show', $row->id) . '" class="btn btn-xs btn-info">
+                        <i class="fas fa-eye"></i>
+                    </a>
                     <a href="' . route('admin.suppliers.edit', $row->id) . '" class="btn btn-xs btn-primary">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -45,7 +46,7 @@ class SuppliersDataTable extends DataTable
     public function query(Supplier $model): QueryBuilder
     {
         return $model->newQuery()
-            ->withCount('stockMovements')
+
             ->orderBy('sort_order');
     }
 
@@ -74,7 +75,7 @@ class SuppliersDataTable extends DataTable
             Column::make('contact_person')->title('Contact Person'),
             Column::make('email')->title('Email'),
             Column::make('phone')->title('Phone'),
-            Column::computed('stock_movements_count')->title('Stock In')->width(80),
+
             Column::computed('status')->title('Status')->width(80),
             Column::computed('action')
                 ->exportable(false)

@@ -44,9 +44,7 @@ class HomeController extends Controller
         $totalStockValue = ProductVariant::selectRaw('SUM(stock * price) as total')->value('total') ?? 0;
 
         // Transaction Statistics
-        $totalTransactions = Transaction::count();
         $todayTransactions = Transaction::whereDate('created_at', today())->count();
-        $totalRevenue = Transaction::sum('grand_total');
         $todayRevenue = Transaction::whereDate('created_at', today())
             ->sum('grand_total');
 
@@ -79,9 +77,7 @@ class HomeController extends Controller
             'lowStockCount',
             'outOfStockCount',
             'totalStockValue',
-            'totalTransactions',
             'todayTransactions',
-            'totalRevenue',
             'todayRevenue',
             'totalUsers',
             'recentStockIn',

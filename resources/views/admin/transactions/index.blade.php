@@ -73,13 +73,13 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Date From</label>
-                        <input type="date" class="form-control" id="date_from" name="date_from">
+                        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request('date_from') }}">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Date To</label>
-                        <input type="date" class="form-control" id="date_to" name="date_to">
+                        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request('date_to') }}">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -87,10 +87,10 @@
                         <label>Payment Method</label>
                         <select class="form-control" id="payment_method" name="payment_method">
                             <option value="">All Methods</option>
-                            <option value="cash">Cash</option>
-                            <option value="card">Card</option>
-                            <option value="transfer">Bank Transfer</option>
-                            <option value="other">Other</option>
+                            <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
+                            <option value="card" {{ request('payment_method') == 'card' ? 'selected' : '' }}>Card</option>
+                            <option value="transfer" {{ request('payment_method') == 'transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                            <option value="other" {{ request('payment_method') == 'other' ? 'selected' : '' }}>Other</option>
                         </select>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
         </div>
     </div>
     <div class="card-body">
-        {{ $dataTable->table(['class' => 'table table-striped table-bordered w-100']) }}
+        {{ $dataTable->table(['class' => 'table table-striped table-bordered w-100'], true) }}
     </div>
 </div>
 @stop
@@ -137,18 +137,15 @@ $(function() {
     // Apply filters
     $('#filter-form').on('submit', function(e) {
         e.preventDefault();
-        
-        var table = window.LaravelDataTables['transactions-table'];
-        
-        // Add filter parameters to the table's ajax request
-        table.ajax.url('{{ route("admin.transactions.index") }}?' + $(this).serialize()).load();
+        window.LaravelDataTables['transactions-table'].draw();
     });
 
     // Reset filters
     $('#reset-filter').on('click', function() {
-        $('#filter-form')[0].reset();
-        var table = window.LaravelDataTables['transactions-table'];
-        table.ajax.url('{{ route("admin.transactions.index") }}').load();
+        $('#date_from').val('');
+        $('#date_to').val('');
+        $('#payment_method').val('');
+        window.LaravelDataTables['transactions-table'].draw();
     });
 });
 </script>

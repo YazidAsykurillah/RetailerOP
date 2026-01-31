@@ -94,12 +94,32 @@ class TransactionsDataTable extends DataTable
         return $this->builder()
             ->setTableId('transactions-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_method = $('#payment_method').val();")
             ->orderBy(0, 'desc')
             ->selectStyleSingle()
             ->autoWidth(false)
             ->responsive(true)
-            ->addTableClass('table-striped table-bordered w-100');
+            ->addTableClass('table-striped table-bordered w-100')
+            ->parameters([
+                'footerCallback' => 'function (row, data, start, end, display) {
+                    var api = this.api();
+                    var intVal = function (i) {
+                        return typeof i === "string" ?
+                            i.replace(/<[^>]+>/g, "").replace(/[\$.]/g, "") * 1 :
+                            typeof i === "number" ?
+                                i : 0;
+                    };
+                    var total = api
+                        .column(4, { page: "current" })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    $(api.column(4).footer()).html(
+                        new Intl.NumberFormat("id-ID").format(total)
+                    );
+                }'
+            ]);
     }
 
     /**
@@ -108,18 +128,19 @@ class TransactionsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('DT_RowIndex', '#')->width(50),
-            Column::make('invoice_no')->title('Invoice'),
-            Column::computed('date')->title('Date'),
-            Column::computed('customer')->title('Customer'),
-            Column::computed('grand_total_formatted')->title('Total')->addClass('text-right'),
-            Column::computed('payment_method_badge')->title('Payment')->addClass('text-center'),
-            Column::computed('cashier')->title('Cashier'),
+            Column::computed('DT_RowIndex', '#')->width(50)->footer(''),
+            Column::make('invoice_no')->title('Invoice')->footer(''),
+            Column::computed('date')->title('Date')->footer(''),
+            Column::computed('customer')->title('Customer')->footer(''),
+            Column::computed('grand_total_formatted')->title('Total')->addClass('text-right')->footer(''),
+            Column::computed('payment_method_badge')->title('Payment')->addClass('text-center')->footer(''),
+            Column::computed('cashier')->title('Cashier')->footer(''),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(100)
-                ->addClass('text-center'),
+                ->addClass('text-center')
+                ->footer(''),
         ];
     }
 
