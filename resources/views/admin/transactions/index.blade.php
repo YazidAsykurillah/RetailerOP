@@ -96,6 +96,14 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
+                        <label>Customer</label>
+                        <select class="form-control" id="customer_id" name="customer_id">
+                            <option value="">All Customers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
                         <label>&nbsp;</label>
                         <div>
                             <button type="submit" class="btn btn-primary">
@@ -134,6 +142,24 @@
 {{ $dataTable->scripts() }}
 <script>
 $(function() {
+    // Initialize Select2
+    $('#customer_id').select2({
+        theme: 'bootstrap4',
+        placeholder: 'All Customers',
+        allowClear: true,
+        ajax: {
+            url: '{{ route("admin.customers.search") }}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
     // Apply filters
     $('#filter-form').on('submit', function(e) {
         e.preventDefault();
@@ -145,6 +171,7 @@ $(function() {
         $('#date_from').val('');
         $('#date_to').val('');
         $('#payment_method').val('');
+        $('#customer_id').val('').trigger('change');
         window.LaravelDataTables['transactions-table'].draw();
     });
 });

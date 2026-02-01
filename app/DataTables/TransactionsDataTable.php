@@ -83,6 +83,11 @@ class TransactionsDataTable extends DataTable
             $query->where('payment_method', request('payment_method'));
         }
 
+        // Filter by customer
+        if (request()->has('customer_id') && request('customer_id')) {
+            $query->where('customer_id', request('customer_id'));
+        }
+
         return $query->orderBy('created_at', 'desc');
     }
 
@@ -94,7 +99,7 @@ class TransactionsDataTable extends DataTable
         return $this->builder()
             ->setTableId('transactions-table')
             ->columns($this->getColumns())
-            ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_method = $('#payment_method').val();")
+            ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_method = $('#payment_method').val(); data.customer_id = $('#customer_id').val();")
             ->orderBy(0, 'desc')
             ->selectStyleSingle()
             ->autoWidth(false)

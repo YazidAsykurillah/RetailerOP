@@ -11,6 +11,39 @@
         <div class="col-lg-12 margin-tb">
             <div class="card">
                 <div class="card-header">
+                    <h3 class="card-title">Filter</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="filter_group_id">Customer Group</label>
+                                <select name="filter_group_id" id="filter_group_id" class="form-control select2">
+                                    <option value="">All Groups</option>
+                                    @foreach($groups as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="margin-top: 30px;">
+                            <button id="btn-filter" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                            <button id="btn-reset" class="btn btn-warning"><i class="fas fa-undo"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 margin-tb">
+            <div class="card">
+                <div class="card-header">
                     <h3 class="card-title">Customer List</h3>
                     <div class="card-tools">
                         <a href="{{ route('admin.customers.create') }}" class="btn btn-success">
@@ -35,6 +68,29 @@
     {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
     
     <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                width: '100%'
+            });
+
+            // Filter button click event
+            $('#btn-filter').click(function() {
+                $('#customers-table').DataTable().draw();
+            });
+
+            // Reset button click event
+            $('#btn-reset').click(function() {
+                $('#filter_group_id').val('').trigger('change');
+                $('#customers-table').DataTable().draw();
+            });
+            
+             // Pass parameters to DataTable
+            $('#customers-table').on('preXhr.dt', function (e, settings, data) {
+                 data.customer_group_id = $('#filter_group_id').val();
+            });
+        });
         $(document).on('click', '.delete-btn', function() {
             let id = $(this).data('id');
             let url = $(this).data('url');

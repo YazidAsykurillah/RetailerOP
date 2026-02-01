@@ -24,7 +24,8 @@ class CustomersDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addIndexColumn()
             ->addColumn('action', function($row){
-                 $btn = '<a href="'.route('admin.customers.edit', $row->id).'" class="btn btn-xs btn-primary mx-1" title="Edit"><i class="fas fa-edit"></i></a>';
+                 $btn = '<a href="'.route('admin.customers.show', $row->id).'" class="btn btn-xs btn-info mx-1" title="View"><i class="fas fa-eye"></i></a>';
+                 $btn = $btn.'<a href="'.route('admin.customers.edit', $row->id).'" class="btn btn-xs btn-primary mx-1" title="Edit"><i class="fas fa-edit"></i></a>';
                  $btn = $btn.'<button class="btn btn-xs btn-danger mx-1 delete-btn" data-id="'.$row->id.'" data-url="'.route('admin.customers.destroy', $row->id).'" title="Delete"><i class="fas fa-trash"></i></button>';
                  return $btn;
             })
@@ -45,7 +46,11 @@ class CustomersDataTable extends DataTable
      */
     public function query(Customer $model): QueryBuilder
     {
-        return $model->newQuery()->with('customerGroup');
+        return $model->newQuery()
+            ->with('customerGroup')
+            ->when($this->request()->get('customer_group_id'), function($query) {
+                return $query->where('customer_group_id', $this->request()->get('customer_group_id'));
+            });
     }
 
     /**

@@ -7,11 +7,38 @@ use App\Models\Customer;
 use App\DataTables\CustomersDataTable;
 use Illuminate\Http\Request;
 
+use App\DataTables\CustomerTransactionsDataTable;
+
 class CustomerController extends Controller
 {
+    public function search(Request $request)
+    {
+        $term = $request->get('term');
+        
+        $query = Customer::query();
+
+        if ($term) {
+            $query->where(function($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('phone', 'like', "%{$term}%")
+                  ->orWhere('email', 'like', "%{$term}%");
+            });
+        }
+
+        $customers = $query->limit(20)->get()->map(function($customer) {
+            return [
+                'id' => $customer->id,
+                'text' => $customer->name . ($customer->phone ? ' (' . $customer->phone . ')' : '')
+            ];
+        });
+
+        return response()->json($customers);
+    }
+
     public function index(CustomersDataTable $dataTable)
     {
-        return $dataTable->render('admin.customers.index');
+        $groups = \App\Models\CustomerGroup::all();
+        return $dataTable->render('admin.customers.index', compact('groups'));
     }
 
     public function create()
@@ -38,6 +65,11 @@ class CustomerController extends Controller
 
         return redirect()->route('admin.customers.index')
             ->with('success', 'Customer created successfully.');
+    }
+
+    public function show(Customer $customer, CustomerTransactionsDataTable $dataTable)
+    {
+        return $dataTable->render('admin.customers.show', compact('customer'));
     }
 
     public function edit(Customer $customer)
