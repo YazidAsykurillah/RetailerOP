@@ -41,7 +41,7 @@
         <div class="small-box bg-olive">
             <div class="inner">
                 <h3>Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
-                <p>Today's Revenue</p>
+                <p>Today's Sales</p>
             </div>
             <div class="icon">
                 <i class="fas fa-coins"></i>

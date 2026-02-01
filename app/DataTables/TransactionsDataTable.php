@@ -101,6 +101,7 @@ class TransactionsDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_method = $('#payment_method').val(); data.customer_id = $('#customer_id').val();")
             ->orderBy(0, 'desc')
+            ->pageLength(100)
             ->selectStyleSingle()
             ->autoWidth(false)
             ->responsive(true)
