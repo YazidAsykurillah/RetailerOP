@@ -68,6 +68,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::put('/settings', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/settings/password', [App\Http\Controllers\Admin\ProfileController::class, 'editPassword'])->name('profile.password.edit');
     Route::put('/settings/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    
+    // Business Profile Routes
+    Route::get('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'edit'])->name('business-profile.edit');
+    Route::put('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'update'])->name('business-profile.update');
 
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show']);

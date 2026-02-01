@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BusinessProfile;
 use App\Models\Transaction;
 use App\DataTables\TransactionsDataTable;
 use Illuminate\Http\Request;
@@ -46,7 +47,8 @@ class TransactionController extends Controller
     public function printReceipt($id)
     {
         $transaction = Transaction::with(['items.productVariant.product', 'user'])->findOrFail($id);
+        $businessProfile = BusinessProfile::first();
 
-        return view('admin.transactions.print', compact('transaction'));
+        return view('admin.transactions.print', compact('transaction', 'businessProfile'));
     }
 }

@@ -264,8 +264,8 @@
         </button>
     </div>
     
-    <!-- Customer Panel (Hidden by default) -->
-    <div class="customer-panel" id="customer-panel">
+    <!-- Customer Panel (Visible by default) -->
+    <div class="customer-panel show" id="customer-panel">
         <div class="form-group mb-2">
             <select id="customer-select" class="form-control" style="width: 100%;">
                 <option></option>
@@ -979,7 +979,7 @@ $(function() {
         $('#customer-select').val(null).trigger('change');
         $('#customer-name').val('').prop('readonly', false);
         $('#customer-phone').val('').prop('readonly', false);
-        $('#customer-panel').removeClass('show');
+        $('#customer-panel').addClass('show');
 
         // Clear notes
         $('#notes').val('');

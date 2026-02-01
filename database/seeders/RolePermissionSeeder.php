@@ -33,6 +33,7 @@ class RolePermissionSeeder extends Seeder
         Permission::create(['name' => 'Access Pos']);
         Permission::create(['name' => 'Manage Purchases']);
         Permission::create(['name' => 'Manage Customers']);
+        Permission::create(['name' => 'Manage Settings']);
 
         // Create Roles and Assign Permissions
 
@@ -46,7 +47,8 @@ class RolePermissionSeeder extends Seeder
         $admin->givePermissionTo([
             'Manage Products', 'Manage Orders', 'Access Store Management',
             'Manage Categories', 'Manage Brands', 'Manage Suppliers', 'Manage Customers', 'Manage Variant Types',
-            'Access Inventory', 'Manage Stock', 'Access Pos','Manage Purchases', 'Manage Customers'
+            'Access Inventory', 'Manage Stock', 'Access Pos','Manage Purchases', 'Manage Customers',
+            'Manage Settings'
         ]);
 
         // Cashier

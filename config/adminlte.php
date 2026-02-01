@@ -444,6 +444,12 @@ return [
             'url' => 'admin/settings/password',
             'icon' => 'fas fa-fw fa-lock',
         ],
+        [
+            'text' => 'Business Profile',
+            'url' => 'admin/business-profile',
+            'icon' => 'fas fa-fw fa-building',
+            'can' => 'Manage Settings', 
+        ],
     ],
 
     /*

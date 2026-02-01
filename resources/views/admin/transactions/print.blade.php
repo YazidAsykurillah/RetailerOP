@@ -13,7 +13,7 @@
         body {
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            width: 100mm;
+            width: 80mm;
             margin: 0 auto;
             padding: 10px;
             background: white;
@@ -177,11 +177,31 @@
     <div class="receipt">
         <!-- Header -->
         <div class="header">
-            <div class="store-name">{{ config('app.name') }}</div>
+            @if(isset($businessProfile) && $businessProfile->logo_path)
+                @php
+                     // Convert absolute path to relative public path if needed, or use asset()
+                     // Usually storage linkage is required: php artisan storage:link
+                     $logoUrl = asset('storage/' . $businessProfile->logo_path);
+                @endphp
+                 <img src="{{ $logoUrl }}" alt="Logo" style="max-height: 50px; display: block; margin: 0 auto 5px auto;">
+            @endif
+            <div class="store-name">{{ $businessProfile->business_name ?? 'SISKHA STORE' }}</div>
             <div class="store-info">
-                Jl. Contoh Alamat No. 123<br>
-                Telp: (021) 1234567<br>
-                www.siskhastore.com
+                @if(isset($businessProfile))
+                    @if($businessProfile->business_address)
+                        {{ $businessProfile->business_address }}<br>
+                    @endif
+                    @if($businessProfile->business_phone)
+                        Telp: {{ $businessProfile->business_phone }}<br>
+                    @endif
+                    @if($businessProfile->business_website)
+                        {{ $businessProfile->business_website }}
+                    @endif
+                @else
+                    Jl. Contoh Alamat No. 123<br>
+                    Telp: (021) 1234567<br>
+                    www.siskhastore.com
+                @endif
             </div>
         </div>
 
@@ -288,8 +308,12 @@
         <div class="footer">
             <div class="thank-you">Thank You!</div>
             <div class="message">
-                Please keep this receipt for your records.<br>
-                No refund without receipt.
+                @if(isset($businessProfile) && $businessProfile->footer_text)
+                    {!! nl2br(e($businessProfile->footer_text)) !!}
+                @else
+                    Please keep this receipt for your records.<br>
+                    No refund without receipt.
+                @endif
             </div>
             <br>
             <div style="font-size: 10px;">
