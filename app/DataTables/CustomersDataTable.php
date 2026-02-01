@@ -74,7 +74,6 @@ class CustomersDataTable extends DataTable
             Column::make('phone'),
             Column::make('group_name')->title('Group')->name('customerGroup.name'),
             Column::make('is_active')->title('Status')->addClass('text-center'),
-            Column::make('created_at'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

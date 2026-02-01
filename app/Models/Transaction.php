@@ -21,6 +21,7 @@ class Transaction extends Model
         'amount_paid',
         'change',
         'notes',
+        'customer_id',
         'user_id',
     ];
 

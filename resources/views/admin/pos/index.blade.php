@@ -212,18 +212,7 @@
     .customer-panel.show {
         display: block;
     }
-    .customer-input {
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        margin-right: 10px;
-        width: 200px;
-    }
-    .customer-input::placeholder {
-        color: rgba(255,255,255,0.5);
-    }
+
     .col-number {
         flex: 0 0 45px;
         max-width: 45px;
@@ -284,10 +273,10 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="customer-input w-100 mb-2" id="customer-name" placeholder="Customer Name (Walk-in)">
+                <input type="text" class="form-control w-100 mb-2" id="customer-name" placeholder="Customer Name (Walk-in)">
             </div>
             <div class="col-md-6">
-                <input type="text" class="customer-input w-100 mb-2" id="customer-phone" placeholder="Phone Number">
+                <input type="text" class="form-control w-100 mb-2" id="customer-phone" placeholder="Phone Number">
             </div>
         </div>
         <textarea id="notes" class="form-control" rows="2" placeholder="Transaction Notes"></textarea>
@@ -560,7 +549,7 @@ $(function() {
     // Initialize Customer Select2
     $('#customer-select').select2({
         theme: 'bootstrap4',
-        placeholder: 'Search Customer (Name/Phone)',
+        placeholder: 'Search Customer Member',
         allowClear: true,
         ajax: {
             url: '{{ route("admin.customers.index") }}',
@@ -978,9 +967,51 @@ $(function() {
         $('#successModal').modal('show');
     }
 
-    // New transaction button
+    // Reset Transaction Form
+    function resetTransactionForm() {
+        // Clear items
+        $('#items-container').empty();
+        rowCounter = 0;
+        addNewRow();
+
+        // Clear customer
+        selectedCustomerId = null;
+        $('#customer-select').val(null).trigger('change');
+        $('#customer-name').val('').prop('readonly', false);
+        $('#customer-phone').val('').prop('readonly', false);
+        $('#customer-panel').removeClass('show');
+
+        // Clear notes
+        $('#notes').val('');
+
+        // Reset payment
+        $('.payment-method').removeClass('active');
+        $('.payment-method[data-method="cash"]').addClass('active');
+        selectedPaymentMethod = 'cash';
+        
+        // Clear amount paid
+        amountPaidAN.set(0);
+        $('#amount-paid').val('');
+        
+        // Reset summary and change display
+        updateSummary();
+        
+        // Focus barcode
+        setTimeout(() => {
+            $('#barcode-input').focus();
+        }, 500);
+        
+        toastr.info('Ready for new transaction');
+    }
+
+    // Handle modal close event (triggers reset)
+    $('#successModal').on('hidden.bs.modal', function () {
+        resetTransactionForm();
+    });
+
+    // New transaction button (just closes modal now)
     $('#new-transaction-btn').on('click', function() {
-        location.reload();
+        $('#successModal').modal('hide');
     });
 
     // Format number helper

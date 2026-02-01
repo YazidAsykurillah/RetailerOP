@@ -177,7 +177,7 @@
     <div class="receipt">
         <!-- Header -->
         <div class="header">
-            <div class="store-name">SISKHA STORE</div>
+            <div class="store-name">{{ config('app.name') }}</div>
             <div class="store-info">
                 Jl. Contoh Alamat No. 123<br>
                 Telp: (021) 1234567<br>
