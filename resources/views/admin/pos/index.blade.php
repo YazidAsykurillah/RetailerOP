@@ -286,7 +286,7 @@
         <!-- Header Row -->
         <div class="row mb-2 font-weight-bold text-muted d-none d-md-flex align-items-center">
             <div class="col-number">#</div>
-            <div class="col">Product</div>
+            <div class="col" style="min-width: 0;">Product</div>
             <div class="col-md-1 text-center">Qty</div>
             <div class="col-md-1">Price</div>
             <div class="col-md-1 text-center">Disc %</div>
@@ -395,7 +395,7 @@
             <div class="col-number">
                 <span class="row-number"></span>
             </div>
-            <div class="col">
+            <div class="col" style="min-width: 0;">
                 <select class="form-control variant-select" style="width: 100%;">
                     <option value="">Select product...</option>
                 </select>
