@@ -290,7 +290,7 @@
             <div class="col-md-1 text-center">Qty</div>
             <div class="col-md-1">Price</div>
             <div class="col-md-1 text-center">Disc %</div>
-            <div class="col-md-2">Cut</div>
+            <div class="col-md-2">Potongan Harga</div>
             <div class="col-md-2 text-right">Subtotal</div>
             <div class="col-md-1 text-center">Action</div>
         </div>
