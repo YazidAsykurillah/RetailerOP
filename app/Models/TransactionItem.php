@@ -17,12 +17,14 @@ class TransactionItem extends Model
         'quantity',
         'price',
         'discount',
+        'cut_amount',
         'subtotal',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'discount' => 'decimal:2',
+        'cut_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
     ];
 
@@ -47,7 +49,7 @@ class TransactionItem extends Model
      */
     public function calculateSubtotal()
     {
-        $this->subtotal = ($this->price * $this->quantity) - $this->discount;
+        $this->subtotal = ($this->price * $this->quantity) - $this->discount - $this->cut_amount;
         return $this;
     }
 }

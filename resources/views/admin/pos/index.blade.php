@@ -288,8 +288,9 @@
             <div class="col-number">#</div>
             <div class="col">Product</div>
             <div class="col-md-1 text-center">Qty</div>
-            <div class="col-md-2">Price</div>
+            <div class="col-md-1">Price</div>
             <div class="col-md-1 text-center">Disc %</div>
+            <div class="col-md-2">Cut</div>
             <div class="col-md-2 text-right">Subtotal</div>
             <div class="col-md-1 text-center">Action</div>
         </div>
@@ -402,11 +403,14 @@
             <div class="col-md-1">
                 <input type="number" class="form-control qty-input text-center" value="1" min="1" placeholder="Qty">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <input type="text" class="form-control price-display" readonly placeholder="Price">
             </div>
             <div class="col-md-1">
                 <input type="number" class="form-control discount-input text-center" value="0" min="0" max="100" placeholder="%">
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control cut-input text-right" placeholder="0">
             </div>
             <div class="col-md-2 text-right">
                 <div class="item-subtotal">0</div>
@@ -427,6 +431,7 @@ $(function() {
     let rowCounter = 0;
     let selectedPaymentMethod = 'cash';
     let selectedCustomerId = null;
+    let currentCustomerDiscount = 0;
 
     // Barcode Scanner Logic
     $('#barcode-input').on('keypress', function(e) {
@@ -534,6 +539,21 @@ $(function() {
          
          $row.find('.price-display').val(formatNumber(variant.price));
          $row.find('.qty-input').attr('max', variant.stock).val(1);
+         
+         // Init AutoNumeric for cut input
+         new AutoNumeric($row.find('.cut-input').get(0), {
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            minimumValue: '0',
+            modifyValueOnWheel: false
+         });
+
+         // Apply current customer discount if any
+         if (currentCustomerDiscount > 0) {
+             $row.find('.discount-input').val(currentCustomerDiscount);
+         }
+         
          updateRowSubtotal($row);
     }
 
@@ -589,13 +609,39 @@ $(function() {
         $('#customer-name').val(customer.name).prop('readonly', true);
         $('#customer-phone').val(customer.phone || '').prop('readonly', true);
         
-        // Future: specific customer discount logic here
+        // Apply customer group discount if available
+        if (customer.customer_group && customer.customer_group.percentage_discount > 0) {
+            currentCustomerDiscount = parseFloat(customer.customer_group.percentage_discount);
+            toastr.info(`Applied ${currentCustomerDiscount}% discount from ${customer.customer_group.name} membership.`);
+        } else {
+            currentCustomerDiscount = 0;
+        }
+
+        // Update all existing items with the new discount
+        $('.item-row').each(function() {
+            if ($(this).data('variant-id')) {
+                $(this).find('.discount-input').val(currentCustomerDiscount);
+                updateRowSubtotal($(this));
+            }
+        });
+        updateSummary();
     });
 
     $('#customer-select').on('select2:clear', function(e) {
         selectedCustomerId = null;
+        currentCustomerDiscount = 0;
         $('#customer-name').val('').prop('readonly', false);
         $('#customer-phone').val('').prop('readonly', false);
+        
+        // Reset discount on all items
+        $('.item-row').each(function() {
+            if ($(this).data('variant-id')) {
+                $(this).find('.discount-input').val(0);
+                updateRowSubtotal($(this));
+            }
+        });
+        updateSummary();
+        toastr.info('Customer removed. Discounts reset.');
     });
 
     // Add first empty row on page load
@@ -644,6 +690,17 @@ $(function() {
             minimumInputLength: 1,
             templateResult: formatProduct,
             templateSelection: formatProductSelection
+        });
+
+        // Init AutoNumeric for cut input if row created empty (though populateRow does it too, but for manual add it's safe to do here or check)
+        // Actually populateRow is called ONLY when adding product. Empty row doesn't have it initialized?
+        // Wait, empty row added via addNewRow has the input, needs AutoNumeric init.
+        new AutoNumeric($row.find('.cut-input').get(0), {
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            minimumValue: '0',
+            modifyValueOnWheel: false
         });
 
         updateRowNumbers();
@@ -697,6 +754,11 @@ $(function() {
         $row.find('.price-display').val(formatNumber(data.price));
         $row.find('.qty-input').attr('max', data.stock).val(1);
         
+        // Apply current customer discount if any
+        if (currentCustomerDiscount > 0) {
+            $row.find('.discount-input').val(currentCustomerDiscount);
+        }
+        
         updateRowSubtotal($row);
         updateSummary();
     });
@@ -707,6 +769,10 @@ $(function() {
         $row.removeData('variant-id price stock');
         $row.find('.price-display').val('');
         $row.find('.item-subtotal').text('0');
+        // Clear cut and discount inputs
+        $row.find('.discount-input').val(0);
+        AutoNumeric.getAutoNumericElement($row.find('.cut-input').get(0)).set(0);
+
         updateSummary();
     });
 
@@ -742,6 +808,7 @@ $(function() {
             $row.find('.discount-input').val(0);
             $row.find('.price-display').val('');
             $row.find('.item-subtotal').text('0');
+            AutoNumeric.getAutoNumericElement($row.find('.cut-input').get(0)).set(0);
             $row.removeData('variant-id price stock');
         } else {
             $row.remove();
@@ -763,14 +830,30 @@ $(function() {
         const price = parseFloat($row.data('price')) || 0;
         const qty = parseInt($row.find('.qty-input').val()) || 0;
         const discountPercent = parseFloat($row.find('.discount-input').val()) || 0;
+        
+        // Get cut amount (parse from AutoNumeric format: 1.000 -> 1000)
+        let cutAmountStr = $row.find('.cut-input').val() || '0';
+        let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+
         const lineTotal = price * qty;
         const discountAmount = lineTotal * (discountPercent / 100);
-        const subtotal = lineTotal - discountAmount;
-        $row.find('.item-subtotal').text(formatNumber(subtotal));
+        const subtotal = lineTotal - discountAmount - cutAmount;
+        
+        // Prevent negative subtotal
+        const finalSubtotal = subtotal < 0 ? 0 : subtotal;
+        
+        $row.find('.item-subtotal').text(formatNumber(finalSubtotal));
     }
 
     // Handle discount input change
     $(document).on('input change', '.discount-input', function() {
+        const $row = $(this).closest('.item-row');
+        updateRowSubtotal($row);
+        updateSummary();
+    });
+
+    // Handle cut input change
+    $(document).on('input change keyup', '.cut-input', function() {
         const $row = $(this).closest('.item-row');
         updateRowSubtotal($row);
         updateSummary();
@@ -788,10 +871,26 @@ $(function() {
                 const price = parseFloat($(this).data('price')) || 0;
                 const qty = parseInt($(this).find('.qty-input').val()) || 0;
                 const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
+                
+                let cutAmountStr = $(this).find('.cut-input').val() || '0';
+                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+
                 const lineTotal = price * qty;
                 const discountAmount = lineTotal * (discountPercent / 100);
+                
+                // Calculate item subtotal (gross - discount - cut)
+                // But realistically, cut shouldn't exceed subtotal? 
+                // Let's assume valid inputs or clamp:
+                let actualDeduction = discountAmount + cutAmount;
+                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
+
+                // We want summary subtotal to be GROSS total? Or total after line discounts?
+                // Usually Subtotal is Gross, Discount is total deductions, Total is Net.
+                // let's stick to: Subtotal = sum(price * qty)
+                // Total Discount = sum(percent_disc + cut)
+                
                 subtotal += lineTotal;
-                totalDiscount += discountAmount;
+                totalDiscount += actualDeduction;
                 itemsCount += qty;
             }
         });
@@ -827,6 +926,8 @@ $(function() {
 
     // Update change display
     function updateChangeDisplay() {
+        // Recalculate total here or reuse from global/DOM? 
+        // Safer to recalculate to match updateSummary logic
         let subtotal = 0;
         let totalDiscount = 0;
         $('.item-row').each(function() {
@@ -834,10 +935,15 @@ $(function() {
                 const price = parseFloat($(this).data('price')) || 0;
                 const qty = parseInt($(this).find('.qty-input').val()) || 0;
                 const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
+                let cutAmountStr = $(this).find('.cut-input').val() || '0';
+                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+
                 const lineTotal = price * qty;
-                const discountAmount = lineTotal * (discountPercent / 100);
+                let actualDeduction = (lineTotal * (discountPercent / 100)) + cutAmount;
+                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
+                
                 subtotal += lineTotal;
-                totalDiscount += discountAmount;
+                totalDiscount += actualDeduction;
             }
         });
 
@@ -871,6 +977,10 @@ $(function() {
                 const qty = parseInt($(this).find('.qty-input').val()) || 0;
                 const price = parseFloat($(this).data('price')) || 0;
                 const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
+                
+                let cutAmountStr = $(this).find('.cut-input').val() || '0';
+                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+
                 const lineTotal = price * qty;
                 const discountAmount = lineTotal * (discountPercent / 100);
                 
@@ -884,7 +994,8 @@ $(function() {
                     variant_id: variantId,
                     quantity: qty,
                     price: price,
-                    discount: discountAmount
+                    discount: discountAmount,
+                    cut_amount: cutAmount
                 });
             }
         });
@@ -900,8 +1011,12 @@ $(function() {
         let subtotal = 0;
         let totalDiscount = 0;
         items.forEach(item => {
-            subtotal += item.price * item.quantity;
-            totalDiscount += item.discount;
+            const lineTotal = item.price * item.quantity;
+            subtotal += lineTotal;
+            // logic same as updateSummary
+            let deduction = item.discount + item.cut_amount;
+            if (deduction > lineTotal) deduction = lineTotal;
+            totalDiscount += deduction;
         });
         const total = subtotal - totalDiscount;
         const amountPaid = amountPaidAN.getNumber() || 0;
@@ -940,7 +1055,8 @@ $(function() {
                 toastr.error(xhr.responseJSON?.message || 'Failed to process transaction');
             },
             complete: function() {
-                $btn.prop('disabled', false).html('<i class="fas fa-check-circle"></i> Complete');
+                // Keep disabled until successful reset or manual re-enable
+                 $btn.prop('disabled', false).html('<i class="fas fa-check-circle"></i> Complete');
             }
         });
     });

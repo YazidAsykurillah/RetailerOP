@@ -198,6 +198,7 @@ class POSController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0',
+            'items.*.cut_amount' => 'nullable|numeric|min:0',
             'subtotal' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0',
             'tax' => 'nullable|numeric|min:0',
@@ -267,7 +268,8 @@ class POSController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'discount' => $item['discount'] ?? 0,
-                    'subtotal' => ($item['price'] * $item['quantity']) - ($item['discount'] ?? 0),
+                    'cut_amount' => $item['cut_amount'] ?? 0,
+                    'subtotal' => ($item['price'] * $item['quantity']) - ($item['discount'] ?? 0) - ($item['cut_amount'] ?? 0),
                 ]);
 
                 // Deduct stock with movement record
