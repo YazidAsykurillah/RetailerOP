@@ -540,14 +540,7 @@ $(function() {
          $row.find('.price-display').val(formatNumber(variant.price));
          $row.find('.qty-input').attr('max', variant.stock).val(1);
          
-         // Init AutoNumeric for cut input
-         new AutoNumeric($row.find('.cut-input').get(0), {
-            digitGroupSeparator: '.',
-            decimalCharacter: ',',
-            decimalPlaces: 0,
-            minimumValue: '0',
-            modifyValueOnWheel: false
-         });
+
 
          // Apply current customer discount if any
          if (currentCustomerDiscount > 0) {
