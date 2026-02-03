@@ -11,12 +11,14 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Courier New', monospace;
+            font-family: sans-serif;
             font-size: 12px;
+            font-weight: 600;
             width: 80mm;
             margin: 0 auto;
             padding: 10px;
             background: white;
+            color: #000;
         }
         .header {
             text-align: center;
@@ -26,12 +28,13 @@
         }
         .store-name {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 900;
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
         .store-info {
             font-size: 10px;
-            color: #666;
+            color: #000;
         }
         .invoice-info {
             margin-bottom: 10px;
@@ -86,7 +89,7 @@
         }
         .item-variant {
             font-size: 10px;
-            color: #666;
+            color: #000;
         }
         .summary {
             border-top: 1px dashed #000;
@@ -143,7 +146,7 @@
         }
         .footer .message {
             font-size: 10px;
-            color: #666;
+            color: #000;
         }
         @media print {
             body {
