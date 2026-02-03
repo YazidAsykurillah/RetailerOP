@@ -40,7 +40,7 @@
     <div class="col-lg-6 col-6">
         <div class="small-box bg-olive">
             <div class="inner">
-                <h3>Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($todayRevenue, 0, ',', '.') }}</h3>
                 <p>Today's Sales</p>
             </div>
             <div class="icon">
@@ -107,7 +107,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-teal">
             <div class="inner">
-                <h3>Rp {{ number_format($totalStockValue, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($totalStockValue, 0, ',', '.') }}</h3>
                 <p>Stock Value</p>
             </div>
             <div class="icon">
@@ -172,7 +172,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-danger">
             <div class="inner">
-                <h3>Rp {{ number_format($totalPurchaseCost, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($totalPurchaseCost, 0, ',', '.') }}</h3>
                 <p>Total Cost</p>
             </div>
             <div class="icon">

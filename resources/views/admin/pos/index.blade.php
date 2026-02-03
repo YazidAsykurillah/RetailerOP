@@ -288,9 +288,9 @@
             <div class="col-number">#</div>
             <div class="col" style="min-width: 0;">Product</div>
             <div class="col-md-1 text-center">Qty</div>
-            <div class="col-md-1">Price</div>
+            <div class="col-md-2">Price</div>
             <div class="col-md-1 text-center">Disc %</div>
-            <div class="col-md-2">Potongan Harga</div>
+            <div class="col-md-1">Potongan Harga</div>
             <div class="col-md-2 text-right">Subtotal</div>
             <div class="col-md-1 text-center">Action</div>
         </div>
@@ -403,13 +403,13 @@
             <div class="col-md-1">
                 <input type="number" class="form-control qty-input text-center" value="1" min="1" placeholder="Qty">
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <input type="text" class="form-control price-display" readonly placeholder="Price">
             </div>
             <div class="col-md-1">
                 <input type="number" class="form-control discount-input text-center" value="0" min="0" max="100" placeholder="%">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <input type="text" class="form-control cut-input text-right" placeholder="0">
             </div>
             <div class="col-md-2 text-right">
