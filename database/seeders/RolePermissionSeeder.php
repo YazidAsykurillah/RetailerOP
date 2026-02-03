@@ -17,23 +17,25 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create Permissions
-        Permission::create(['name' => 'Manage Users']);
-        Permission::create(['name' => 'Manage Products']);
-        Permission::create(['name' => 'Manage Orders']);
-        Permission::create(['name' => 'Manage Roles']);
-        Permission::create(['name' => 'Manage Permissions']);
-        Permission::create(['name' => 'Access Store Management']);
-        Permission::create(['name' => 'Manage Categories']);
-        Permission::create(['name' => 'Manage Brands']);
-        Permission::create(['name' => 'Manage Suppliers']);
-        Permission::create(['name' => 'Manage Customers']);
-        Permission::create(['name' => 'Manage Variant Types']);
-        Permission::create(['name' => 'Access Inventory']);
-        Permission::create(['name' => 'Manage Stock']);
-        Permission::create(['name' => 'Access Pos']);
-        Permission::create(['name' => 'Manage Purchases']);
-        Permission::create(['name' => 'Manage Customers']);
-        Permission::create(['name' => 'Manage Settings']);
+        // Create Permissions
+        Permission::firstOrCreate(['name' => 'View All Users']);
+        Permission::firstOrCreate(['name' => 'Manage Users']);
+        Permission::firstOrCreate(['name' => 'Manage Products']);
+        Permission::firstOrCreate(['name' => 'Manage Orders']);
+        Permission::firstOrCreate(['name' => 'Manage Roles']);
+        Permission::firstOrCreate(['name' => 'Manage Permissions']);
+        Permission::firstOrCreate(['name' => 'Access Store Management']);
+        Permission::firstOrCreate(['name' => 'Manage Categories']);
+        Permission::firstOrCreate(['name' => 'Manage Brands']);
+        Permission::firstOrCreate(['name' => 'Manage Suppliers']);
+        Permission::firstOrCreate(['name' => 'Manage Customers']);
+        Permission::firstOrCreate(['name' => 'Manage Variant Types']);
+        Permission::firstOrCreate(['name' => 'Access Inventory']);
+        Permission::firstOrCreate(['name' => 'Manage Stock']);
+        Permission::firstOrCreate(['name' => 'Access Pos']);
+        Permission::firstOrCreate(['name' => 'Manage Purchases']);
+        Permission::firstOrCreate(['name' => 'Manage Customers']);
+        Permission::firstOrCreate(['name' => 'Manage Settings']);
 
         // Create Roles and Assign Permissions
 

@@ -39,7 +39,15 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->with('roles');
+        $query = $model->newQuery()->with('roles');
+
+        if (!auth()->user()->can('View All Users')) {
+            $query->whereDoesntHave('roles', function ($q) {
+                $q->where('name', 'Super Admin');
+            });
+        }
+
+        return $query;
     }
 
     /**

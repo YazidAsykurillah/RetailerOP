@@ -106,7 +106,13 @@ class UserController extends Controller
             return response()->json(['error' => 'You cannot delete yourself.'], 403);
         }
 
-        User::find($id)->delete();
+        $user = User::find($id);
+
+        if ($user->transactions()->exists()) {
+             return response()->json(['error' => 'Cannot delete user. This user has related transactions.'], 403);
+        }
+
+        $user->delete();
         return response()->json(['success'=>'User deleted successfully.']);
     }
 }
