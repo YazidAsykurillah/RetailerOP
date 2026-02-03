@@ -43,6 +43,9 @@ class TransactionsDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 return '
                     <div class="btn-group">
+                        <a href="' . route('admin.transactions.edit', $row->id) . '" class="btn btn-xs btn-warning" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
                         <a href="' . route('admin.transactions.show', $row->id) . '" class="btn btn-xs btn-info" title="View Details">
                             <i class="fas fa-eye"></i>
                         </a>
@@ -50,6 +53,7 @@ class TransactionsDataTable extends DataTable
                             <i class="fas fa-print"></i>
                         </a>
                     </div>
+
                 ';
             })
             ->filterColumn('customer', function($query, $keyword) {

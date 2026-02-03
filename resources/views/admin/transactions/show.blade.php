@@ -114,9 +114,9 @@
                             <td>{{ $item->variant_name ?: 'Default' }}</td>
                             <td class="text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                             <td class="text-center">{{ $item->quantity }}</td>
-                            <td class="text-right">Rp {{ number_format($item->discount, 0, ',', '.') }}</td>
+                            <td class="text-right">{{ number_format($item->discount, 0, ',', '.') }}</td>
                             <td class="text-right">
-                                <strong>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</strong>
+                                <strong>{{ number_format($item->subtotal, 0, ',', '.') }}</strong>
                             </td>
                         </tr>
                         @endforeach
@@ -138,11 +138,11 @@
                 <table class="table table-borderless mb-0">
                     <tr>
                         <th>Subtotal</th>
-                        <td class="text-right">Rp {{ number_format($transaction->subtotal, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($transaction->subtotal, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <th>Discount</th>
-                        <td class="text-right text-danger">- Rp {{ number_format($transaction->discount, 0, ',', '.') }}</td>
+                        <td class="text-right text-danger">-{{ number_format($transaction->discount, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <th>Tax</th>
@@ -151,7 +151,7 @@
                     <tr class="border-top">
                         <th class="h4 text-success">Grand Total</th>
                         <td class="text-right h4 text-success font-weight-bold">
-                            Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}
+                            {{ number_format($transaction->grand_total, 0, ',', '.') }}
                         </td>
                     </tr>
                 </table>
@@ -169,12 +169,12 @@
                 <table class="table table-borderless mb-0">
                     <tr>
                         <th>Amount Paid</th>
-                        <td class="text-right">Rp {{ number_format($transaction->amount_paid, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($transaction->amount_paid, 0, ',', '.') }}</td>
                     </tr>
                     <tr class="border-top">
                         <th class="h5">Change</th>
                         <td class="text-right h5 font-weight-bold text-primary">
-                            Rp {{ number_format($transaction->change, 0, ',', '.') }}
+                            {{ number_format($transaction->change, 0, ',', '.') }}
                         </td>
                     </tr>
                 </table>
