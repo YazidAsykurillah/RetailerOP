@@ -72,13 +72,7 @@ class ProductsDataTable extends DataTable
                     ? '<span class="badge badge-success">Active</span>'
                     : '<span class="badge badge-danger">Inactive</span>';
             })
-            ->addColumn('image', function ($row) {
-                $imageUrl = $row->primary_image_url;
-                if ($imageUrl) {
-                    return '<img src="' . $imageUrl . '" alt="' . $row->name . '" class="img-thumbnail" style="max-width: 50px; max-height: 50px;">';
-                }
-                return '<span class="text-muted">No image</span>';
-            })
+
             ->addColumn('action', function ($row) {
                 return '
                     <a href="' . route('admin.products.variants.index', $row->id) . '" class="btn btn-xs btn-info" title="Manage Variants">
@@ -92,7 +86,7 @@ class ProductsDataTable extends DataTable
                     </button>
                 ';
             })
-            ->rawColumns(['status', 'variants_list', 'image', 'action']);
+            ->rawColumns(['status', 'variants_list', 'action']);
     }
 
     /**
@@ -111,7 +105,7 @@ class ProductsDataTable extends DataTable
             $query->where('brand_id', request('brand_id'));
         }
 
-        return $query->orderBy('created_at', 'desc');
+        return $query->orderBy('name', 'asc');
     }
 
     /**
@@ -123,7 +117,8 @@ class ProductsDataTable extends DataTable
             ->setTableId('products-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
+            ->orderBy(2, 'asc')
+            ->pageLength(500)
             ->selectStyleSingle()
             ->autoWidth(false)
             ->responsive(true)
@@ -137,7 +132,7 @@ class ProductsDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(50),
-            Column::computed('image', 'Image')->width(70),
+
             Column::make('sku')->title('SKU')->width(100),
             Column::make('name')->title('Product Name'),
             Column::computed('category_name')->title('Category'),
