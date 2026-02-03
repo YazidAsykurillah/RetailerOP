@@ -191,4 +191,49 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+    /**
+     * Remove the specified transaction from storage.
+     */
+    public function destroy($id)
+    {
+        abort_if(!auth()->user()->can('Delete Transaction'), 403, 'You do not have permission to delete transactions.');
+
+        $transaction = Transaction::with('items.productVariant')->findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            // 1. Restore Stock
+            foreach ($transaction->items as $item) {
+                if ($item->productVariant) {
+                    $item->productVariant->adjustStock(
+                        $item->quantity,
+                        'in',
+                        auth()->id(),
+                        $transaction->invoice_no,
+                        'Transaction Deleted - Stock Restored',
+                        null
+                    );
+                }
+            }
+
+            // 2. Delete Transaction (Cascade should handle items, but manual delete is safer for hooks if any)
+            $transaction->items()->delete();
+            $transaction->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction deleted and stock restored successfully!',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete transaction: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

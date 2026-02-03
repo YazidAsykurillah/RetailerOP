@@ -174,6 +174,35 @@ $(function() {
         $('#customer_id').val('').trigger('change');
         window.LaravelDataTables['transactions-table'].draw();
     });
+
+    // Handle Delete Button
+    $(document).on('click', '.btn-delete', function() {
+        var id = $(this).data('id');
+        var url = '{{ route("admin.transactions.destroy", ":id") }}';
+        url = url.replace(':id', id);
+
+        if (confirm('Are you sure you want to delete this transaction? This will RESTORE the stock quantities for all items in this transaction.')) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    _method: 'DELETE',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.LaravelDataTables['transactions-table'].draw();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error: ' + (xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred'));
+                }
+            });
+        }
+    });
 });
 </script>
 @stop
