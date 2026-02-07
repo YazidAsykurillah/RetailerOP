@@ -34,6 +34,14 @@ class POSController extends Controller
     }
 
     /**
+     * Display the dedicated POS interface (no sidebar).
+     */
+    public function dedicated()
+    {
+        return view('admin.pos.dedicated');
+    }
+
+    /**
      * Search products/variants for POS.
      */
     public function searchProducts(Request $request)

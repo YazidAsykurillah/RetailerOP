@@ -57,6 +57,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     // POS Routes
     Route::prefix('pos')->name('pos.')->group(function() {
         Route::get('/', [App\Http\Controllers\Admin\POSController::class, 'index'])->name('index');
+        Route::get('/dedicated', [App\Http\Controllers\Admin\POSController::class, 'dedicated'])->name('dedicated');
         Route::get('/search-products', [App\Http\Controllers\Admin\POSController::class, 'searchProducts'])->name('search-products');
         Route::get('/find-by-sku', [App\Http\Controllers\Admin\POSController::class, 'findBySku'])->name('find-by-sku');
         Route::get('/product/{id}', [App\Http\Controllers\Admin\POSController::class, 'getProductDetails'])->name('product-details');
