@@ -43,7 +43,7 @@
                             <div class="form-group">
                                 <label for="sku">SKU <span class="text-danger">*</span></label>
                                 <input type="text" name="sku" id="sku" class="form-control @error('sku') is-invalid @enderror" 
-                                       value="{{ old('sku', $product->sku . '-') }}" placeholder="Enter variant SKU" required>
+                                       value="" placeholder="Enter variant SKU">
                                 @error('sku')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
