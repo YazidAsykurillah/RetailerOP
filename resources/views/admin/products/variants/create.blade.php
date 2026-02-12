@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <!-- Product Info Card -->
         <div class="card card-outline card-primary mb-3">
             <div class="card-body py-2">
