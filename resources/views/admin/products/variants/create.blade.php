@@ -43,7 +43,8 @@
                             <div class="form-group">
                                 <label for="sku">SKU <span class="text-danger">*</span></label>
                                 <input type="text" name="sku" id="sku" class="form-control @error('sku') is-invalid @enderror" 
-                                       value="" placeholder="Enter variant SKU">
+                                       value="" placeholder="Enter variant SKU" autofocus>
+                                <small class="text-muted">You can also scan the barcode</small>
                                 @error('sku')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -182,6 +183,16 @@
 @section('js')
 <script>
     $(function() {
+        // Barcode Scanner Logic for SKU
+        $('#sku').on('keypress', function(e) {
+            if (e.which == 13) { // Enter key
+                e.preventDefault();
+                // Move focus to name field
+                $('#name').focus();
+                toastr.success('SKU Scanned');
+            }
+        });
+
         // Initialize AutoNumeric for price inputs (Indonesian Rupiah format)
         var autoNumericOptions = {
             digitGroupSeparator: '.',

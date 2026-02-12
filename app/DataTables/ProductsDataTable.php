@@ -119,6 +119,7 @@ class ProductsDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(2, 'asc')
             ->pageLength(500)
+            ->lengthMenu([10, 25, 50, 100, 500])
             ->selectStyleSingle()
             ->autoWidth(false)
             ->responsive(true)
