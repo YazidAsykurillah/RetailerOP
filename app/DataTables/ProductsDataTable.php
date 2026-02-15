@@ -50,31 +50,34 @@ class ProductsDataTable extends DataTable
             })
             ->addColumn('variants_list', function ($row) {
                 $variants = $row->variants;
+                $html = '';
                 
                 if ($variants->isEmpty()) {
-                    return '<span class="text-muted">-</span>';
-                }
-                
-                $variantNames = $variants->pluck('name')->filter()->unique()->toArray();
-                
-                if (empty($variantNames)) {
-                    return '<span class="text-muted">-</span>';
+                    $html = '<span class="text-muted mr-1">-</span>';
+                } else {
+                    $variantNames = $variants->pluck('name')->filter()->unique()->toArray();
+                    
+                    if (empty($variantNames)) {
+                        $html = '<span class="text-muted mr-1">-</span>';
+                    } else {
+                        $maxDisplay = 3;
+                        $totalVariants = count($variantNames);
+                        $displayedVariants = array_slice($variantNames, 0, $maxDisplay);
+                        $remainingCount = $totalVariants - $maxDisplay;
+                        
+                        $badges = array_map(function ($name) {
+                            return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
+                        }, $displayedVariants);
+        
+                        $html = implode(' ', $badges);
+        
+                        if ($remainingCount > 0) {
+                            $html .= ' <span class="badge badge-secondary mr-1">+' . $remainingCount . ' more variants</span>';
+                        }
+                    }
                 }
 
-                $maxDisplay = 3;
-                $totalVariants = count($variantNames);
-                $displayedVariants = array_slice($variantNames, 0, $maxDisplay);
-                $remainingCount = $totalVariants - $maxDisplay;
-                
-                $badges = array_map(function ($name) {
-                    return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
-                }, $displayedVariants);
-
-                $html = implode(' ', $badges);
-
-                if ($remainingCount > 0) {
-                    $html .= ' <span class="badge badge-secondary">+' . $remainingCount . ' more variants</span>';
-                }
+                $html .= ' <br><a href="' . route('admin.products.variants.index', $row->id) . '" class="btn btn-xs btn-warning" title="Manage Variants"><i class="fas fa-cubes"></i> </a>';
                 
                 return $html;
             })
@@ -86,9 +89,6 @@ class ProductsDataTable extends DataTable
 
             ->addColumn('action', function ($row) {
                 return '
-                    <a href="' . route('admin.products.variants.index', $row->id) . '" class="btn btn-xs btn-info" title="Manage Variants">
-                        <i class="fas fa-cubes"></i>
-                    </a>
                     <a href="' . route('admin.products.edit', $row->id) . '" class="btn btn-xs btn-primary" title="Edit">
                         <i class="fas fa-edit"></i>
                     </a>
