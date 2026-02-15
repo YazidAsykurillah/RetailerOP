@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\DataTables\BrandsDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Brand\StoreBrandRequest;
+use App\Http\Requests\Admin\Brand\UpdateBrandRequest;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller
@@ -29,18 +31,10 @@ class BrandController extends Controller
     /**
      * Store a newly created brand.
      */
-    public function store(Request $request)
+    public function store(StoreBrandRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name',
-            'description' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only(['name', 'description']);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('brands', 'public');
@@ -63,18 +57,10 @@ class BrandController extends Controller
     /**
      * Update the specified brand.
      */
-    public function update(Request $request, Brand $brand)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
-            'description' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only(['name', 'description']);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
 
         if ($request->hasFile('logo')) {
             // Delete old logo if exists

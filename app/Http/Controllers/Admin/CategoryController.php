@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\DataTables\CategoriesDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Category\StoreCategoryRequest;
+use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -30,19 +32,14 @@ class CategoryController extends Controller
     /**
      * Store a newly created category.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'parent_id' => 'nullable|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only(['name', 'description', 'parent_id', 'is_active']);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
+        $data = $request->validated();
+        
+        // Slug is handled by Model boot method for creation, 
+        // or we can explicit set it if we want to ensure it matches input name immediately
+        // The original code set it explicitly:
+        $data['slug'] = Str::slug($data['name']);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('categories', 'public');
@@ -71,19 +68,12 @@ class CategoryController extends Controller
     /**
      * Update the specified category.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'parent_id' => 'nullable|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only(['name', 'description', 'parent_id']);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
+        $data = $request->validated();
+        
+        // Explicitly update slug when name changes
+        $data['slug'] = Str::slug($data['name']);
 
         if ($request->hasFile('image')) {
             // Delete old image if exists

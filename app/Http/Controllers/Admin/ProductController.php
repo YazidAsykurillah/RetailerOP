@@ -9,6 +9,8 @@ use App\Models\Brand;
 use App\Models\ProductImage;
 use App\DataTables\ProductsDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Product\StoreProductRequest;
+use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,28 +39,11 @@ class ProductController extends Controller
     /**
      * Store a newly created product.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $request->validate([
-            'sku' => 'required|string|max:50|unique:products,sku',
-            'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'base_price' => 'required|numeric|min:0',
-            'base_cost' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'short_description' => 'nullable|string|max:500',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only([
-            'sku', 'name', 'category_id', 'brand_id', 
-            'base_price', 'base_cost', 'description', 'short_description'
-        ]);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
-        $data['base_cost'] = $request->base_cost ?? 0;
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
+        $data['base_cost'] = $data['base_cost'] ?? 0;
 
         $product = Product::create($data);
 
@@ -105,28 +90,11 @@ class ProductController extends Controller
     /**
      * Update the specified product.
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $request->validate([
-            'sku' => 'required|string|max:50|unique:products,sku,' . $product->id,
-            'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'base_price' => 'required|numeric|min:0',
-            'base_cost' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'short_description' => 'nullable|string|max:500',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->only([
-            'sku', 'name', 'category_id', 'brand_id', 
-            'base_price', 'base_cost', 'description', 'short_description'
-        ]);
-        $data['slug'] = Str::slug($request->name);
-        $data['is_active'] = $request->has('is_active');
-        $data['base_cost'] = $request->base_cost ?? 0;
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
+        $data['base_cost'] = $data['base_cost'] ?? 0;
 
         $product->update($data);
 

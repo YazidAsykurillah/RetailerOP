@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\DataTables\CustomersDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Customer\StoreCustomerRequest;
+use App\Http\Requests\Admin\Customer\UpdateCustomerRequest;
 
 use App\DataTables\CustomerTransactionsDataTable;
 
@@ -47,20 +49,9 @@ class CustomerController extends Controller
         return view('admin.customers.create', compact('groups'));
     }
 
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:customers,email',
-            'phone' => 'nullable|string|max:20|unique:customers,phone',
-            'address' => 'nullable|string',
-            'customer_group_id' => 'required|exists:customer_groups,id',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->except('is_active');
-        $data['is_active'] = $request->has('is_active');
-
+        $data = $request->validated();
         Customer::create($data);
 
         return redirect()->route('admin.customers.index')
@@ -78,20 +69,9 @@ class CustomerController extends Controller
         return view('admin.customers.edit', compact('customer', 'groups'));
     }
 
-    public function update(Request $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:customers,email,' . $customer->id,
-            'phone' => 'nullable|string|max:20|unique:customers,phone,' . $customer->id,
-            'address' => 'nullable|string',
-            'customer_group_id' => 'required|exists:customer_groups,id',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->except('is_active');
-        $data['is_active'] = $request->has('is_active');
-
+        $data = $request->validated();
         $customer->update($data);
 
         return redirect()->route('admin.customers.index')

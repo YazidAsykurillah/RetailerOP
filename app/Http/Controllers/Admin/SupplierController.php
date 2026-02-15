@@ -7,6 +7,8 @@ use App\Models\Supplier;
 use App\DataTables\SuppliersDataTable;
 use App\DataTables\SupplierPurchasesDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Supplier\StoreSupplierRequest;
+use App\Http\Requests\Admin\Supplier\UpdateSupplierRequest;
 
 class SupplierController extends Controller
 {
@@ -37,23 +39,9 @@ class SupplierController extends Controller
     /**
      * Store a newly created supplier.
      */
-    public function store(Request $request)
+    public function store(StoreSupplierRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:suppliers,name',
-            'contact_person' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:suppliers,email',
-            'phone' => 'required|string|max:255|unique:suppliers,phone',
-            'address' => 'required|string',
-            'website' => 'nullable|url|max:255',
-            'tax_id' => 'nullable|string|max:255',
-            'payment_terms' => 'nullable|string|max:255',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->except('is_active');
-        $data['is_active'] = $request->has('is_active');
-
+        $data = $request->validated();
         Supplier::create($data);
 
         return redirect()->route('admin.suppliers.index')
@@ -71,23 +59,9 @@ class SupplierController extends Controller
     /**
      * Update the specified supplier.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:suppliers,name,' . $supplier->id,
-            'contact_person' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:suppliers,email,' . $supplier->id,
-            'phone' => 'required|string|max:255|unique:suppliers,phone,' . $supplier->id,
-            'address' => 'required|string',
-            'website' => 'nullable|url|max:255',
-            'tax_id' => 'nullable|string|max:255',
-            'payment_terms' => 'nullable|string|max:255',
-            'is_active' => 'boolean',
-        ]);
-
-        $data = $request->except('is_active');
-        $data['is_active'] = $request->has('is_active');
-
+        $data = $request->validated();
         $supplier->update($data);
 
         return redirect()->route('admin.suppliers.index')

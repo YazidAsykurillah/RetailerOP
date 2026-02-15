@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomerGroup;
 use App\DataTables\CustomerGroupsDataTable;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\CustomerGroup\StoreCustomerGroupRequest;
+use App\Http\Requests\Admin\CustomerGroup\UpdateCustomerGroupRequest;
 
 class CustomerGroupController extends Controller
 {
@@ -19,17 +21,9 @@ class CustomerGroupController extends Controller
         return view('admin.customer-groups.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreCustomerGroupRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:customer_groups,code',
-            'percentage_discount' => 'required|numeric|min:0|max:100',
-            'is_default' => 'boolean',
-        ]);
-
-        $data = $request->except('is_default');
-        $data['is_default'] = $request->has('is_default');
+        $data = $request->validated();
 
         // If this is set as default, unset other defaults
         if ($data['is_default']) {
@@ -47,17 +41,9 @@ class CustomerGroupController extends Controller
         return view('admin.customer-groups.edit', compact('customerGroup'));
     }
 
-    public function update(Request $request, CustomerGroup $customerGroup)
+    public function update(UpdateCustomerGroupRequest $request, CustomerGroup $customerGroup)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:customer_groups,code,' . $customerGroup->id,
-            'percentage_discount' => 'required|numeric|min:0|max:100',
-            'is_default' => 'boolean',
-        ]);
-
-        $data = $request->except('is_default');
-        $data['is_default'] = $request->has('is_default');
+        $data = $request->validated();
 
         // If this is set as default, unset other defaults
         if ($data['is_default']) {
