@@ -60,12 +60,23 @@ class ProductsDataTable extends DataTable
                 if (empty($variantNames)) {
                     return '<span class="text-muted">-</span>';
                 }
+
+                $maxDisplay = 3;
+                $totalVariants = count($variantNames);
+                $displayedVariants = array_slice($variantNames, 0, $maxDisplay);
+                $remainingCount = $totalVariants - $maxDisplay;
                 
                 $badges = array_map(function ($name) {
                     return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
-                }, $variantNames);
+                }, $displayedVariants);
+
+                $html = implode(' ', $badges);
+
+                if ($remainingCount > 0) {
+                    $html .= ' <span class="badge badge-secondary">+' . $remainingCount . ' more variants</span>';
+                }
                 
-                return implode(' ', $badges);
+                return $html;
             })
             ->addColumn('status', function ($row) {
                 return $row->is_active
