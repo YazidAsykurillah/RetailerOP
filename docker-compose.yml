@@ -1,0 +1,61 @@
+services:
+  # PHP 8.3 (Official Image)
+  app:
+    image: php:8.3-fpm
+    volumes:
+      - .:/var/www/html
+    # Menambahkan perintah untuk install driver pdo_mysql
+    command: sh -c "docker-php-ext-install pdo_mysql && php-fpm"
+    networks:
+      - siskha-store-network
+      - web-gateway # Tambahkan ini
+
+  # Nginx (Official Image)
+  web-siskha:
+    image: nginx:alpine
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - siskha-store-network
+      - web-gateway # Tambahkan ini
+
+  # Database MySQL 8.0
+  db:
+    container_name: db-siskha-store
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=siskha_store
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=yazid
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - db-data-siskha-store:/var/lib/mysql
+    networks:
+      - siskha-store-network
+  # Tambahkan phpMyAdmin di sini
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_siskha_store
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "8089:80"
+    networks:
+      - siskha-store-network
+
+networks:
+  siskha-store-network:
+    driver: bridge
+  web-gateway: # Daftarkan network global di sini
+    external: true
+
+volumes:
+  db-data-siskha-store:
