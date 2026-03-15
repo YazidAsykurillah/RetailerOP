@@ -1,11 +1,11 @@
 services:
   # PHP 8.3 (Official Image)
   app:
-    image: php:8.3-fpm
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - .:/var/www/html
-    # Menambahkan perintah untuk install driver pdo_mysql
-    command: sh -c "docker-php-ext-install pdo_mysql && php-fpm"
     networks:
       - siskha-store-network
       - web-gateway # Tambahkan ini
