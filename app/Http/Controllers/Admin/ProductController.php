@@ -175,6 +175,56 @@ class ProductController extends Controller
     }
 
     /**
+     * Remove the specified products permanently in bulk.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->ids;
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['error' => 'No products selected.'], 422);
+        }
+
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($ids as $id) {
+            $product = Product::find($id);
+            if (!$product) continue;
+
+            // Check if any variants have transaction history (Sales or Purchases)
+            $hasHistory = $product->variants()->whereHas('transactionItems')->exists() || 
+                          $product->variants()->whereHas('purchaseDetails')->exists();
+
+            if ($hasHistory) {
+                $skippedCount++;
+                continue;
+            }
+
+            // Delete all product images from storage and database
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->forceDelete();
+            }
+
+            // Permanently delete the product (variants will be deleted by DB cascade)
+            $product->forceDelete();
+            $deletedCount++;
+        }
+
+        $message = "Successfully deleted $deletedCount products.";
+        if ($skippedCount > 0) {
+            $message .= " $skippedCount products were skipped due to transaction history.";
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'deleted_count' => $deletedCount,
+            'skipped_count' => $skippedCount
+        ]);
+    }
+
+    /**
      * Show the product import form.
      */
     public function import()

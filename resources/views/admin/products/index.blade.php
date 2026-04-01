@@ -67,6 +67,11 @@
             <div class="card-header">
                 <h3 class="card-title">Product List</h3>
                 <div class="card-tools">
+                    @can('delete-multiple-product')
+                        <button class="btn btn-danger mr-2" id="bulk-delete" style="display: none;">
+                            <i class="fas fa-trash"></i> Bulk Delete
+                        </button>
+                    @endcan
                     <a class="btn btn-info mr-2" href="{{ route('admin.products.import') }}">
                         <i class="fas fa-file-import"></i> Import Products
                     </a>
@@ -147,6 +152,63 @@
             // Hide overlay when table is drawn
             table.on('draw.dt', function () {
                 overlay.hide();
+                $('#select-all-products').prop('checked', false);
+                toggleBulkDeleteButton();
+            });
+
+            // Handle Select All checkbox
+            $('body').on('click', '#select-all-products', function() {
+                $('.product-checkbox').prop('checked', $(this).prop('checked'));
+                toggleBulkDeleteButton();
+            });
+
+            // Handle individual checkbox changes
+            $('body').on('change', '.product-checkbox', function() {
+                var total = $('.product-checkbox').length;
+                var checked = $('.product-checkbox:checked').length;
+                
+                $('#select-all-products').prop('checked', total > 0 && total === checked);
+                toggleBulkDeleteButton();
+            });
+
+            function toggleBulkDeleteButton() {
+                var checkedCount = $('.product-checkbox:checked').length;
+                if (checkedCount > 0) {
+                    $('#bulk-delete').show();
+                } else {
+                    $('#bulk-delete').hide();
+                }
+            }
+
+            // Bulk Delete
+            $('#bulk-delete').on('click', function() {
+                var ids = [];
+                $('.product-checkbox:checked').each(function() {
+                    ids.push($(this).val());
+                });
+
+                if (ids.length > 0) {
+                    if (confirm("Are you sure you want to delete " + ids.length + " selected products?")) {
+                        overlay.show();
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{ route('admin.products.bulk-destroy') }}",
+                            data: { ids: ids },
+                            success: function (data) {
+                                table.draw();
+                                toastr.success(data.message);
+                            },
+                            error: function (xhr) {
+                                overlay.hide();
+                                if (xhr.responseJSON && xhr.responseJSON.error) {
+                                    toastr.error(xhr.responseJSON.error);
+                                } else {
+                                    toastr.error('Error deleting products.');
+                                }
+                            }
+                        });
+                    }
+                }
             });
 
             $('body').on('click', '.delete', function () {

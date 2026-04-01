@@ -19,6 +19,9 @@ class ProductsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
+            ->addColumn('checkbox', function ($row) {
+                return '<input type="checkbox" value="' . $row->id . '" class="product-checkbox">';
+            })
             ->addColumn('category_name', function ($row) {
                 return $row->category ? $row->category->name : '-';
             })
@@ -97,7 +100,7 @@ class ProductsDataTable extends DataTable
                     </button>
                 ';
             })
-            ->rawColumns(['status', 'variants_list', 'action']);
+            ->rawColumns(['checkbox', 'status', 'variants_list', 'action']);
     }
 
     /**
@@ -143,6 +146,12 @@ class ProductsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('checkbox')
+                ->title('<input type="checkbox" id="select-all-products">')
+                ->exportable(false)
+                ->printable(false)
+                ->width(30)
+                ->addClass('text-center'),
             Column::computed('DT_RowIndex', '#')->width(50),
 
             Column::make('sku')->title('SKU')->width(100),
