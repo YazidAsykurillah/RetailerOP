@@ -152,10 +152,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Check if product has variants
-        if ($product->variants()->count() > 0) {
+        // Check if any variants have transaction history (Sales or Purchases)
+        $hasHistory = $product->variants()->whereHas('transactionItems')->exists() || 
+                      $product->variants()->whereHas('purchaseDetails')->exists();
+
+        if ($hasHistory) {
             return response()->json([
-                'error' => 'Cannot delete product with variants. Please delete all variants first.'
+                'error' => 'Cannot delete product with transaction history (Sales or Purchases). Please deactivate the product instead.'
             ], 422);
         }
 
@@ -165,10 +168,10 @@ class ProductController extends Controller
             $image->forceDelete();
         }
 
-        // Permanently delete the product
+        // Permanently delete the product (variants will be deleted by DB cascade)
         $product->forceDelete();
 
-        return response()->json(['success' => 'Product deleted permanently.']);
+        return response()->json(['success' => 'Product and its variants deleted successfully.']);
     }
 
     /**

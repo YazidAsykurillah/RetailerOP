@@ -174,4 +174,12 @@ class ProductVariant extends Model
     {
         return $this->hasMany(PurchaseDetail::class);
     }
+
+    /**
+     * Get all sales transactions containing this variant
+     */
+    public function transactionItems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 }
