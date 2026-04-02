@@ -13,6 +13,7 @@ use App\Http\Requests\Admin\Product\StoreProductRequest;
 use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -272,5 +273,30 @@ class ProductController extends Controller
             new \App\Exports\ProductTemplateExport, 
             'product_import_template.xlsx'
         );
+    }
+
+    /**
+     * Export products to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Product::with(['category', 'brand', 'variants']);
+
+        if ($request->has('category_id') && $request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('brand_id') && $request->brand_id) {
+            $query->where('brand_id', $request->brand_id);
+        }
+
+        $products = $query->orderBy('name', 'asc')->get();
+        
+        $pdf = Pdf::loadView('admin.products.pdf', compact('products'));
+        
+        // Optional: Set paper size and orientation
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('product_list_' . date('YmdHis') . '.pdf');
     }
 }

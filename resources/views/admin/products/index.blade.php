@@ -73,7 +73,10 @@
                         </button>
                     @endcan
                     <a class="btn btn-info mr-2" href="{{ route('admin.products.import') }}">
-                        <i class="fas fa-file-import"></i> Import Products
+                        <i class="fas fa-file-import"></i> Import
+                    </a>
+                    <a id="export-pdf-btn" class="btn btn-dark mr-2" href="{{ route('admin.products.export-pdf') }}">
+                        <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
                     <a class="btn btn-success" href="{{ route('admin.products.create') }}">
                         <i class="fas fa-plus"></i> Create New Product
@@ -147,6 +150,14 @@
             table.on('preXhr.dt', function (e, settings, data) {
                 data.category_id = $('#category_id').val();
                 data.brand_id = $('#brand_id').val();
+                
+                // Update Export PDF link
+                var exportUrl = "{{ route('admin.products.export-pdf') }}";
+                var params = $.param({
+                    category_id: data.category_id,
+                    brand_id: data.brand_id
+                });
+                $('#export-pdf-btn').attr('href', exportUrl + '?' + params);
             });
 
             // Hide overlay when table is drawn
