@@ -301,13 +301,21 @@ class ProductController extends Controller
 
         $products = $query->orderBy('name', 'asc')->get();
         
+        // Simple initialization to rule out option-related errors
         $pdf = Pdf::loadView('admin.products.pdf', compact('products'));
-        
-        // Optional: Set paper size and orientation
         $pdf->setPaper('a4', 'landscape');
+        
+        // Use a basic set of stable options
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isPhpEnabled', true); // Still needed for page numbers
 
         $filename = implode('_', $filenameParts) . '_' . date('YmdHis') . '.pdf';
 
-        return $pdf->download($filename);
+        // Use Laravel's streamDownload for more reliable header handling
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }
