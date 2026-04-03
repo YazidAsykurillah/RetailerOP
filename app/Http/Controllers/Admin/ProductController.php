@@ -281,13 +281,22 @@ class ProductController extends Controller
     public function exportPdf(Request $request)
     {
         $query = Product::with(['category', 'brand', 'variants']);
+        $filenameParts = ['product_list'];
 
         if ($request->has('category_id') && $request->category_id) {
             $query->where('category_id', $request->category_id);
+            $category = Category::find($request->category_id);
+            if ($category) {
+                $filenameParts[] = Str::slug($category->name);
+            }
         }
 
         if ($request->has('brand_id') && $request->brand_id) {
             $query->where('brand_id', $request->brand_id);
+            $brand = Brand::find($request->brand_id);
+            if ($brand) {
+                $filenameParts[] = Str::slug($brand->name);
+            }
         }
 
         $products = $query->orderBy('name', 'asc')->get();
@@ -297,6 +306,8 @@ class ProductController extends Controller
         // Optional: Set paper size and orientation
         $pdf->setPaper('a4', 'landscape');
 
-        return $pdf->download('product_list_' . date('YmdHis') . '.pdf');
+        $filename = implode('_', $filenameParts) . '_' . date('YmdHis') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }
