@@ -85,23 +85,76 @@
 
         <!-- Payment Section -->
         <div class="payment-section">
-            <div class="payment-methods">
-                <div class="payment-method active" data-method="cash">
-                    <i class="fas fa-money-bill-wave"></i> Cash
-                </div>
-                <div class="payment-method" data-method="card">
-                    <i class="fas fa-credit-card"></i> Card
-                </div>
-                <div class="payment-method" data-method="transfer">
-                    <i class="fas fa-university"></i> Transfer
+            <div class="payment-mode-toggle mb-3">
+                <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
+                    <label class="btn btn-outline-info active flex-fill">
+                        <input type="radio" name="payment_mode" value="full" checked autocomplete="off"> Full Payment
+                    </label>
+                    <label class="btn btn-outline-info flex-fill">
+                        <input type="radio" name="payment_mode" value="partial" autocomplete="off"> Partial Payment
+                    </label>
                 </div>
             </div>
-            
-            <input type="text" class="amount-input" id="amount-paid" placeholder="Amount Paid">
-            
-            <div class="change-display positive" id="change-display" style="display: none;">
-                <small>Change</small><br>
-                <span id="change-amount">0</span>
+
+            <div id="full-payment-section">
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="cash">
+                        <i class="fas fa-money-bill-wave"></i> Cash
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <i class="fas fa-credit-card"></i> Card
+                    </div>
+                    <div class="payment-method" data-method="transfer">
+                        <i class="fas fa-university"></i> Transfer
+                    </div>
+                </div>
+                
+                <input type="text" class="amount-input" id="amount-paid" placeholder="Amount Paid">
+                
+                <div class="change-display positive" id="change-display" style="display: none;">
+                    <small>Change</small><br>
+                    <span id="change-amount">0</span>
+                </div>
+            </div>
+
+            <div id="partial-payment-section" style="display: none;">
+                <div class="partial-header mb-2">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-calendar-check"></i> Initial Payment</h6>
+                </div>
+                
+                <div class="initial-payment-box p-2 border rounded bg-light mb-2">
+                    <div class="row no-gutters mb-2">
+                        <div class="col-6 pr-1">
+                            <label class="small font-weight-bold mb-1">Amount</label>
+                            <input type="text" class="form-control form-control-sm" id="initial-payment-amount" placeholder="0">
+                        </div>
+                        <div class="col-6 pl-1">
+                            <label class="small font-weight-bold mb-1">Method</label>
+                            <select class="form-control form-control-sm" id="initial-payment-method">
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="transfer">Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row no-gutters mb-2">
+                        <div class="col-12">
+                            <label class="small font-weight-bold mb-1">Payment Date</label>
+                            <input type="date" class="form-control form-control-sm" id="initial-payment-date" value="{{ date('Y-m-d') }}">
+                        </div>
+                    </div>
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <label class="small font-weight-bold mb-1">Note</label>
+                            <textarea class="form-control form-control-sm" id="initial-payment-note" rows="1" placeholder="Initial payment note..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="remaining-balance-box p-2 bg-white border rounded mb-2 d-flex justify-content-between align-items-center">
+                    <span class="small font-weight-bold">Remaining Balance:</span>
+                    <span id="remaining-balance" class="font-weight-bold text-danger">0</span>
+                </div>
             </div>
             
             <button class="checkout-btn" id="submit-btn" disabled>
@@ -176,3 +229,4 @@
         </div>
     </div>
 </template>
+

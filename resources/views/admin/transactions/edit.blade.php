@@ -331,23 +331,52 @@
 
         <!-- Payment Section -->
         <div class="payment-section">
-            <div class="payment-methods">
-                <div class="payment-method {{ $transaction->payment_method == 'cash' ? 'active' : '' }}" data-method="cash">
-                    <i class="fas fa-money-bill-wave"></i> Cash
-                </div>
-                <div class="payment-method {{ $transaction->payment_method == 'card' ? 'active' : '' }}" data-method="card">
-                    <i class="fas fa-credit-card"></i> Card
-                </div>
-                <div class="payment-method {{ $transaction->payment_method == 'transfer' ? 'active' : '' }}" data-method="transfer">
-                    <i class="fas fa-university"></i> Transfer
+            <div class="payment-mode-toggle mb-3">
+                <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
+                    <label class="btn btn-outline-info {{ $transaction->payment_mode === 'full' ? 'active' : '' }} flex-fill">
+                        <input type="radio" name="payment_mode" value="full" {{ $transaction->payment_mode === 'full' ? 'checked' : '' }} autocomplete="off"> Full Payment
+                    </label>
+                    <label class="btn btn-outline-info {{ $transaction->payment_mode === 'partial' ? 'active' : '' }} flex-fill">
+                        <input type="radio" name="payment_mode" value="partial" {{ $transaction->payment_mode === 'partial' ? 'checked' : '' }} autocomplete="off"> Partial Payment
+                    </label>
                 </div>
             </div>
-            
-            <input type="text" class="amount-input" id="amount-paid" placeholder="Amount Paid" value="0">
-            
-            <div class="change-display {{ $transaction->change >= 0 ? 'positive' : 'negative' }}" id="change-display">
-                <small>Change</small><br>
-                <span id="change-amount">{{ number_format(abs($transaction->change), 0, ',', '.') }} {{ $transaction->change < 0 ? 'short' : '' }}</span>
+
+            <div id="full-payment-section" style="{{ $transaction->payment_mode === 'partial' ? 'display: none;' : '' }}">
+                <div class="payment-methods">
+                    <div class="payment-method {{ $transaction->payment_method == 'cash' || $transaction->payment_mode === 'partial' ? 'active' : '' }}" data-method="cash">
+                        <i class="fas fa-money-bill-wave"></i> Cash
+                    </div>
+                    <div class="payment-method {{ $transaction->payment_method == 'card' ? 'active' : '' }}" data-method="card">
+                        <i class="fas fa-credit-card"></i> Card
+                    </div>
+                    <div class="payment-method {{ $transaction->payment_method == 'transfer' ? 'active' : '' }}" data-method="transfer">
+                        <i class="fas fa-university"></i> Transfer
+                    </div>
+                </div>
+                
+                <input type="text" class="amount-input" id="amount-paid" placeholder="Amount Paid" value="{{ $transaction->payment_mode === 'full' ? (float)$transaction->amount_paid : 0 }}">
+                
+                <div class="change-display {{ $transaction->change >= 0 ? 'positive' : 'negative' }}" id="change-display" style="{{ $transaction->payment_mode === 'partial' ? 'display: none;' : '' }}">
+                    <small>Change</small><br>
+                    <span id="change-amount">{{ number_format(abs($transaction->change), 0, ',', '.') }}</span>
+                </div>
+            </div>
+
+            <div id="partial-payment-section" style="{{ $transaction->payment_mode === 'full' ? 'display: none;' : '' }}">
+                <div class="partial-header d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-calendar-alt"></i> Payment Schedule</h6>
+                    <button type="button" class="btn btn-xs btn-primary font-weight-bold" id="add-payment-row">
+                        <i class="fas fa-plus"></i> ADD PAYMENT
+                    </button>
+                </div>
+                <div id="payment-schedule-container" class="mb-2" style="max-height: 150px; overflow-y: auto; overflow-x: hidden; width: 100%;">
+                    <!-- Existing payments will be populated here by JS -->
+                </div>
+                <div class="remaining-balance-box p-2 bg-light border rounded mb-2 d-flex justify-content-between align-items-center text-dark">
+                    <span>Remaining Balance:</span>
+                    <span id="remaining-balance" class="font-weight-bold text-primary">0</span>
+                </div>
             </div>
             
             <button class="checkout-btn" id="submit-btn">
@@ -392,15 +421,53 @@
         </div>
     </div>
 </template>
+
+<!-- Payment Row Template -->
+<template id="payment-row-template">
+    <div class="payment-row mb-2 p-2 bg-dark rounded border border-secondary">
+        <div class="row no-gutters align-items-center">
+            <div class="col-5 pr-1">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text p-1"><i class="fas fa-calendar-day"></i></span>
+                    </div>
+                    <input type="date" class="form-control payment-date-input" value="{{ date('Y-m-d') }}">
+                </div>
+            </div>
+            <div class="col-4 px-1">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text p-1"><i class="fas fa-money-bill"></i></span>
+                    </div>
+                    <input type="text" class="form-control payment-amount-input text-right" placeholder="0">
+                </div>
+            </div>
+            <div class="col-2 px-1">
+                <select class="form-control form-control-sm payment-method-select">
+                    <option value="cash">CASH</option>
+                    <option value="card">CARD</option>
+                    <option value="transfer">BANK</option>
+                </select>
+            </div>
+            <div class="col-1 text-right pl-1">
+                <button type="button" class="btn btn-xs btn-outline-danger remove-payment-row">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
 @stop
 
 @section('js')
 <script>
 $(function() {
     let rowCounter = 0;
+    let selectedPaymentMode = '{{ $transaction->payment_mode ?? "full" }}';
     let selectedPaymentMethod = '{{ $transaction->payment_method }}';
     let selectedCustomerId = {{ $transaction->customer_id ?? 'null' }};
     const initialCart = @json($initialCart);
+    const initialPayments = @json($initialPayments ?? []);
 
     // Initialize AutoNumeric for Amount Paid
     const amountPaidAN = new AutoNumeric('#amount-paid', {
@@ -410,7 +477,12 @@ $(function() {
         minimumValue: '0',
         modifyValueOnWheel: false
     });
-    amountPaidAN.set(0);
+    
+    @if($transaction->payment_mode === 'full')
+        amountPaidAN.set({{ (float)$transaction->amount_paid }});
+    @else
+        amountPaidAN.set(0);
+    @endif
 
     // Initialize logic function
     function init() {
@@ -421,7 +493,18 @@ $(function() {
         } else {
             addNewRow();
         }
+
+        // Initialize Existing Payments
+        if (selectedPaymentMode === 'partial' && initialPayments.length > 0) {
+            initialPayments.forEach(p => {
+                addPaymentRow(p.amount, p.payment_method, p.payment_date, p.notes);
+            });
+        } else if (selectedPaymentMode === 'partial') {
+            addPaymentRow(); // Add at least one empty row if partial but no payments
+        }
+
         updateSummary();
+        updatePaymentModeAbility();
     }
 
     // --- Core Logic Copied & Adapted from POS ---
@@ -571,12 +654,14 @@ $(function() {
         selectedCustomerId = customer.id;
         $('#customer-name').val(customer.name).prop('readonly', true);
         $('#customer-phone').val(customer.phone || '').prop('readonly', true);
+        updatePaymentModeAbility();
     });
 
     $('#customer-select').on('select2:clear', function(e) {
         selectedCustomerId = null;
         $('#customer-name').val('').prop('readonly', false);
         $('#customer-phone').val('').prop('readonly', false);
+        updatePaymentModeAbility();
     });
 
     // Row Management
@@ -619,6 +704,93 @@ $(function() {
         });
 
         updateRowNumbers();
+    }
+
+    // --- Payment Mode & Schedule Logic ---
+    function updatePaymentModeAbility() {
+        const $partialLabel = $('input[name="payment_mode"][value="partial"]').parent();
+        const $partialInput = $('input[name="payment_mode"][value="partial"]');
+        
+        if (!selectedCustomerId) {
+            $partialInput.prop('disabled', true);
+            $partialLabel.addClass('disabled');
+            
+            if (selectedPaymentMode === 'partial') {
+                $('input[name="payment_mode"][value="full"]').prop('checked', true).parent().click();
+                toastr.warning('Partial payment is only available for registered customers.');
+            }
+        } else {
+            $partialInput.prop('disabled', false);
+            $partialLabel.removeClass('disabled');
+        }
+    }
+
+    $('input[name="payment_mode"]').on('change', function() {
+        selectedPaymentMode = $(this).val();
+        if (selectedPaymentMode === 'full') {
+            $('#full-payment-section').show();
+            $('#partial-payment-section').hide();
+        } else {
+            $('#full-payment-section').hide();
+            $('#partial-payment-section').show();
+            if ($('.payment-row').length === 0) {
+                addPaymentRow();
+            }
+        }
+        updateSummary();
+    });
+
+    $('#add-payment-row').on('click', function() {
+        addPaymentRow();
+    });
+
+    function addPaymentRow(amount = 0, method = 'cash', date = '{{ date("Y-m-d") }}', notes = '') {
+        const template = document.getElementById('payment-row-template');
+        const clone = template.content.cloneNode(true);
+        const $row = $(clone).find('.payment-row');
+        
+        $row.find('.payment-date-input').val(date);
+        $row.find('.payment-method-select').val(method);
+        
+        const $amountInput = $row.find('.payment-amount-input');
+        const an = new AutoNumeric($amountInput.get(0), {
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            minimumValue: '0',
+            modifyValueOnWheel: false
+        });
+        if (amount > 0) an.set(amount);
+
+        $('#payment-schedule-container').append($row);
+        updateRemainingBalance();
+    }
+
+    $(document).on('click', '.remove-payment-row', function() {
+        $(this).closest('.payment-row').remove();
+        updateRemainingBalance();
+    });
+
+    $(document).on('input', '.payment-amount-input', function() {
+        updateRemainingBalance();
+    });
+
+    function updateRemainingBalance() {
+        let total = parseFloat($('#summary-total').text().replace(/\./g, '')) || 0;
+        let totalPaid = 0;
+        
+        $('.payment-amount-input').each(function() {
+            totalPaid += AutoNumeric.getNumber(this) || 0;
+        });
+
+        const remaining = total - totalPaid;
+        $('#remaining-balance').text(formatNumber(remaining));
+        
+        if (remaining < 0) {
+            $('#remaining-balance').removeClass('text-primary').addClass('text-danger');
+        } else {
+            $('#remaining-balance').removeClass('text-danger').addClass('text-primary');
+        }
     }
 
     function formatProduct(product) {
@@ -752,7 +924,11 @@ $(function() {
         $('#summary-discount').text(formatNumber(totalDiscount));
         $('#summary-total').text(formatNumber(total));
 
-        updateChangeDisplay();
+        if (selectedPaymentMode === 'full') {
+            updateChangeDisplay();
+        } else {
+            updateRemainingBalance();
+        }
     }
 
     function updateChangeDisplay() {
@@ -817,7 +993,37 @@ $(function() {
         const total = parseFloat($('#summary-total').text().replace(/\./g, ''));
         const amountPaid = amountPaidAN.getNumber();
 
-        if (amountPaid < total) { toastr.error('Insufficient payment!'); return; }
+        const payments = [];
+        if (selectedPaymentMode === 'partial') {
+            let totalInstallments = 0;
+            $('.payment-row').each(function() {
+                const amt = AutoNumeric.getAutoNumericElement($(this).find('.payment-amount-input').get(0)).getNumber();
+                if (amt > 0) {
+                    payments.push({
+                        amount: amt,
+                        payment_method: $(this).find('.payment-method-select').val(),
+                        payment_date: $(this).find('.payment-date-input').val(),
+                        notes: ''
+                    });
+                    totalInstallments += amt;
+                }
+            });
+
+            if (payments.length === 0) {
+                toastr.error('Please add at least one payment installment.');
+                return;
+            }
+
+            if (totalInstallments > total) {
+                toastr.error('Total payments exceed the transaction total!');
+                return;
+            }
+        } else {
+            if (amountPaid < total) {
+                toastr.error('Insufficient payment!');
+                return;
+            }
+        }
 
         const $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
@@ -833,8 +1039,10 @@ $(function() {
                 discount: totalDiscount,
                 tax: 0,
                 grand_total: total,
+                payment_mode: selectedPaymentMode,
                 payment_method: selectedPaymentMethod,
                 amount_paid: amountPaid,
+                payments: payments,
                 customer_id: selectedCustomerId,
                 customer_name: $('#customer-name').val(),
                 customer_phone: $('#customer-phone').val(),

@@ -2,8 +2,28 @@
 $(function() {
     let rowCounter = 0;
     let selectedPaymentMethod = 'cash';
+    let selectedPaymentMode = 'full';
     let selectedCustomerId = null;
     let currentCustomerDiscount = 0;
+
+    // Check if partial payment is allowed (only for registered customers)
+    function updatePaymentModeAbility() {
+        const $partialLabel = $('input[name="payment_mode"][value="partial"]').parent();
+        const $partialInput = $('input[name="payment_mode"][value="partial"]');
+        
+        if (!selectedCustomerId) {
+            $partialInput.prop('disabled', true);
+            $partialLabel.addClass('disabled');
+            
+            if (selectedPaymentMode === 'partial') {
+                $('input[name="payment_mode"][value="full"]').prop('checked', true).parent().click();
+                toastr.warning('Partial payment is only available for registered customers.');
+            }
+        } else {
+            $partialInput.prop('disabled', false);
+            $partialLabel.removeClass('disabled');
+        }
+    }
 
     // Barcode Scanner Logic
     $('#barcode-input').on('keypress', function(e) {
@@ -129,6 +149,13 @@ $(function() {
         minimumValue: '0',
         modifyValueOnWheel: false
     });
+    const initialPaymentAmountAN = new AutoNumeric('#initial-payment-amount', {
+        digitGroupSeparator: '.',
+        decimalCharacter: ',',
+        decimalPlaces: 0,
+        minimumValue: '0',
+        modifyValueOnWheel: false
+    });
     
     // Initialize Customer Select2
     $('#customer-select').select2({
@@ -194,6 +221,7 @@ $(function() {
             }
         });
         updateSummary();
+        updatePaymentModeAbility();
     });
 
     $('#customer-select').on('select2:clear', function(e) {
@@ -210,11 +238,13 @@ $(function() {
             }
         });
         updateSummary();
+        updatePaymentModeAbility();
         toastr.info('Customer removed. Discounts reset.');
     });
 
     // Add first empty row on page load
     addNewRow();
+    updatePaymentModeAbility();
 
     // Toggle customer panel
     $('#customer-toggle').on('click', function() {
@@ -476,9 +506,22 @@ $(function() {
             return $(this).data('variant-id');
         }).length > 0;
         
-        $('#submit-btn').prop('disabled', !hasItems);
+        let canSubmit = hasItems;
+        if (selectedPaymentMode === 'partial') {
+            const balance = getGrandTotal() - getPartialTotal();
+            if (balance < 0) {
+                canSubmit = false;
+            }
+        }
+
+        $('#submit-btn').prop('disabled', !canSubmit);
 
         updateChangeDisplay();
+        updateRemainingBalance();
+    }
+
+    function getPartialTotal() {
+        return initialPaymentAmountAN.getNumber() || 0;
     }
 
     // Payment method
@@ -492,6 +535,63 @@ $(function() {
     $('#amount-paid').on('input', function() {
         updateChangeDisplay();
     });
+
+    // Payment Mode Toggle
+    $('input[name="payment_mode"]').on('change', function() {
+        selectedPaymentMode = $(this).val();
+        if (selectedPaymentMode === 'partial') {
+            $('#full-payment-section').hide();
+            $('#partial-payment-section').show();
+        } else {
+            $('#partial-payment-section').hide();
+            $('#full-payment-section').show();
+        }
+        updateSummary();
+    });
+
+    // Update Remaining Balance on input
+    $('#initial-payment-amount').on('input', function() {
+        updateRemainingBalance();
+        updateSummary();
+    });
+
+    function updateRemainingBalance() {
+        let totalAllocated = getPartialTotal();
+        const grandTotal = getGrandTotal();
+        const balance = grandTotal - totalAllocated;
+        
+        $('#remaining-balance').text(formatNumber(balance));
+        
+        if (balance < 0) {
+            $('#remaining-balance').removeClass('text-danger').addClass('text-danger');
+            $('#remaining-balance').parent().addClass('bg-danger text-white').removeClass('bg-white text-dark');
+        } else {
+            $('#remaining-balance').removeClass('text-danger').addClass('text-danger');
+            $('#remaining-balance').parent().addClass('bg-white text-dark').removeClass('bg-danger text-white');
+        }
+    }
+
+    function getGrandTotal() {
+        let subtotal = 0;
+        let totalDiscount = 0;
+        $('.item-row').each(function() {
+            if ($(this).data('variant-id')) {
+                const price = parseFloat($(this).data('price')) || 0;
+                const qty = parseInt($(this).find('.qty-input').val()) || 0;
+                const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
+                let cutAmountStr = $(this).find('.cut-input').val() || '0';
+                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+
+                const lineTotal = price * qty;
+                let actualDeduction = (lineTotal * (discountPercent / 100)) + cutAmount;
+                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
+                
+                subtotal += lineTotal;
+                totalDiscount += actualDeduction;
+            }
+        });
+        return subtotal - totalDiscount;
+    }
 
     // Update change display
     function updateChangeDisplay() {
@@ -590,9 +690,39 @@ $(function() {
         const total = subtotal - totalDiscount;
         const amountPaid = amountPaidAN.getNumber() || 0;
 
-        if (amountPaid < total) {
+        if (selectedPaymentMode === 'full' && amountPaid < total) {
             toastr.error('Amount paid is insufficient!');
             return;
+        }
+
+        // Collect payments
+        const payments = [];
+        if (selectedPaymentMode === 'full') {
+            payments.push({
+                amount: amountPaid,
+                payment_method: selectedPaymentMethod,
+                payment_date: '{{ date("Y-m-d") }}',
+                status: 'paid',
+                notes: ''
+            });
+        } else {
+            const initialAmount = initialPaymentAmountAN.getNumber() || 0;
+            if (initialAmount <= 0) {
+                toastr.error('Please enter an initial payment amount!');
+                return;
+            }
+            if (initialAmount > total) {
+                toastr.error('Initial payment cannot exceed the total amount!');
+                return;
+            }
+
+            payments.push({
+                amount: initialAmount,
+                payment_method: $('#initial-payment-method').val(),
+                payment_date: $('#initial-payment-date').val(),
+                notes: $('#initial-payment-note').val(),
+                status: 'paid'
+            });
         }
 
         const $btn = $(this);
@@ -608,8 +738,10 @@ $(function() {
                 discount: totalDiscount,
                 tax: 0,
                 grand_total: total,
-                payment_method: selectedPaymentMethod,
-                amount_paid: amountPaid,
+                payment_mode: selectedPaymentMode,
+                payment_method: selectedPaymentMethod, // Fallback for full payment
+                amount_paid: amountPaid, // Fallback for full payment
+                payments: payments,
                 customer_id: selectedCustomerId,
                 customer_name: $('#customer-name').val(),
                 customer_phone: $('#customer-phone').val(),
@@ -677,6 +809,18 @@ $(function() {
         // Clear amount paid
         amountPaidAN.set(0);
         $('#amount-paid').val('');
+
+        // Reset Partial Payments
+        selectedPaymentMode = 'full';
+        $('input[name="payment_mode"][value="full"]').parent().addClass('active').siblings().removeClass('active');
+        $('input[name="payment_mode"][value="full"]').prop('checked', true);
+        $('#partial-payment-section').hide();
+        $('#full-payment-section').show();
+        
+        initialPaymentAmountAN.set(0);
+        $('#initial-payment-method').val('cash');
+        $('#initial-payment-date').val('{{ date("Y-m-d") }}');
+        $('#initial-payment-note').val('');
         
         // Reset summary and change display
         updateSummary();

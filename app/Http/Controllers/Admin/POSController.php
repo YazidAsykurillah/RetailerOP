@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\TransactionPayment;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -211,13 +212,27 @@ class POSController extends Controller
             'discount' => 'nullable|numeric|min:0',
             'tax' => 'nullable|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:cash,card,transfer,other',
-            'amount_paid' => 'required|numeric|min:0',
+            'payment_mode' => 'required|in:full,partial',
+            'payment_method' => 'required_if:payment_mode,full|string',
+            'amount_paid' => 'required_if:payment_mode,full|numeric',
+            'payments' => 'required|array|min:1',
+            'payments.*.amount' => 'required|numeric|min:1', // Enforce minimum 1 for the initial payment
+            'payments.*.payment_method' => 'required|string',
+            'payments.*.payment_date' => 'required|date',
+            'payments.*.status' => 'required|in:paid,pending',
             'customer_id' => 'nullable|exists:customers,id',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string|max:1000',
         ]);
+
+        $paymentsTotal = collect($request->payments)->sum('amount');
+        if ($paymentsTotal > $request->grand_total) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Total payments exceed grand total.',
+            ], 422);
+        }
 
         // Validate stock availability for all items
         foreach ($request->items as $item) {
@@ -236,8 +251,8 @@ class POSController extends Controller
             }
         }
 
-        // Validate amount paid
-        if ($request->amount_paid < $request->grand_total) {
+        // Validate amount paid for full payment
+        if ($request->payment_mode === 'full' && $request->amount_paid < $request->grand_total) {
             return response()->json([
                 'success' => false,
                 'message' => 'Amount paid is less than the total amount.',
@@ -247,6 +262,18 @@ class POSController extends Controller
         DB::beginTransaction();
 
         try {
+            // Calculate initial paid amount and status
+            $totalPaidNow = collect($request->payments)
+                ->where('status', 'paid')
+                ->sum('amount');
+            
+            $paymentStatus = 'unpaid';
+            if ($totalPaidNow >= $request->grand_total) {
+                $paymentStatus = 'paid';
+            } elseif ($totalPaidNow > 0) {
+                $paymentStatus = 'partial';
+            }
+
             // Create transaction
             $transaction = Transaction::create([
                 'customer_name' => $request->customer_name,
@@ -255,13 +282,27 @@ class POSController extends Controller
                 'discount' => $request->discount ?? 0,
                 'tax' => $request->tax ?? 0,
                 'grand_total' => $request->grand_total,
-                'payment_method' => $request->payment_method,
-                'amount_paid' => $request->amount_paid,
-                'change' => $request->amount_paid - $request->grand_total,
+                'payment_mode' => $request->payment_mode,
+                'payment_status' => $paymentStatus,
+                'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
+                'amount_paid' => $totalPaidNow,
+                'change' => $request->payment_mode === 'full' ? ($request->amount_paid - $request->grand_total) : 0,
                 'notes' => $request->notes,
                 'customer_id' => $request->customer_id,
                 'user_id' => auth()->id(),
             ]);
+
+            // Create transaction payments
+            foreach ($request->payments as $paymentData) {
+                TransactionPayment::create([
+                    'transaction_id' => $transaction->id,
+                    'amount' => $paymentData['amount'],
+                    'payment_method' => $paymentData['payment_method'],
+                    'payment_date' => $paymentData['payment_date'],
+                    'status' => $paymentData['status'],
+                    'notes' => $paymentData['notes'] ?? null,
+                ]);
+            }
 
             // Create transaction items and deduct stock
             foreach ($request->items as $item) {

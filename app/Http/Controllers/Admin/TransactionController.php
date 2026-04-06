@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessProfile;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\TransactionPayment;
 use App\Models\ProductVariant;
 use App\Models\Category;
 use App\DataTables\TransactionsDataTable;
@@ -40,7 +41,7 @@ class TransactionController extends Controller
      */
     public function show($id)
     {
-        $transaction = Transaction::with(['items.productVariant.product', 'user'])->findOrFail($id);
+        $transaction = Transaction::with(['items.productVariant.product', 'user', 'payments'])->findOrFail($id);
 
         return view('admin.transactions.show', compact('transaction'));
     }
@@ -50,7 +51,7 @@ class TransactionController extends Controller
      */
     public function printReceipt($id)
     {
-        $transaction = Transaction::with(['items.productVariant.product', 'user'])->findOrFail($id);
+        $transaction = Transaction::with(['items.productVariant.product', 'user', 'payments'])->findOrFail($id);
         $businessProfile = BusinessProfile::first();
 
         return view('admin.transactions.print', compact('transaction', 'businessProfile'));
@@ -61,7 +62,7 @@ class TransactionController extends Controller
      */
     public function edit($id)
     {
-        $transaction = Transaction::with(['items.productVariant.product', 'customer'])->findOrFail($id);
+        $transaction = Transaction::with(['items.productVariant.product', 'customer', 'payments'])->findOrFail($id);
         $categories = Category::active()->orderBy('name')->get();
         
         // Prepare initial cart data
@@ -75,12 +76,23 @@ class TransactionController extends Controller
                 'quantity' => $item->quantity,
                 'discount_percent' => ($item->price * $item->quantity) > 0 ? (($item->discount / ($item->price * $item->quantity)) * 100) : 0,
                 'cut_amount' => (float) $item->cut_amount,
-                'stock' => $item->productVariant->stock + $item->quantity, // Add current qty back to stock for validation
+                'stock' => ($item->productVariant->stock ?? 0) + $item->quantity, // Add current qty back to stock for validation
                 'image' => $item->productVariant->product->primary_image_url ?? asset('images/no-image.png'),
             ];
         });
 
-        return view('admin.transactions.edit', compact('transaction', 'categories', 'initialCart'));
+        // Prepare initial payments data
+        $initialPayments = $transaction->payments->map(function($payment) {
+            return [
+                'amount' => (float) $payment->amount,
+                'payment_method' => $payment->payment_method,
+                'payment_date' => $payment->payment_date->format('Y-m-d'),
+                'status' => $payment->status,
+                'notes' => $payment->notes,
+            ];
+        });
+
+        return view('admin.transactions.edit', compact('transaction', 'categories', 'initialCart', 'initialPayments'));
     }
 
     /**
@@ -101,12 +113,18 @@ class TransactionController extends Controller
             'discount' => 'nullable|numeric|min:0',
             'tax' => 'nullable|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:cash,card,transfer,other',
-            'amount_paid' => 'required|numeric|min:0',
+            'payment_method' => 'required_if:payment_mode,full',
+            'amount_paid' => 'required_if:payment_mode,full|numeric',
             'customer_id' => 'nullable|exists:customers,id',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string|max:1000',
+            'payment_mode' => 'required|in:full,partial',
+            'payments' => 'required_if:payment_mode,partial|array',
+            'payments.*.amount' => 'required|numeric|min:0',
+            'payments.*.payment_method' => 'required|string',
+            'payments.*.payment_date' => 'required|date',
+            'payments.*.notes' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -131,20 +149,48 @@ class TransactionController extends Controller
 
             // 3. Update Transaction Details
             $transaction->update([
+                'customer_id' => $request->customer_id,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'subtotal' => $request->subtotal,
                 'discount' => $request->discount ?? 0,
                 'tax' => $request->tax ?? 0,
                 'grand_total' => $request->grand_total,
-                'payment_method' => $request->payment_method,
-                'amount_paid' => $request->amount_paid,
-                'change' => $request->amount_paid - $request->grand_total,
+                'payment_mode' => $request->payment_mode,
+                'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
+                'amount_paid' => $request->payment_mode === 'full' ? $request->amount_paid : 0, // Will be recalculated from payments
+                'change' => $request->payment_mode === 'full' ? ($request->amount_paid - $request->grand_total) : 0,
                 'notes' => $request->notes,
-                'customer_id' => $request->customer_id,
             ]);
 
-            // 4. Process New Items
+            // 4. Handle Payments (Delete existing and recreate)
+            $transaction->payments()->delete();
+            
+            if ($request->payment_mode === 'full') {
+                $transaction->payments()->create([
+                    'amount' => $request->amount_paid,
+                    'payment_method' => $request->payment_method,
+                    'payment_date' => now(),
+                    'status' => $request->amount_paid >= $request->grand_total ? 'paid' : 'partial',
+                    'processed_by' => auth()->id(),
+                ]);
+            } else {
+                foreach ($request->payments as $p) {
+                    $transaction->payments()->create([
+                        'amount' => $p['amount'],
+                        'payment_method' => $p['payment_method'],
+                        'payment_date' => $p['payment_date'],
+                        'notes' => $p['notes'] ?? null,
+                        'status' => 'paid', // Installments are usually marked paid once recorded
+                        'processed_by' => auth()->id(),
+                    ]);
+                }
+            }
+
+            // Refresh status from payments
+            $transaction->refreshPaymentStatus();
+
+            // 5. Process New Items
             foreach ($request->items as $item) {
                 $variant = ProductVariant::with('product')->find($item['variant_id']);
                 
@@ -233,6 +279,59 @@ class TransactionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete transaction: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Add a payment to an existing transaction.
+     */
+    public function addPayment(Request $request, $id)
+    {
+        $transaction = Transaction::findOrFail($id);
+
+        $remainingBalance = (float) $transaction->grand_total - (float) $transaction->amount_paid;
+
+        if ($request->amount > $remainingBalance + 0.01) {
+             return response()->json([
+                'success' => false,
+                'message' => 'Payment amount exceeds remaining balance.',
+            ], 422);
+        }
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'payment_method' => 'required|string',
+            'payment_date' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            TransactionPayment::create([
+                'transaction_id' => $transaction->id,
+                'amount' => $request->amount,
+                'payment_method' => $request->payment_method,
+                'payment_date' => $request->payment_date,
+                'status' => 'paid',
+                'notes' => $request->notes,
+            ]);
+
+            $transaction->refreshPaymentStatus();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment recorded successfully!',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to record payment: ' . $e->getMessage(),
             ], 500);
         }
     }

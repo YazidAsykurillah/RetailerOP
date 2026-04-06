@@ -84,21 +84,30 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Payment Method</label>
-                        <select class="form-control" id="payment_method" name="payment_method">
-                            <option value="">All Methods</option>
-                            <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="card" {{ request('payment_method') == 'card' ? 'selected' : '' }}>Card</option>
-                            <option value="transfer" {{ request('payment_method') == 'transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                            <option value="other" {{ request('payment_method') == 'other' ? 'selected' : '' }}>Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
                         <label>Customer</label>
                         <select class="form-control" id="customer_id" name="customer_id">
                             <option value="">All Customers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Payment Mode</label>
+                        <select class="form-control" id="payment_mode" name="payment_mode">
+                            <option value="">All Modes</option>
+                            <option value="full" {{ request('payment_mode') === 'full' ? 'selected' : '' }}>Full</option>
+                            <option value="partial" {{ request('payment_mode') === 'partial' ? 'selected' : '' }}>Partial</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <select class="form-control" id="payment_status" name="payment_status">
+                            <option value="">All Statuses</option>
+                            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Paid</option>
+                            <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Partial</option>
+                            <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                         </select>
                     </div>
                 </div>
@@ -171,6 +180,8 @@ $(function() {
         $('#date_from').val('');
         $('#date_to').val('');
         $('#payment_method').val('');
+        $('#payment_mode').val('');
+        $('#payment_status').val('');
         $('#customer_id').val('').trigger('change');
         window.LaravelDataTables['transactions-table'].draw();
     });

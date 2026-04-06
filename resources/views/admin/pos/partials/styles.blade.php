@@ -237,4 +237,11 @@
         background-color: #e9ecef !important; /* Light gray background */
         color: #212529 !important; /* Dark text to keep contrast */
     }
+
+    /* Disabled style for radio button group labels */
+    .btn-group-toggle label.disabled {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+        pointer-events: none;
+    }
 </style>

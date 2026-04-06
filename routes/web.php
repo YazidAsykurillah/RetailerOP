@@ -80,5 +80,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');
+    Route::post('/transactions/{transaction}/payments', [App\Http\Controllers\Admin\TransactionController::class, 'addPayment'])->name('transactions.add-payment');
 });
 

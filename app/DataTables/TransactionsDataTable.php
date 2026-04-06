@@ -27,15 +27,18 @@ class TransactionsDataTable extends DataTable
             ->addColumn('grand_total_formatted', function ($row) {
                 return '<span class="font-weight-bold">' . number_format($row->grand_total, 0, ',', '.') . '</span>';
             })
-            ->addColumn('payment_method_badge', function ($row) {
-                $colors = [
-                    'cash' => 'success',
-                    'card' => 'info',
-                    'transfer' => 'primary',
-                    'other' => 'secondary',
+            ->addColumn('payment_status_badge', function ($row) {
+                $statusColors = [
+                    'paid' => 'success',
+                    'partial' => 'warning',
+                    'unpaid' => 'danger',
                 ];
-                $color = $colors[$row->payment_method] ?? 'secondary';
-                return '<span class="badge badge-' . $color . '">' . $row->payment_method_label . '</span>';
+                $statusColor = $statusColors[$row->payment_status] ?? 'secondary';
+                return '<span class="badge badge-' . $statusColor . '">' . $row->payment_status_label . '</span>';
+            })
+            ->addColumn('payment_mode_badge', function ($row) {
+                $color = $row->payment_mode === 'full' ? 'info' : 'warning';
+                return '<span class="badge badge-pill badge-' . $color . '">' . ucfirst($row->payment_mode) . '</span>';
             })
             ->addColumn('cashier', function ($row) {
                 return $row->user->name ?? '-';
@@ -68,7 +71,7 @@ class TransactionsDataTable extends DataTable
                     $q->where('name', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['customer', 'grand_total_formatted', 'payment_method_badge', 'action']);
+            ->rawColumns(['customer', 'grand_total_formatted', 'payment_status_badge', 'payment_mode_badge', 'action']);
     }
 
     /**
@@ -86,14 +89,20 @@ class TransactionsDataTable extends DataTable
             $query->whereDate('created_at', '<=', request('date_to'));
         }
 
-        // Filter by payment method
-        if (request()->has('payment_method') && request('payment_method')) {
-            $query->where('payment_method', request('payment_method'));
-        }
 
         // Filter by customer
         if (request()->has('customer_id') && request('customer_id')) {
             $query->where('customer_id', request('customer_id'));
+        }
+
+        // Filter by payment status
+        if (request()->has('payment_status') && request('payment_status')) {
+            $query->where('payment_status', request('payment_status'));
+        }
+
+        // Filter by payment mode
+        if (request()->has('payment_mode') && request('payment_mode')) {
+            $query->where('payment_mode', request('payment_mode'));
         }
 
         return $query->orderBy('created_at', 'desc');
@@ -107,7 +116,7 @@ class TransactionsDataTable extends DataTable
         return $this->builder()
             ->setTableId('transactions-table')
             ->columns($this->getColumns())
-            ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_method = $('#payment_method').val(); data.customer_id = $('#customer_id').val();")
+            ->minifiedAjax('', "data.date_from = $('#date_from').val(); data.date_to = $('#date_to').val(); data.payment_mode = $('#payment_mode').val(); data.payment_status = $('#payment_status').val(); data.customer_id = $('#customer_id').val();")
             ->orderBy(0, 'desc')
             ->pageLength(50)
             ->selectStyleSingle()
@@ -147,7 +156,8 @@ class TransactionsDataTable extends DataTable
             Column::computed('date')->title('Date')->footer(''),
             Column::computed('customer')->title('Customer')->footer(''),
             Column::computed('grand_total_formatted')->title('Total')->addClass('text-right')->footer(''),
-            Column::computed('payment_method_badge')->title('Payment')->addClass('text-center')->footer(''),
+            Column::computed('payment_mode_badge')->title('Payment Mode')->addClass('text-center')->footer(''),
+            Column::computed('payment_status_badge')->title('Status')->addClass('text-center')->footer(''),
             Column::computed('cashier')->title('Cashier')->footer(''),
             Column::computed('action')
                 ->exportable(false)

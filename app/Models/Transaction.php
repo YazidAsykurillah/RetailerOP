@@ -18,6 +18,8 @@ class Transaction extends Model
         'tax',
         'grand_total',
         'payment_method',
+        'payment_mode',
+        'payment_status',
         'amount_paid',
         'change',
         'notes',
@@ -89,6 +91,14 @@ class Transaction extends Model
     }
 
     /**
+     * Get transaction payments (installments)
+     */
+    public function payments()
+    {
+        return $this->hasMany(TransactionPayment::class);
+    }
+
+    /**
      * Get payment method label
      */
     public function getPaymentMethodLabelAttribute()
@@ -100,6 +110,44 @@ class Transaction extends Model
             'other' => 'Other',
             default => $this->payment_method,
         };
+    }
+
+    /**
+     * Get payment status label
+     */
+    public function getPaymentStatusLabelAttribute()
+    {
+        return match($this->payment_status) {
+            'paid' => 'Paid',
+            'partial' => 'Partial Payment',
+            'unpaid' => 'Unpaid',
+            default => $this->payment_status,
+        };
+    }
+
+    /**
+     * Refresh payment status and amount paid based on payment history
+     */
+    public function refreshPaymentStatus()
+    {
+        $totalPaid = $this->payments()
+            ->where('status', 'paid')
+            ->sum('amount');
+        
+        $this->amount_paid = $totalPaid;
+        
+        if ($totalPaid >= $this->grand_total) {
+            $this->payment_status = 'paid';
+        } elseif ($totalPaid > 0) {
+            $this->payment_status = 'partial';
+        } else {
+            $this->payment_status = 'unpaid';
+        }
+
+        $this->change = $totalPaid > $this->grand_total ? ($totalPaid - $this->grand_total) : 0;
+        $this->save();
+
+        return $this;
     }
 
     /**
