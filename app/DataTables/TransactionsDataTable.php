@@ -27,6 +27,14 @@ class TransactionsDataTable extends DataTable
             ->addColumn('grand_total_formatted', function ($row) {
                 return '<span class="font-weight-bold">' . number_format($row->grand_total, 0, ',', '.') . '</span>';
             })
+            ->addColumn('amount_paid_formatted', function ($row) {
+                return '<span class="text-success">' . number_format($row->amount_paid, 0, ',', '.') . '</span>';
+            })
+            ->addColumn('outstanding_payment_formatted', function ($row) {
+                $outstanding = (float) $row->outstanding_balance;
+                $color = $outstanding > 0 ? 'text-danger' : 'text-success';
+                return '<span class="font-weight-bold ' . $color . '">' . number_format($outstanding, 0, ',', '.') . '</span>';
+            })
             ->addColumn('payment_status_badge', function ($row) {
                 $statusColors = [
                     'paid' => 'success',
@@ -71,7 +79,7 @@ class TransactionsDataTable extends DataTable
                     $q->where('name', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['customer', 'grand_total_formatted', 'payment_status_badge', 'payment_mode_badge', 'action']);
+            ->rawColumns(['customer', 'grand_total_formatted', 'amount_paid_formatted', 'outstanding_payment_formatted', 'payment_status_badge', 'payment_mode_badge', 'action']);
     }
 
     /**
@@ -79,7 +87,10 @@ class TransactionsDataTable extends DataTable
      */
     public function query(Transaction $model): QueryBuilder
     {
-        $query = $model->newQuery()->with('user');
+        $query = $model->newQuery()
+            ->select('transactions.*')
+            ->selectRaw('(grand_total - amount_paid) as outstanding_balance')
+            ->with(['user', 'customer']);
 
         // Filter by date range
         if (request()->has('date_from') && request('date_from')) {
@@ -132,15 +143,13 @@ class TransactionsDataTable extends DataTable
                             typeof i === "number" ?
                                 i : 0;
                     };
-                    var total = api
-                        .column(4, { page: "current" })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    $(api.column(4).footer()).html(
-                        new Intl.NumberFormat("id-ID").format(total)
-                    );
+                    var total = api.column(6, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                    var paid = api.column(7, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                    var outstanding = api.column(8, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+
+                    $(api.column(6).footer()).html("<span class=\"font-weight-bold\">" + new Intl.NumberFormat("id-ID").format(total) + "</span>");
+                    $(api.column(7).footer()).html("<span class=\"font-weight-bold text-success\">" + new Intl.NumberFormat("id-ID").format(paid) + "</span>");
+                    $(api.column(8).footer()).html("<span class=\"font-weight-bold text-danger\">" + new Intl.NumberFormat("id-ID").format(outstanding) + "</span>");
                 }'
             ]);
     }
@@ -155,9 +164,12 @@ class TransactionsDataTable extends DataTable
             Column::make('invoice_no')->title('Invoice')->footer(''),
             Column::computed('date')->title('Date')->footer(''),
             Column::computed('customer')->title('Customer')->footer(''),
-            Column::computed('grand_total_formatted')->title('Total')->addClass('text-right')->footer(''),
             Column::computed('payment_mode_badge')->title('Payment Mode')->addClass('text-center')->footer(''),
-            Column::computed('payment_status_badge')->title('Status')->addClass('text-center')->footer(''),
+            Column::computed('payment_status_badge')->title('Payment Status')->addClass('text-center')->footer(''),
+            Column::computed('grand_total_formatted')->title('Total')->addClass('text-right')->footer(''),
+            Column::make('amount_paid')->title('Paid')->data('amount_paid_formatted')->addClass('text-right')->footer(''),
+            Column::make('outstanding_balance')->title('Outstanding')->data('outstanding_payment_formatted')->addClass('text-right')->footer(''),
+            
             Column::computed('cashier')->title('Cashier')->footer(''),
             Column::computed('action')
                 ->exportable(false)

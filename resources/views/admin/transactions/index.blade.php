@@ -10,13 +10,13 @@
 <!-- Summary Cards -->
 <div class="row">
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
+        <div class="small-box bg-secondary">
             <div class="inner">
-                <h3>Rp {{ number_format($todaySales, 0, ',', '.') }}</h3>
-                <p>Today's Sales</p>
+                <h3>{{ number_format($totalTransactions) }}</h3>
+                <p>Total Transactions</p>
             </div>
             <div class="icon">
-                <i class="fas fa-cash-register"></i>
+                <i class="fas fa-database"></i>
             </div>
         </div>
     </div>
@@ -32,6 +32,17 @@
         </div>
     </div>
     <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>Rp {{ number_format($todaySales, 0, ',', '.') }}</h3>
+                <p>Today's Sales</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-cash-register"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
         <div class="small-box bg-primary">
             <div class="inner">
                 <h3>Rp {{ number_format($monthSales, 0, ',', '.') }}</h3>
@@ -42,17 +53,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-secondary">
-            <div class="inner">
-                <h3>{{ number_format($totalTransactions) }}</h3>
-                <p>Total Transactions</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-database"></i>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 <!-- Filters -->
@@ -105,8 +106,8 @@
                         <label>Payment Status</label>
                         <select class="form-control" id="payment_status" name="payment_status">
                             <option value="">All Statuses</option>
-                            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Paid</option>
-                            <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Partial</option>
+                            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Completed</option>
+                            <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Not Completed</option>
                             <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                         </select>
                     </div>
@@ -136,9 +137,6 @@
             <i class="fas fa-list"></i> All Transactions
         </h3>
         <div class="card-tools">
-            <a href="{{ route('admin.pos.index') }}" class="btn btn-success btn-sm">
-                <i class="fas fa-plus"></i> New Transaction
-            </a>
         </div>
     </div>
     <div class="card-body">

@@ -118,8 +118,8 @@ class Transaction extends Model
     public function getPaymentStatusLabelAttribute()
     {
         return match($this->payment_status) {
-            'paid' => 'Paid',
-            'partial' => 'Partial Payment',
+            'paid' => 'Completed',
+            'partial' => 'Not Completed',
             'unpaid' => 'Unpaid',
             default => $this->payment_status,
         };
