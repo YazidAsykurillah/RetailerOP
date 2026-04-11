@@ -255,7 +255,23 @@
                         </td>
                         <td class="qty">{{ $item->quantity }}</td>
                         <td class="price">{{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td class="discount">{{ number_format($item->discount, 0, ',', '.') }}</td>
+                        <td class="discount">
+                            @php
+                                $totalItemDiscount = ($item->discount ?? 0) + ($item->cut_amount ?? 0);
+                            @endphp
+                            @if($totalItemDiscount > 0)
+                                @php
+                                    $itemGross = $item->price * $item->quantity;
+                                    $percent = $itemGross > 0 ? ($totalItemDiscount / $itemGross) * 100 : 0;
+                                @endphp
+                                <div style="font-size: 9px; line-height: 1.1;">
+                                    ({{ round($percent) }}%)<br>
+                                    {{ number_format($totalItemDiscount, 0, ',', '.') }}
+                                </div>
+                            @else
+                                0
+                            @endif
+                        </td>
                         <td class="subtotal">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
