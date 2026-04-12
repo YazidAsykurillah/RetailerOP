@@ -18,6 +18,7 @@ return [
     'added'=>'Menambahkan',
     'add_product'=>'Tambah Produk',
     'walk_in_customer'=>'Walk In Customer',
+    'open_dedicated_mode'=>'Buka Mode Layar Penuh',
 
     // Summary
     'items' => 'Item',
