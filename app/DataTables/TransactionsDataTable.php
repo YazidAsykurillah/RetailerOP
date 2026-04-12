@@ -46,7 +46,7 @@ class TransactionsDataTable extends DataTable
             })
             ->addColumn('payment_mode_badge', function ($row) {
                 $color = $row->payment_mode === 'full' ? 'info' : 'warning';
-                return '<span class="badge badge-pill badge-' . $color . '">' . ucfirst(__("transaction.payment_mode_{$row->payment_mode}")) . '</span>';
+                return '<span class="badge badge-pill badge-' . $color . '">' . $row->payment_mode . '</span>';
             })
             ->addColumn('cashier', function ($row) {
                 return $row->user->name ?? '-';
