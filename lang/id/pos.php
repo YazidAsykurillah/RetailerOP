@@ -17,6 +17,7 @@ return [
     'search_product'=>'Produk ...',
     'added'=>'Menambahkan',
     'add_product'=>'Tambah Produk',
+    'walk_in_customer'=>'Walk In Customer',
 
     // Summary
     'items' => 'Item',
