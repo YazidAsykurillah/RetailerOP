@@ -32,10 +32,21 @@ class CustomersDataTable extends DataTable
             ->addColumn('group_name', function($row) {
                 return $row->customerGroup->name ?? '-';
             })
+            ->addColumn('total_transaction_value', function($row) {
+                return 'Rp ' . number_format($row->transactions_sum_grand_total ?? 0, 0, ',', '.');
+            })
+            ->addColumn('outstanding_amount', function($row) {
+                $outstanding = ($row->transactions_sum_grand_total ?? 0) - ($row->transactions_sum_amount_paid ?? 0);
+                $outstanding = max(0, $outstanding);
+                if ($outstanding > 0) {
+                    return '<span class="badge badge-warning">Rp ' . number_format($outstanding, 0, ',', '.') . '</span>';
+                }
+                return '<span class="badge badge-success">Rp 0</span>';
+            })
             ->editColumn('is_active', function($row) {
                 return $row->is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>';
             })
-            ->rawColumns(['action', 'is_active'])
+            ->rawColumns(['action', 'is_active', 'outstanding_amount'])
             ->setRowId('id');
     }
 
@@ -48,6 +59,8 @@ class CustomersDataTable extends DataTable
     {
         return $model->newQuery()
             ->with('customerGroup')
+            ->withSum('transactions', 'grand_total')
+            ->withSum('transactions', 'amount_paid')
             ->when($this->request()->get('customer_group_id'), function($query) {
                 return $query->where('customer_group_id', $this->request()->get('customer_group_id'));
             });
@@ -78,6 +91,8 @@ class CustomersDataTable extends DataTable
             Column::make('email'),
             Column::make('phone'),
             Column::make('group_name')->title('Group')->name('customerGroup.name'),
+            Column::make('total_transaction_value')->title('Total Transaction')->addClass('text-center')->searchable(false)->orderable(false),
+            Column::make('outstanding_amount')->title('Outstanding')->addClass('text-center')->searchable(false)->orderable(false),
             Column::make('is_active')->title('Status')->addClass('text-center'),
             Column::computed('action')
                   ->exportable(false)
