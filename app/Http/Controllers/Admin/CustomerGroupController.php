@@ -33,7 +33,7 @@ class CustomerGroupController extends Controller
         CustomerGroup::create($data);
 
         return redirect()->route('admin.customer-groups.index')
-            ->with('success', 'Customer Group created successfully.');
+            ->with('success', __('customer.group_created'));
     }
 
     public function edit(CustomerGroup $customerGroup)
@@ -53,21 +53,21 @@ class CustomerGroupController extends Controller
         $customerGroup->update($data);
 
         return redirect()->route('admin.customer-groups.index')
-            ->with('success', 'Customer Group updated successfully.');
+            ->with('success', __('customer.group_updated'));
     }
 
     public function destroy(CustomerGroup $customerGroup)
     {
         if ($customerGroup->is_default) {
-            return response()->json(['error' => 'Cannot delete the default customer group.'], 422);
+            return response()->json(['error' => __('general.something_went_wrong')], 422);
         }
         
         if ($customerGroup->customers()->count() > 0) {
-            return response()->json(['error' => 'Cannot delete group with associated customers.'], 422);
+            return response()->json(['error' => __('general.cannot_delete_has_relations', ['item' => __('customer.singular'), 'relation' => __('customer.group')])], 422);
         }
 
         $customerGroup->delete();
 
-        return response()->json(['success' => 'Customer Group deleted successfully.']);
+        return response()->json(['success' => __('customer.group_deleted')]);
     }
 }

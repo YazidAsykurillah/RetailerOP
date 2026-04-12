@@ -28,7 +28,7 @@ class PermissionController extends Controller
         Permission::create(['name' => $name]);
 
         return redirect()->route('permissions.index')
-                        ->with('success','Permission created successfully');
+                        ->with('success', __('user.permission_created'));
     }
 
     public function show(string $id)
@@ -54,12 +54,12 @@ class PermissionController extends Controller
         $permission->save();
 
         return redirect()->route('permissions.index')
-                        ->with('success','Permission updated successfully');
+                        ->with('success', __('user.permission_updated'));
     }
 
     public function destroy(string $id)
     {
         Permission::find($id)->delete();
-        return response()->json(['success'=>'Permission deleted successfully.']);
+        return response()->json(['success' => __('user.permission_deleted')]);
     }
 }

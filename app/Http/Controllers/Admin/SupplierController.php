@@ -45,7 +45,7 @@ class SupplierController extends Controller
         Supplier::create($data);
 
         return redirect()->route('admin.suppliers.index')
-            ->with('success', 'Supplier created successfully.');
+            ->with('success', __('supplier.created'));
     }
 
     /**
@@ -65,7 +65,7 @@ class SupplierController extends Controller
         $supplier->update($data);
 
         return redirect()->route('admin.suppliers.index')
-            ->with('success', 'Supplier updated successfully.');
+            ->with('success', __('supplier.updated'));
     }
 
     /**
@@ -75,12 +75,12 @@ class SupplierController extends Controller
     {
         // Check if supplier has stock movements
         if ($supplier->stockMovements()->count() > 0) {
-            return response()->json(['error' => 'Cannot delete supplier with stock movement history.'], 422);
+            return response()->json(['error' => __('supplier.cannot_delete')], 422);
         }
 
         $supplier->delete();
 
-        return response()->json(['success' => 'Supplier deleted successfully.']);
+        return response()->json(['success' => __('supplier.deleted')]);
     }
     public function search(Request $request)
     {

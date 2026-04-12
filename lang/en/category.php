@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'singular' => 'Category',
+    'plural' => 'Categories',
+    'management' => 'Category Management',
+    'list' => 'Category List',
+    'create' => 'Create New Category',
+    'create_title' => 'Create Category',
+    'edit' => 'Edit Category',
+    'edit_title' => 'Edit Category',
+    'information' => 'Category Information',
+    'name' => 'Category Name',
+    'parent' => 'Parent Category',
+    'no_parent' => '-- No Parent (Root Category) --',
+    'image' => 'Category Image',
+    'enter_name' => 'Enter category name',
+    'enter_description' => 'Enter description',
+    'save' => 'Save Category',
+    'update' => 'Update Category',
+    'created' => 'Category created successfully.',
+    'updated' => 'Category updated successfully.',
+    'deleted' => 'Category deleted successfully.',
+    'cannot_delete' => 'Cannot delete category with products.',
+    'confirm_delete' => 'Are you sure you want to delete this category?',
+    'delete_error' => 'Error deleting category.',
+];

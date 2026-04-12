@@ -52,13 +52,13 @@ class RolesDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex')
-                  ->title('No')
+                  ->title(__('general.no'))
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
-            Column::make('name'),
-            Column::computed('permissions')->title('Permissions'),
+            Column::make('name')->title(__('user.role', [], 'Role')),
+            Column::computed('permissions')->title(__('user.permissions', [], 'Permissions')),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

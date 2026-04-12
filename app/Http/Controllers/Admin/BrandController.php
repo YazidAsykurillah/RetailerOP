@@ -43,7 +43,7 @@ class BrandController extends Controller
         Brand::create($data);
 
         return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand created successfully.');
+            ->with('success', __('brand.created'));
     }
 
     /**
@@ -73,7 +73,7 @@ class BrandController extends Controller
         $brand->update($data);
 
         return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand updated successfully.');
+            ->with('success', __('brand.updated'));
     }
 
     /**
@@ -83,7 +83,7 @@ class BrandController extends Controller
     {
         // Check if brand has products
         if ($brand->products()->count() > 0) {
-            return response()->json(['error' => 'Cannot delete brand with products.'], 422);
+            return response()->json(['error' => __('brand.cannot_delete')], 422);
         }
 
         // Delete logo if exists
@@ -93,6 +93,6 @@ class BrandController extends Controller
 
         $brand->delete();
 
-        return response()->json(['success' => 'Brand deleted successfully.']);
+        return response()->json(['success' => __('brand.deleted')]);
     }
 }

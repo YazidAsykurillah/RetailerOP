@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Product')
+@section('title', __('general.edit') . ' ' . __('product.singular'))
 
 @section('content_header')
-    <h1>Edit Product</h1>
+    <h1>{{ __('general.edit') }} {{ __('product.singular') }}</h1>
 @stop
 
 @section('content')
@@ -11,7 +11,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Product Information</h3>
+                <h3 class="card-title">{{ __('general.information') ?? 'Product Information' }}</h3>
             </div>
             <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -20,9 +20,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="sku">SKU <span class="text-danger">*</span></label>
+                                <label for="sku">{{ __('product.sku') ?? 'SKU' }} <span class="text-danger">*</span></label>
                                 <input type="text" name="sku" id="sku" class="form-control @error('sku') is-invalid @enderror" 
-                                       value="{{ old('sku', $product->sku) }}" placeholder="Enter SKU" required>
+                                       value="{{ old('sku', $product->sku) }}" placeholder="{{ __('product.enter_sku') ?? 'Enter SKU' }}" required>
                                 @error('sku')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -30,9 +30,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">Product Name <span class="text-danger">*</span></label>
+                                <label for="name">{{ __('product.name') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" 
-                                       value="{{ old('name', $product->name) }}" placeholder="Enter product name" required>
+                                       value="{{ old('name', $product->name) }}" placeholder="{{ __('product.name') }}" required>
                                 @error('name')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -43,9 +43,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="category_id">Category</label>
-                                <select name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror" style="width: 100%;">
-                                    <option value="">-- Select Category --</option>
+                                <label for="category_id">{{ __('category.singular') }}</label>
+                                <select name="category_id" id="category_id" class="form-control select2 @error('category_id') is-invalid @enderror" style="width: 100%;" data-placeholder="{{ __('general.select') }} {{ __('category.singular') }}">
+                                    <option value=""></option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
@@ -59,9 +59,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="brand_id">Brand</label>
-                                <select name="brand_id" id="brand_id" class="form-control select2 @error('brand_id') is-invalid @enderror" style="width: 100%;">
-                                    <option value="">-- Select Brand --</option>
+                                <label for="brand_id">{{ __('brand.singular') }}</label>
+                                <select name="brand_id" id="brand_id" class="form-control select2 @error('brand_id') is-invalid @enderror" style="width: 100%;" data-placeholder="{{ __('general.select') }} {{ __('brand.singular') }}">
+                                    <option value=""></option>
                                     @foreach($brands as $brand)
                                         <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
                                             {{ $brand->name }}
@@ -78,7 +78,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="base_price">Selling Price <span class="text-danger">*</span></label>
+                                <label for="base_price">{{ __('product.price') }} <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Rp</span>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="base_cost">Cost Price</label>
+                                <label for="base_cost">{{ __('product.cost') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Rp</span>
@@ -113,18 +113,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="short_description">Short Description</label>
+                        <label for="short_description">{{ __('product.description') }} {{ __('product.short') ?? '(Short)' }}</label>
                         <textarea name="short_description" id="short_description" class="form-control @error('short_description') is-invalid @enderror" 
-                                  rows="2" placeholder="Brief product description (max 500 characters)">{{ old('short_description', $product->short_description) }}</textarea>
+                                  rows="2" placeholder="{{ __('product.description') }}">{{ old('short_description', $product->short_description) }}</textarea>
                         @error('short_description')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Full Description</label>
+                        <label for="description">{{ __('product.description') }} {{ __('product.full') ?? '(Full)' }}</label>
                         <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" 
-                                  rows="4" placeholder="Detailed product description">{{ old('description', $product->description) }}</textarea>
+                                  rows="4">{{ old('description', $product->description) }}</textarea>
                         @error('description')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
@@ -133,7 +133,7 @@
                     <!-- Existing Images -->
                     @if($product->images->count() > 0)
                     <div class="form-group">
-                        <label>Current Images</label>
+                        <label>{{ __('product.images') ?? 'Current Images' }}</label>
                         <div class="row">
                             @foreach($product->images as $image)
                             <div class="col-md-3 col-sm-4 col-6 mb-3">
@@ -144,7 +144,7 @@
                                             <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" 
                                                    class="custom-control-input" id="delete_{{ $image->id }}">
                                             <label class="custom-control-label text-danger" for="delete_{{ $image->id }}">
-                                                <small>Delete</small>
+                                                <small>{{ __('general.delete') }}</small>
                                             </label>
                                         </div>
                                         <div class="custom-control custom-radio mt-1">
@@ -164,15 +164,15 @@
                     @endif
 
                     <div class="form-group">
-                        <label for="images">Add More Images</label>
+                        <label for="images">{{ __('general.add') ?? 'Add More Images' }}</label>
                         <div class="input-group">
                             <div class="custom-file">
                                 <input type="file" name="images[]" id="images" class="custom-file-input @error('images.*') is-invalid @enderror" 
                                        accept="image/*" multiple>
-                                <label class="custom-file-label" for="images">Choose files</label>
+                                <label class="custom-file-label" for="images">{{ __('general.select') ?? 'Choose files' }}</label>
                             </div>
                         </div>
-                        <small class="text-muted">You can select multiple images to add.</small>
+                        <small class="text-muted">{{ __('product.add_images_help') ?? 'You can select multiple images to add.' }}</small>
                         @error('images.*')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -184,17 +184,17 @@
                         <div class="custom-control custom-switch">
                             <input type="checkbox" name="is_active" id="is_active" class="custom-control-input" 
                                    value="1" {{ old('is_active', $product->is_active) ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="is_active">Active</label>
+                            <label class="custom-control-label" for="is_active">{{ __('general.active') }}</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Product
+                        <i class="fas fa-save"></i> {{ __('general.update') }}
                     </button>
                     <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> {{ __('general.back') }}
                     </a>
                 </div>
             </form>
@@ -248,7 +248,7 @@
             form.find('.invalid-feedback, .text-danger').not('.persistent-error').remove();
             
             // Show loading state
-            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Updating...');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> ' + ("{{ __('general.updating') ?? 'Updating...' }}"));
             
             // Set hidden fields with raw numeric values before submission
             $('#base_price_hidden').val(basePriceAN.getNumber());
@@ -297,9 +297,9 @@
                                 input.after('<span class="invalid-feedback d-block">' + messages[0] + '</span>');
                             }
                         });
-                        toastr.error('Please fix the validation errors.');
+                        toastr.error("{{ __('general.validation_error') ?? 'Please fix the validation errors.' }}");
                     } else {
-                        toastr.error('An error occurred. Please try again.');
+                        toastr.error("{{ __('general.error') ?? 'An error occurred. Please try again.' }}");
                     }
                 }
             });
@@ -309,7 +309,7 @@
         document.getElementById('images').addEventListener('change', function(e) {
             var fileCount = e.target.files.length;
             var label = e.target.nextElementSibling;
-            label.innerText = fileCount > 0 ? fileCount + ' file(s) selected' : 'Choose files';
+            label.innerText = fileCount > 0 ? fileCount + ' ' + ("{{ __('general.files_selected') ?? 'file(s) selected' }}") : ("{{ __('general.select') ?? 'Choose files' }}");
             
             // Preview images
             var preview = document.getElementById('image-preview');

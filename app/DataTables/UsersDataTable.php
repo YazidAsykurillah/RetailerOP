@@ -78,14 +78,14 @@ class UsersDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex')
-                  ->title('No')
+                  ->title(__('general.no'))
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
-            Column::make('name'),
-            Column::make('email'),
-            Column::computed('roles'),
+            Column::make('name')->title(__('user.name')),
+            Column::make('email')->title(__('user.email')),
+            Column::computed('roles')->title(__('user.roles')),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

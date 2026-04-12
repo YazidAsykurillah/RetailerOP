@@ -1,0 +1,52 @@
+<?php
+
+return [
+    // User Management
+    'singular' => 'Pengguna',
+    'plural' => 'Pengguna',
+    'management' => 'Manajemen Pengguna',
+    'list' => 'Daftar Pengguna',
+    'create' => 'Buat Pengguna Baru',
+    'create_title' => 'Buat Pengguna',
+    'edit' => 'Ubah Pengguna',
+    'edit_title' => 'Ubah Pengguna',
+    'name' => 'Nama',
+    'email' => 'Email',
+    'password' => 'Kata Sandi',
+    'confirm_password' => 'Konfirmasi Kata Sandi',
+    'role' => 'Peran',
+    'roles' => 'Peran',
+    'save' => 'Simpan Pengguna',
+    'update' => 'Perbarui Pengguna',
+    'created' => 'Pengguna berhasil dibuat.',
+    'updated' => 'Pengguna berhasil diperbarui.',
+    'deleted' => 'Pengguna berhasil dihapus.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus pengguna ini?',
+
+    // Role Management
+    'role_singular' => 'Peran',
+    'role_plural' => 'Peran',
+    'role_management' => 'Manajemen Peran',
+    'role_list' => 'Daftar Peran',
+    'role_create' => 'Buat Peran Baru',
+    'role_edit' => 'Ubah Peran',
+    'role_name' => 'Nama Peran',
+    'role_permissions' => 'Izin Peran',
+    'role_created' => 'Peran berhasil dibuat.',
+    'role_updated' => 'Peran berhasil diperbarui.',
+    'role_deleted' => 'Peran berhasil dihapus.',
+    'role_confirm_delete' => 'Apakah Anda yakin ingin menghapus peran ini?',
+
+    // Permission Management
+    'permission_singular' => 'Izin',
+    'permission_plural' => 'Izin',
+    'permission_management' => 'Manajemen Izin',
+    'permission_list' => 'Daftar Izin',
+    'permission_create' => 'Buat Izin Baru',
+    'permission_edit' => 'Ubah Izin',
+    'permission_name' => 'Nama Izin',
+    'permission_created' => 'Izin berhasil dibuat.',
+    'permission_updated' => 'Izin berhasil diperbarui.',
+    'permission_deleted' => 'Izin berhasil dihapus.',
+    'permission_confirm_delete' => 'Apakah Anda yakin ingin menghapus izin ini?',
+];

@@ -102,7 +102,7 @@ class POSController extends Controller
         $sku = $request->get('sku');
 
         if (!$sku) {
-            return response()->json(['success' => false, 'message' => 'SKU is required'], 400);
+            return response()->json(['success' => false, 'message' => __('pos.sku_required')], 400);
         }
 
         $variant = ProductVariant::with(['product.primaryImage'])
@@ -114,11 +114,11 @@ class POSController extends Controller
             ->first();
 
         if (!$variant) {
-            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+            return response()->json(['success' => false, 'message' => __('pos.product_not_found')], 404);
         }
 
         if ($variant->stock <= 0) {
-            return response()->json(['success' => false, 'message' => 'Product is out of stock'], 400);
+            return response()->json(['success' => false, 'message' => __('pos.product_out_of_stock')], 400);
         }
 
         return response()->json([
@@ -143,7 +143,7 @@ class POSController extends Controller
         $variant = ProductVariant::with(['product.primaryImage', 'variantValues'])->find($id);
 
         if (!$variant) {
-            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+            return response()->json(['success' => false, 'message' => __('pos.product_not_found')], 404);
         }
 
         return response()->json([
@@ -230,7 +230,7 @@ class POSController extends Controller
         if ($paymentsTotal > $request->grand_total) {
             return response()->json([
                 'success' => false,
-                'message' => 'Total payments exceed grand total.',
+                'message' => __('pos.amount_insufficient'),
             ], 422);
         }
 
@@ -240,13 +240,13 @@ class POSController extends Controller
             if (!$variant) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Product variant not found.',
+                    'message' => __('pos.product_not_found'),
                 ], 422);
             }
             if ($variant->stock < $item['quantity']) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Insufficient stock for {$variant->full_name}. Available: {$variant->stock}",
+                    'message' => __('pos.insufficient_stock', ['product' => $variant->full_name, 'stock' => $variant->stock]),
                 ], 422);
             }
         }
@@ -255,7 +255,7 @@ class POSController extends Controller
         if ($request->payment_mode === 'full' && $request->amount_paid < $request->grand_total) {
             return response()->json([
                 'success' => false,
-                'message' => 'Amount paid is less than the total amount.',
+                'message' => __('pos.amount_insufficient'),
             ], 422);
         }
 
@@ -335,7 +335,7 @@ class POSController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Transaction completed successfully!',
+                'message' => __('pos.checkout_success'),
                 'transaction' => [
                     'id' => $transaction->id,
                     'invoice_no' => $transaction->invoice_no,
@@ -349,7 +349,7 @@ class POSController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process transaction: ' . $e->getMessage(),
+                'message' => __('pos.checkout_error') . ': ' . $e->getMessage(),
             ], 500);
         }
     }

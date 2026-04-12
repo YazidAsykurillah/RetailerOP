@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Variant Types')
+@section('title', __('variant.types'))
 
 @section('content_header')
-    <h1>Variant Types</h1>
+    <h1>{{ __('variant.types') }}</h1>
 @stop
 
 @section('content')
@@ -11,10 +11,10 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Manage Variant Types</h3>
+                <h3 class="card-title">{{ __('variant.manage_types') ?? 'Manage Variant Types' }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-success" href="{{ route('admin.variant-types.create') }}">
-                        <i class="fas fa-plus"></i> Add Variant Type
+                        <i class="fas fa-plus"></i> {{ __('variant.add_type') ?? 'Add Variant Type' }}
                     </a>
                 </div>
             </div>
@@ -42,7 +42,7 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this variant type?")) {
+                if(confirm(window.Lang.confirm_delete || "Are you sure you want to delete this variant type?")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/variant-types') }}/" + id,
@@ -54,7 +54,7 @@
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting variant type.');
+                                toastr.error(window.Lang.error || 'An error occurred.');
                             }
                         }
                     });

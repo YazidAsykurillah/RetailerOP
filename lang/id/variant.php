@@ -1,0 +1,53 @@
+<?php
+
+return [
+    // Variant Types
+    'type_singular' => 'Tipe Varian',
+    'type_plural' => 'Tipe Varian',
+    'type_management' => 'Manajemen Tipe Varian',
+    'type_list' => 'Daftar Tipe Varian',
+    'type_create' => 'Buat Tipe Varian',
+    'type_edit' => 'Ubah Tipe Varian',
+    'type_name' => 'Nama Tipe',
+    'type_enter_name' => 'Masukkan nama tipe varian',
+    'type_created' => 'Tipe Varian berhasil dibuat.',
+    'type_updated' => 'Tipe Varian berhasil diperbarui.',
+    'type_deleted' => 'Tipe Varian berhasil dihapus.',
+    'type_confirm_delete' => 'Apakah Anda yakin ingin menghapus tipe varian ini?',
+    'type_cannot_delete' => 'Tidak dapat menghapus tipe varian yang digunakan oleh produk.',
+    'type_delete_error' => 'Gagal menghapus tipe varian.',
+
+    // Variant Values
+    'value_singular' => 'Nilai Varian',
+    'value_plural' => 'Nilai Varian',
+    'value_list' => 'Nilai Varian',
+    'value_create' => 'Buat Nilai Varian',
+    'value_edit' => 'Ubah Nilai Varian',
+    'value_name' => 'Nama Nilai',
+    'value_enter_name' => 'Masukkan nama nilai varian',
+    'value_created' => 'Nilai Varian berhasil dibuat.',
+    'value_updated' => 'Nilai Varian berhasil diperbarui.',
+    'value_deleted' => 'Nilai Varian berhasil dihapus.',
+    'value_confirm_delete' => 'Apakah Anda yakin ingin menghapus nilai varian ini?',
+    'value_delete_error' => 'Gagal menghapus nilai varian.',
+
+    // Product Variants
+    'singular' => 'Varian',
+    'plural' => 'Varian',
+    'list' => 'Daftar Varian',
+    'create' => 'Buat Varian',
+    'edit' => 'Ubah Varian',
+    'name' => 'Nama Varian',
+    'sku' => 'SKU',
+    'price' => 'Harga',
+    'stock' => 'Stok',
+    'min_stock' => 'Stok Min',
+    'created' => 'Varian berhasil dibuat.',
+    'updated' => 'Varian berhasil diperbarui.',
+    'deleted' => 'Varian berhasil dihapus.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus varian ini?',
+    'delete_error' => 'Gagal menghapus varian.',
+    'import' => 'Impor Varian',
+    'download_template' => 'Unduh Template',
+    'print_barcode' => 'Cetak Barcode',
+];

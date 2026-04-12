@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'singular' => 'Pemasok',
+    'plural' => 'Pemasok',
+    'management' => 'Manajemen Pemasok',
+    'list' => 'Daftar Pemasok',
+    'create' => 'Buat Pemasok Baru',
+    'create_title' => 'Buat Pemasok',
+    'edit' => 'Ubah Pemasok',
+    'edit_title' => 'Ubah Pemasok',
+    'information' => 'Informasi Pemasok',
+    'name' => 'Nama Pemasok',
+    'contact_person' => 'Kontak Person',
+    'enter_name' => 'Masukkan nama pemasok',
+    'enter_description' => 'Masukkan deskripsi',
+    'save' => 'Simpan Pemasok',
+    'update' => 'Perbarui Pemasok',
+    'created' => 'Pemasok berhasil dibuat.',
+    'updated' => 'Pemasok berhasil diperbarui.',
+    'deleted' => 'Pemasok berhasil dihapus.',
+    'cannot_delete' => 'Tidak dapat menghapus pemasok yang memiliki pembelian.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus pemasok ini?',
+    'delete_error' => 'Gagal menghapus pemasok.',
+    'purchase_history' => 'Riwayat Pembelian',
+];

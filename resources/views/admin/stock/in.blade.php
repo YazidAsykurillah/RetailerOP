@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock In')
+@section('title', __('stock.stock_in') ?? 'Stock In')
 
 @section('content_header')
-    <h1>Stock In</h1>
+    <h1>{{ __('stock.stock_in') ?? 'Stock In' }}</h1>
 @stop
 
 @section('content')
@@ -12,14 +12,14 @@
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-arrow-down"></i> Add Stock
+                    <i class="fas fa-arrow-down"></i> {{ __('stock.add_stock') ?? 'Add Stock' }}
                 </h3>
             </div>
             <form id="stock-in-form">
                 @csrf
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="product_variant_id">Product / Variant <span class="text-danger">*</span></label>
+                        <label for="product_variant_id">{{ __('product.singular') ?? 'Product' }} / {{ __('variant.singular') ?? 'Variant' }} <span class="text-danger">*</span></label>
                         <select class="form-control select2" id="product_variant_id" name="product_variant_id" style="width: 100%;" required>
                             @if($selectedVariant)
                                 <option value="{{ $selectedVariant->id }}" selected>
@@ -33,50 +33,50 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Current Stock</label>
+                                <label>{{ __('stock.current_stock') ?? 'Current Stock' }}</label>
                                 <input type="text" class="form-control" id="current_stock" readonly value="{{ $selectedVariant ? $selectedVariant->stock : '-' }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="quantity">Quantity to Add <span class="text-danger">*</span></label>
+                                <label for="quantity">{{ __('stock.quantity_to_add') ?? 'Quantity to Add' }} <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>New Stock After</label>
+                        <label>{{ __('stock.new_stock_after') ?? 'New Stock After' }}</label>
                         <input type="text" class="form-control bg-success text-white font-weight-bold" id="new_stock" readonly value="-">
                     </div>
 
                     <div class="form-group">
-                        <label for="reference">Reference (Invoice/PO Number)</label>
+                        <label for="reference">{{ __('stock.reference') ?? 'Reference (Invoice/PO Number)' }}</label>
                         <input type="text" class="form-control" id="reference" name="reference" placeholder="e.g., PO-2024-001">
                     </div>
 
                     <div class="form-group">
-                        <label for="supplier_id">Supplier</label>
+                        <label for="supplier_id">{{ __('supplier.singular') ?? 'Supplier' }}</label>
                         <select class="form-control select2" id="supplier_id" name="supplier_id" style="width: 100%;">
-                            <option value="">Select Supplier (Optional)</option>
+                            <option value="">{{ __('supplier.select_optional') ?? 'Select Supplier (Optional)' }}</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                             @endforeach
                         </select>
-                        <small class="form-text text-muted">Select the supplier for this stock-in if applicable</small>
+                        <small class="form-text text-muted">{{ __('stock.supplier_help') ?? 'Select the supplier for this stock-in if applicable' }}</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="notes">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes..."></textarea>
+                        <label for="notes">{{ __('stock.notes') ?? 'Notes' }}</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('stock.additional_notes') ?? 'Additional notes...' }}"></textarea>
                     </div>
                 </div>
                 <div class="card-footer">
                     <a href="{{ route('admin.stock.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> {{ __('general.back') ?? 'Back' }}
                     </a>
                     <button type="submit" class="btn btn-success float-right" id="submit-btn">
-                        <i class="fas fa-check"></i> Confirm Stock In
+                        <i class="fas fa-check"></i> {{ __('stock.confirm_stock_in') ?? 'Confirm Stock In' }}
                     </button>
                 </div>
             </form>
@@ -91,7 +91,7 @@ $(function() {
     // Initialize Select2 with AJAX search
     $('#product_variant_id').select2({
         theme: 'bootstrap4',
-        placeholder: 'Search product or variant...',
+        placeholder: "{{ __('product.search') ?? 'Search product or variant...' }}",
         allowClear: true,
         ajax: {
             url: '{{ route("admin.stock.search-products") }}',
@@ -111,7 +111,7 @@ $(function() {
     // Initialize Select2 for supplier dropdown
     $('#supplier_id').select2({
         theme: 'bootstrap4',
-        placeholder: 'Select Supplier (Optional)',
+        placeholder: "{{ __('supplier.select_optional') ?? 'Select Supplier (Optional)' }}",
         allowClear: true
     });
 
@@ -160,7 +160,7 @@ $(function() {
                 }, 1000);
             },
             error: function(xhr) {
-                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> Confirm Stock In');
+                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> ' + ("{{ __('stock.confirm_stock_in') ?? 'Confirm Stock In' }}"));
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     toastr.error(xhr.responseJSON.message);
                 } else if (xhr.responseJSON && xhr.responseJSON.errors) {

@@ -34,7 +34,7 @@ class ProfileController extends Controller
         $user->email = $request->email;
         $user->save();
 
-        return redirect()->back()->with('success', 'Profile updated successfully.');
+        return redirect()->back()->with('success', __('profile.profile_updated'));
     }
 
     /**
@@ -58,12 +58,12 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+            return back()->withErrors(['current_password' => __('profile.password_incorrect')]);
         }
 
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()->back()->with('success', 'Password changed successfully.');
+        return redirect()->back()->with('success', __('profile.password_updated'));
     }
 }

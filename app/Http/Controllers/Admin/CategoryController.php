@@ -48,7 +48,7 @@ class CategoryController extends Controller
         Category::create($data);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category created successfully.');
+            ->with('success', __('category.created'));
     }
 
     /**
@@ -86,7 +86,7 @@ class CategoryController extends Controller
         $category->update($data);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category updated successfully.');
+            ->with('success', __('category.updated'));
     }
 
     /**
@@ -96,7 +96,7 @@ class CategoryController extends Controller
     {
         // Check if category has products
         if ($category->products()->count() > 0) {
-            return response()->json(['error' => 'Cannot delete category with products.'], 422);
+            return response()->json(['error' => __('category.cannot_delete')], 422);
         }
 
         // Delete image if exists
@@ -106,6 +106,6 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return response()->json(['success' => 'Category deleted successfully.']);
+        return response()->json(['success' => __('category.deleted')]);
     }
 }

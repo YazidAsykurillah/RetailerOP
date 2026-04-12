@@ -46,7 +46,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+                        ->with('success', __('user.created'));
     }
 
     /**
@@ -94,7 +94,7 @@ class UserController extends Controller
         $user->syncRoles($request->input('roles'));
 
         return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+                        ->with('success', __('user.updated'));
     }
 
     /**
@@ -103,16 +103,16 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         if (auth()->id() == $id) {
-            return response()->json(['error' => 'You cannot delete yourself.'], 403);
+            return response()->json(['error' => __('general.cannot_delete_has_relations', ['item' => __('user.singular'), 'relation' => 'yourself'])], 403);
         }
 
         $user = User::find($id);
 
         if ($user->transactions()->exists()) {
-             return response()->json(['error' => 'Cannot delete user. This user has related transactions.'], 403);
+             return response()->json(['error' => __('general.cannot_delete_has_relations', ['item' => __('user.singular'), 'relation' => __('transaction.plural')])], 403);
         }
 
         $user->delete();
-        return response()->json(['success'=>'User deleted successfully.']);
+        return response()->json(['success' => __('user.deleted')]);
     }
 }

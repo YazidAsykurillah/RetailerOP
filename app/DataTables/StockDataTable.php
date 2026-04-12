@@ -34,11 +34,11 @@ class StockDataTable extends DataTable
             })
             ->addColumn('status', function ($row) {
                 if ($row->stock <= 0) {
-                    return '<span class="badge badge-danger">Out of Stock</span>';
+                    return '<span class="badge badge-danger">' . __('stock.out_of_stock') . '</span>';
                 } elseif ($row->is_low_stock) {
-                    return '<span class="badge badge-warning">Low Stock</span>';
+                    return '<span class="badge badge-warning">' . __('stock.low_stock') . '</span>';
                 }
-                return '<span class="badge badge-success">In Stock</span>';
+                return '<span class="badge badge-success">' . __('stock.in_stock') . '</span>';
             })
             ->addColumn('action', function ($row) {
                 return '
@@ -160,12 +160,12 @@ class StockDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(50),
-            Column::make('product_name')->data('product_name')->name('products.name')->title('Product'),
-            Column::make('variant_name')->data('variant_name')->name('product_variants.name')->title('Variant'),
-            Column::make('sku')->name('product_variants.sku')->title('SKU')->footer('Grand Total'),
-            Column::computed('stock_display')->title('Stock')->addClass('text-center')->footer(''),
-            Column::computed('min_stock_display')->title('Min Stock')->addClass('text-center'),
-            Column::computed('status')->title('Status')->addClass('text-center'),
+            Column::make('product_name')->data('product_name')->name('products.name')->title(__('product.singular')),
+            Column::make('variant_name')->data('variant_name')->name('product_variants.name')->title(__('variant.singular')),
+            Column::make('sku')->name('product_variants.sku')->title(__('product.sku'))->footer(__('general.grand_total')),
+            Column::computed('stock_display')->title(__('product.stock'))->addClass('text-center')->footer(''),
+            Column::computed('min_stock_display')->title(__('stock.min_stock', [], 'Min Stock'))->addClass('text-center'),
+            Column::computed('status')->title(__('product.status'))->addClass('text-center'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

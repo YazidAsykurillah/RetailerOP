@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock Out')
+@section('title', __('stock.stock_out') ?? 'Stock Out')
 
 @section('content_header')
-    <h1>Stock Out</h1>
+    <h1>{{ __('stock.stock_out') ?? 'Stock Out' }}</h1>
 @stop
 
 @section('content')
@@ -12,14 +12,14 @@
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-arrow-up"></i> Remove Stock
+                    <i class="fas fa-arrow-up"></i> {{ __('stock.remove_stock') ?? 'Remove Stock' }}
                 </h3>
             </div>
             <form id="stock-out-form">
                 @csrf
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="product_variant_id">Product / Variant <span class="text-danger">*</span></label>
+                        <label for="product_variant_id">{{ __('product.singular') ?? 'Product' }} / {{ __('variant.singular') ?? 'Variant' }} <span class="text-danger">*</span></label>
                         <select class="form-control select2" id="product_variant_id" name="product_variant_id" style="width: 100%;" required>
                             @if($selectedVariant)
                                 <option value="{{ $selectedVariant->id }}" selected>
@@ -33,45 +33,45 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Current Stock</label>
+                                <label>{{ __('stock.current_stock') ?? 'Current Stock' }}</label>
                                 <input type="text" class="form-control font-weight-bold" id="current_stock" readonly value="{{ $selectedVariant ? $selectedVariant->stock : '-' }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="quantity">Quantity to Remove <span class="text-danger">*</span></label>
+                                <label for="quantity">{{ __('stock.quantity_to_remove') ?? 'Quantity to Remove' }} <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
-                                <small class="text-muted">Maximum: <span id="max-qty">-</span></small>
+                                <small class="text-muted">{{ __('stock.maximum') ?? 'Maximum' }}: <span id="max-qty">-</span></small>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Remaining Stock After</label>
+                        <label>{{ __('stock.remaining_stock_after') ?? 'Remaining Stock After' }}</label>
                         <input type="text" class="form-control font-weight-bold" id="remaining_stock" readonly value="-">
                     </div>
 
                     <div id="stock-warning" class="alert alert-danger" style="display: none;">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <span id="warning-message">Cannot remove more stock than available!</span>
+                        <span id="warning-message">{{ __('stock.error_max_stock') ?? 'Cannot remove more stock than available!' }}</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="reference">Reference (Invoice/Reason)</label>
+                        <label for="reference">{{ __('stock.reference') ?? 'Reference (Invoice/Reason)' }}</label>
                         <input type="text" class="form-control" id="reference" name="reference" placeholder="e.g., SO-2024-001 or Damaged">
                     </div>
 
                     <div class="form-group">
-                        <label for="notes">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Reason for stock removal..."></textarea>
+                        <label for="notes">{{ __('stock.notes') ?? 'Notes' }}</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('stock.reason_help') ?? 'Reason for stock removal...' }}"></textarea>
                     </div>
                 </div>
                 <div class="card-footer">
                     <a href="{{ route('admin.stock.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> {{ __('general.back') ?? 'Back' }}
                     </a>
                     <button type="submit" class="btn btn-warning float-right" id="submit-btn">
-                        <i class="fas fa-check"></i> Confirm Stock Out
+                        <i class="fas fa-check"></i> {{ __('stock.confirm_stock_out') ?? 'Confirm Stock Out' }}
                     </button>
                 </div>
             </form>
@@ -88,7 +88,7 @@ $(function() {
     // Initialize Select2 with AJAX search
     $('#product_variant_id').select2({
         theme: 'bootstrap4',
-        placeholder: 'Search product or variant...',
+        placeholder: "{{ __('product.search') ?? 'Search product or variant...' }}",
         allowClear: true,
         ajax: {
             url: '{{ route("admin.stock.search-products") }}',
@@ -173,7 +173,7 @@ $(function() {
                 }, 1000);
             },
             error: function(xhr) {
-                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> Confirm Stock Out');
+                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> ' + ("{{ __('stock.confirm_stock_out') ?? 'Confirm Stock Out' }}"));
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     toastr.error(xhr.responseJSON.message);
                 } else if (xhr.responseJSON && xhr.responseJSON.errors) {

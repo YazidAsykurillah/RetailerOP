@@ -1,0 +1,53 @@
+<?php
+
+return [
+    // Variant Types
+    'type_singular' => 'Variant Type',
+    'type_plural' => 'Variant Types',
+    'type_management' => 'Variant Type Management',
+    'type_list' => 'Variant Type List',
+    'type_create' => 'Create Variant Type',
+    'type_edit' => 'Edit Variant Type',
+    'type_name' => 'Type Name',
+    'type_enter_name' => 'Enter variant type name',
+    'type_created' => 'Variant Type created successfully.',
+    'type_updated' => 'Variant Type updated successfully.',
+    'type_deleted' => 'Variant Type deleted successfully.',
+    'type_confirm_delete' => 'Are you sure you want to delete this variant type?',
+    'type_cannot_delete' => 'Cannot delete variant type that is used by products.',
+    'type_delete_error' => 'Error deleting variant type.',
+
+    // Variant Values
+    'value_singular' => 'Variant Value',
+    'value_plural' => 'Variant Values',
+    'value_list' => 'Variant Values',
+    'value_create' => 'Create Variant Value',
+    'value_edit' => 'Edit Variant Value',
+    'value_name' => 'Value Name',
+    'value_enter_name' => 'Enter variant value name',
+    'value_created' => 'Variant Value created successfully.',
+    'value_updated' => 'Variant Value updated successfully.',
+    'value_deleted' => 'Variant Value deleted successfully.',
+    'value_confirm_delete' => 'Are you sure you want to delete this variant value?',
+    'value_delete_error' => 'Error deleting variant value.',
+
+    // Product Variants
+    'singular' => 'Variant',
+    'plural' => 'Variants',
+    'list' => 'Variant List',
+    'create' => 'Create Variant',
+    'edit' => 'Edit Variant',
+    'name' => 'Variant Name',
+    'sku' => 'SKU',
+    'price' => 'Price',
+    'stock' => 'Stock',
+    'min_stock' => 'Min Stock',
+    'created' => 'Variant created successfully.',
+    'updated' => 'Variant updated successfully.',
+    'deleted' => 'Variant deleted successfully.',
+    'confirm_delete' => 'Are you sure you want to delete this variant?',
+    'delete_error' => 'Error deleting variant.',
+    'import' => 'Import Variants',
+    'download_template' => 'Download Template',
+    'print_barcode' => 'Print Barcode',
+];

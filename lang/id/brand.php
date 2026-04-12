@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'singular' => 'Merek',
+    'plural' => 'Merek',
+    'management' => 'Manajemen Merek',
+    'list' => 'Daftar Merek',
+    'create' => 'Buat Merek Baru',
+    'create_title' => 'Buat Merek',
+    'edit' => 'Ubah Merek',
+    'edit_title' => 'Ubah Merek',
+    'information' => 'Informasi Merek',
+    'name' => 'Nama Merek',
+    'logo' => 'Logo Merek',
+    'enter_name' => 'Masukkan nama merek',
+    'enter_description' => 'Masukkan deskripsi',
+    'save' => 'Simpan Merek',
+    'update' => 'Perbarui Merek',
+    'created' => 'Merek berhasil dibuat.',
+    'updated' => 'Merek berhasil diperbarui.',
+    'deleted' => 'Merek berhasil dihapus.',
+    'cannot_delete' => 'Tidak dapat menghapus merek yang memiliki produk.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus merek ini?',
+    'delete_error' => 'Gagal menghapus merek.',
+];

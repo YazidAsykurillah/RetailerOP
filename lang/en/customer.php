@@ -1,0 +1,44 @@
+<?php
+
+return [
+    'singular' => 'Customer',
+    'plural' => 'Customers',
+    'management' => 'Customer Management',
+    'list' => 'Customer List',
+    'create' => 'Add New Customer',
+    'create_title' => 'Create Customer',
+    'edit' => 'Edit Customer',
+    'edit_title' => 'Edit Customer',
+    'show' => 'Customer Details',
+    'information' => 'Customer Information',
+    'name' => 'Customer Name',
+    'enter_name' => 'Enter customer name',
+    'save' => 'Save Customer',
+    'update' => 'Update Customer',
+    'created' => 'Customer created successfully.',
+    'updated' => 'Customer updated successfully.',
+    'deleted' => 'Customer deleted successfully.',
+    'confirm_delete' => 'Are you sure you want to delete this customer?',
+    'delete_error' => 'Error deleting customer.',
+
+    // Customer Groups
+    'group_singular' => 'Customer Group',
+    'group_plural' => 'Customer Groups',
+    'group_list' => 'Customer Group List',
+    'group_create' => 'Create Customer Group',
+    'group_edit' => 'Edit Customer Group',
+    'group_name' => 'Group Name',
+    'group' => 'Group',
+    'group_filter' => 'Customer Group',
+    'group_created' => 'Customer Group created successfully.',
+    'group_updated' => 'Customer Group updated successfully.',
+    'group_deleted' => 'Customer Group deleted successfully.',
+    'group_confirm_delete' => 'Are you sure you want to delete this customer group?',
+
+    // Transaction info
+    'total_transaction' => 'Total Transaction',
+    'outstanding' => 'Outstanding',
+    'walk_in' => 'Walk-in Customer',
+    'customer_name_walkin' => 'Customer Name (Walk-in)',
+    'phone_number' => 'Phone Number',
+];

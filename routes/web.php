@@ -6,6 +6,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Language Switching Route
+Route::get('/lang/{locale}', [App\Http\Controllers\LanguageController::class, 'switch'])->name('lang.switch');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Create Variant Type')
+@section('title', __('general.create') . ' ' . __('variant.type'))
 
 @section('content_header')
-    <h1>Create Variant Type</h1>
+    <h1>{{ __('general.create') }} {{ __('variant.type') }}</h1>
 @stop
 
 @section('content')
@@ -11,13 +11,13 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Variant Type Information</h3>
+                <h3 class="card-title">{{ __('general.information') }}</h3>
             </div>
             <form id="variant-type-form" action="{{ route('admin.variant-types.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="name">Type Name <span class="text-danger">*</span></label>
+                        <label for="name">{{ __('variant.type_name') ?? 'Type Name' }} <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="name" class="form-control" 
                                placeholder="e.g. Color, Size, Material" required>
                         <small class="text-muted">A unique name for this variant type</small>
@@ -33,10 +33,10 @@
 
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save
+                        <i class="fas fa-save"></i> {{ __('general.save') }}
                     </button>
                     <a href="{{ route('admin.variant-types.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> {{ __('general.back') }}
                     </a>
                 </div>
             </form>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product List</title>
+    <title>{{ __('product.list') }}</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -73,20 +73,20 @@
 </head>
 <body>
     <div class="header">
-        <h2>Product List</h2>
-        <p>Generated on: {{ date('F d, Y H:i:s') }}</p>
+        <h2>{{ __('product.list') }}</h2>
+        <p>{{ __('general.generated_on') ?? 'Generated on' }}: {{ date('F d, Y H:i:s') }}</p>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th width="30">#</th>
-                <th width="100">SKU</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Brand</th>
-                <th width="120" class="text-right">Price (IDR)</th>
-                <th width="50" class="text-right">Stock</th>
+                <th width="30">{{ __('general.no') }}</th>
+                <th width="100">{{ __('product.sku') }}</th>
+                <th>{{ __('product.name') }}</th>
+                <th>{{ __('category.singular') }}</th>
+                <th>{{ __('brand.singular') }}</th>
+                <th width="120" class="text-right">{{ __('product.price') }}</th>
+                <th width="50" class="text-right">{{ __('product.stock') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -104,7 +104,7 @@
                     <tr style="font-size: 11px;">
                         <td></td>
                         <td style="padding-left: 15px;">{{ $variant->sku ?: '-' }}</td>
-                        <td>{{ $variant->name ?: 'Standard' }}</td>
+                        <td>{{ $variant->name ?: (__('variant.standard') ?? 'Standard') }}</td>
                         <td></td>
                         <td></td>
                         <td class="text-right">{{ number_format($variant->price, 0, ',', '.') }}</td>
@@ -116,7 +116,7 @@
     </table>
 
     <div class="footer">
-        Page <script type="text/php">echo $PAGE_NUM;</script> of <script type="text/php">echo $PAGE_COUNT;</script>
+        {{ __('general.page') ?? 'Page' }} <script type="text/php">echo $PAGE_NUM;</script> {{ __('general.of') ?? 'of' }} <script type="text/php">echo $PAGE_COUNT;</script>
     </div>
 </body>
 </html>

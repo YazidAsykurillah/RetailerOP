@@ -75,27 +75,27 @@ class ProductsDataTable extends DataTable
                         $html = implode(' ', $badges);
         
                         if ($remainingCount > 0) {
-                            $html .= ' <span class="badge badge-secondary mr-1">+' . $remainingCount . ' more variants</span>';
+                            $html .= ' <span class="badge badge-secondary mr-1">+' . $remainingCount . ' ' . __('product.more_variants') . '</span>';
                         }
                     }
                 }
 
-                $html .= ' <br><a href="' . route('admin.products.variants.index', $row->id) . '" class="btn btn-xs btn-warning" title="Manage Variants"><i class="fas fa-cubes"></i> </a>';
+                $html .= ' <br><a href="' . route('admin.products.variants.index', $row->id) . '" class="btn btn-xs btn-warning" title="' . __('product.manage_variants') . '"><i class="fas fa-cubes"></i> </a>';
                 
                 return $html;
             })
             ->addColumn('status', function ($row) {
                 return $row->is_active
-                    ? '<span class="badge badge-success">Active</span>'
-                    : '<span class="badge badge-danger">Inactive</span>';
+                    ? '<span class="badge badge-success">' . __('general.active') . '</span>'
+                    : '<span class="badge badge-danger">' . __('general.inactive') . '</span>';
             })
 
             ->addColumn('action', function ($row) {
                 return '
-                    <a href="' . route('admin.products.edit', $row->id) . '" class="btn btn-xs btn-primary" title="Edit">
+                    <a href="' . route('admin.products.edit', $row->id) . '" class="btn btn-xs btn-primary" title="' . __('general.edit') . '">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <button class="btn btn-xs btn-danger delete" data-id="' . $row->id . '" title="Delete">
+                    <button class="btn btn-xs btn-danger delete" data-id="' . $row->id . '" title="' . __('general.delete') . '">
                         <i class="fas fa-trash"></i>
                     </button>
                 ';
@@ -154,14 +154,14 @@ class ProductsDataTable extends DataTable
                 ->addClass('text-center'),
             Column::computed('DT_RowIndex', '#')->width(50),
 
-            Column::make('sku')->title('SKU')->width(100),
-            Column::make('name')->title('Product Name'),
-            Column::computed('category_name')->title('Category'),
-            Column::computed('brand_name')->title('Brand'),
-            Column::computed('price_formatted')->title('Price')->width(180),
-            Column::computed('variants_list')->title('Variants')->width(200),
-            Column::computed('stock')->title('Stock')->width(60),
-            Column::computed('status')->title('Status')->width(70),
+            Column::make('sku')->title(__('product.sku'))->width(100),
+            Column::make('name')->title(__('product.name')),
+            Column::computed('category_name')->title(__('category.singular')),
+            Column::computed('brand_name')->title(__('brand.singular')),
+            Column::computed('price_formatted')->title(__('product.price'))->width(180),
+            Column::computed('variants_list')->title(__('product.variants'))->width(200),
+            Column::computed('stock')->title(__('product.stock'))->width(60),
+            Column::computed('status')->title(__('product.status'))->width(70),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

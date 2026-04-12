@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchases')
+@section('title', __('purchase.plural') ?? 'Purchases')
 
 @section('content_header')
-    <h1>Purchases</h1>
+    <h1>{{ __('purchase.plural') ?? 'Purchases' }}</h1>
 @stop
 
 @section('content')
@@ -11,7 +11,7 @@
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-filter"></i> Filters
+                <i class="fas fa-filter"></i> {{ __('general.filter') ?? 'Filters' }}
             </h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -24,38 +24,38 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Date From</label>
+                            <label>{{ __('general.date_from') ?? 'Date From' }}</label>
                             <input type="date" class="form-control" id="date_from" name="date_from">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Date To</label>
+                            <label>{{ __('general.date_to') ?? 'Date To' }}</label>
                             <input type="date" class="form-control" id="date_to" name="date_to">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>
-                                Supplier 
+                                {{ __('supplier.singular') ?? 'Supplier' }} 
                                 <a href="javascript:void(0)" id="clear-supplier" class="text-danger ml-2" style="display:none;" title="Clear Selection">
                                     <i class="fas fa-times"></i>
                                 </a>
                             </label>
                             <select class="form-control" id="supplier_id" name="supplier_id">
-                                <option value="">All Suppliers</option>
+                                <option value="">{{ __('supplier.all') ?? 'All Suppliers' }}</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Status</label>
+                            <label>{{ __('general.status') ?? 'Status' }}</label>
                             <select class="form-control" name="status">
-                                <option value="">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="partial">Partial</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="">{{ __('general.all_status') ?? 'All Status' }}</option>
+                                <option value="pending">{{ __('purchase.status_pending') ?? 'Pending' }}</option>
+                                <option value="partial">{{ __('purchase.status_partial') ?? 'Partial' }}</option>
+                                <option value="completed">{{ __('purchase.status_completed') ?? 'Completed' }}</option>
+                                <option value="cancelled">{{ __('purchase.status_cancelled') ?? 'Cancelled' }}</option>
                             </select>
                         </div>
                     </div>
@@ -66,10 +66,10 @@
                             <label>&nbsp;</label>
                             <div>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Filter
+                                    <i class="fas fa-search"></i> {{ __('general.filter') ?? 'Filter' }}
                                 </button>
                                 <button type="button" class="btn btn-secondary" id="reset-filter">
-                                    <i class="fas fa-times"></i> Reset
+                                    <i class="fas fa-times"></i> {{ __('general.reset') ?? 'Reset' }}
                                 </button>
                             </div>
                         </div>
@@ -81,10 +81,10 @@
 
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">List of Purchases</h3>
+            <h3 class="card-title">{{ __('purchase.list') ?? 'List of Purchases' }}</h3>
             <div class="card-tools">
                 <a href="{{ route('admin.purchases.create') }}" class="btn btn-success btn-sm">
-                    <i class="fas fa-plus"></i> Create Purchase
+                    <i class="fas fa-plus"></i> {{ __('purchase.create') ?? 'Create Purchase' }}
                 </a>
             </div>
         </div>
@@ -126,7 +126,7 @@
         // Initialize Select2
         $('#supplier_id').select2({
             theme: 'bootstrap4',
-            placeholder: 'All Suppliers',
+            placeholder: "{{ __('supplier.all') ?? 'All Suppliers' }}",
             allowClear: false,
             ajax: {
                 url: '{{ route("admin.suppliers.search") }}',

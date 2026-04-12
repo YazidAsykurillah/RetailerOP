@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'singular' => 'Kategori',
+    'plural' => 'Kategori',
+    'management' => 'Manajemen Kategori',
+    'list' => 'Daftar Kategori',
+    'create' => 'Buat Kategori Baru',
+    'create_title' => 'Buat Kategori',
+    'edit' => 'Ubah Kategori',
+    'edit_title' => 'Ubah Kategori',
+    'information' => 'Informasi Kategori',
+    'name' => 'Nama Kategori',
+    'parent' => 'Kategori Induk',
+    'no_parent' => '-- Tanpa Induk (Kategori Utama) --',
+    'image' => 'Gambar Kategori',
+    'enter_name' => 'Masukkan nama kategori',
+    'enter_description' => 'Masukkan deskripsi',
+    'save' => 'Simpan Kategori',
+    'update' => 'Perbarui Kategori',
+    'created' => 'Kategori berhasil dibuat.',
+    'updated' => 'Kategori berhasil diperbarui.',
+    'deleted' => 'Kategori berhasil dihapus.',
+    'cannot_delete' => 'Tidak dapat menghapus kategori yang memiliki produk.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus kategori ini?',
+    'delete_error' => 'Gagal menghapus kategori.',
+];

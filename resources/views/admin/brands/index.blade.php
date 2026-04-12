@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Brand Management')
+@section('title', __('brand.management'))
 
 @section('content_header')
-    <h1>Brand Management</h1>
+    <h1>{{ __('brand.management') }}</h1>
 @stop
 
 @section('content')
@@ -11,10 +11,10 @@
     <div class="col-lg-12 margin-tb">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Brand List</h3>
+                <h3 class="card-title">{{ __('brand.list') }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-success" href="{{ route('admin.brands.create') }}">
-                        <i class="fas fa-plus"></i> Create New Brand
+                        <i class="fas fa-plus"></i> {{ __('brand.create') }}
                     </a>
                 </div>
             </div>
@@ -49,19 +49,19 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this brand?")) {
+                if(confirm(window.Lang.confirm_delete || "Are you sure you want to delete this brand?")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/brands') }}/" + id,
                         success: function (data) {
                             table.draw();
-                            toastr.success('Brand deleted successfully!');
+                            toastr.success("{{ __('brand.deleted') ?? 'Brand deleted successfully!' }}");
                         },
                         error: function (xhr) {
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting brand.');
+                                toastr.error("{{ __('brand.delete_error') ?? 'Error deleting brand.' }}");
                             }
                         }
                     });

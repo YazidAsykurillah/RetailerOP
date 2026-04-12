@@ -17,7 +17,7 @@ $(function() {
             
             if (selectedPaymentMode === 'partial') {
                 $('input[name="payment_mode"][value="full"]').prop('checked', true).parent().click();
-                toastr.warning('Partial payment is only available for registered customers.');
+                toastr.warning("{{ __('pos.partial_payment_registered_only') ?? 'Partial payment is only available for registered customers.' }}");
             }
         } else {
             $partialInput.prop('disabled', false);
@@ -42,11 +42,11 @@ $(function() {
                 success: function(response) {
                     if (response.success) {
                         addProductToCart(response.variant);
-                        toastr.success('Added: ' + response.variant.full_name ?? response.variant.product_name);
+                        toastr.success("{{ __('pos.added') ?? 'Added:' }} " + (response.variant.full_name ?? response.variant.product_name));
                     }
                 },
                 error: function(xhr) {
-                    let message = 'Product not found';
+                    let message = "{{ __('pos.product_not_found') ?? 'Product not found' }}";
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         message = xhr.responseJSON.message;
                     }
@@ -87,7 +87,7 @@ $(function() {
                 qtyInput.val(newQty);
                 updateRowSubtotal(foundRow);
             } else {
-                toastr.warning('Maximum stock reached for ' + variant.product_name);
+                toastr.warning("{{ __('pos.max_stock_reached') ?? 'Maximum stock reached for' }} " + variant.product_name);
             }
         } else {
             // Add new row if current row is empty and it's the only row, use it.
@@ -160,7 +160,7 @@ $(function() {
     // Initialize Customer Select2
     $('#customer-select').select2({
         theme: 'bootstrap4',
-        placeholder: 'Search Customer Member',
+        placeholder: "{{ __('pos.search_customer') ?? 'Search Customer Member' }}",
         allowClear: true,
         ajax: {
             url: '{{ route("admin.customers.index") }}',
@@ -208,7 +208,7 @@ $(function() {
         // Apply customer group discount if available
         if (customer.customer_group && customer.customer_group.percentage_discount > 0) {
             currentCustomerDiscount = parseFloat(customer.customer_group.percentage_discount);
-            toastr.info(`Applied ${currentCustomerDiscount}% discount from ${customer.customer_group.name} membership.`);
+            toastr.info(`{{ __('pos.applied_discount') ?? 'Applied' }} ${currentCustomerDiscount}% {{ __('general.discount') ?? 'discount' }} {{ __('pos.from') ?? 'from' }} ${customer.customer_group.name} {{ __('pos.membership') ?? 'membership.' }}`);
         } else {
             currentCustomerDiscount = 0;
         }
@@ -239,7 +239,7 @@ $(function() {
         });
         updateSummary();
         updatePaymentModeAbility();
-        toastr.info('Customer removed. Discounts reset.');
+        toastr.info("{{ __('pos.customer_removed') ?? 'Customer removed. Discounts reset.' }}");
     });
 
     // Add first empty row on page load
@@ -272,7 +272,7 @@ $(function() {
         const $select = $row.find('.variant-select');
         $select.select2({
             theme: 'bootstrap4',
-            placeholder: 'Search product by name or SKU...',
+            placeholder: "{{ __('pos.search_product') ?? 'Search product by name or SKU...' }}",
             allowClear: true,
             ajax: {
                 url: '{{ route("admin.pos.search-products") }}',
@@ -339,7 +339,7 @@ $(function() {
         });
         
         if (isDuplicate) {
-            toastr.warning('This product variant is already added. Please adjust the quantity instead.');
+            toastr.warning("{{ __('pos.duplicate_product') ?? 'This product variant is already added. Please adjust the quantity instead.' }}");
             $(this).val(null).trigger('change');
             return;
         }
@@ -384,7 +384,7 @@ $(function() {
         if (qty > stock) {
             qty = stock;
             $(this).val(qty);
-            toastr.warning('Maximum stock available: ' + stock);
+            toastr.warning("{{ __('pos.max_stock_available') ?? 'Maximum stock available:' }} " + stock);
         }
         if (qty < 1) {
             qty = 1;
@@ -654,7 +654,7 @@ $(function() {
                 const discountAmount = lineTotal * (discountPercent / 100);
                 
                 if (qty <= 0) {
-                    toastr.error('Quantity must be at least 1');
+                    toastr.error("{{ __('pos.qty_min_1') ?? 'Quantity must be at least 1' }}");
                     valid = false;
                     return false;
                 }
@@ -672,7 +672,7 @@ $(function() {
         if (!valid) return;
 
         if (items.length === 0) {
-            toastr.error('Please add at least one product');
+            toastr.error("{{ __('pos.add_at_least_one') ?? 'Please add at least one product' }}");
             return;
         }
 
@@ -691,7 +691,7 @@ $(function() {
         const amountPaid = amountPaidAN.getNumber() || 0;
 
         if (selectedPaymentMode === 'full' && amountPaid < total) {
-            toastr.error('Amount paid is insufficient!');
+            toastr.error("{{ __('pos.insufficient_amount') ?? 'Amount paid is insufficient!' }}");
             return;
         }
 
@@ -708,11 +708,11 @@ $(function() {
         } else {
             const initialAmount = initialPaymentAmountAN.getNumber() || 0;
             if (initialAmount <= 0) {
-                toastr.error('Please enter an initial payment amount!');
+                toastr.error("{{ __('pos.enter_initial_amount') ?? 'Please enter an initial payment amount!' }}");
                 return;
             }
             if (initialAmount > total) {
-                toastr.error('Initial payment cannot exceed the total amount!');
+                toastr.error("{{ __('pos.initial_exceeds_total') ?? 'Initial payment cannot exceed the total amount!' }}");
                 return;
             }
 
@@ -726,7 +726,7 @@ $(function() {
         }
 
         const $btn = $(this);
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> ' + ("{{ __('general.processing') ?? 'Processing...' }}"));
 
         $.ajax({
             url: '{{ route("admin.pos.checkout") }}',
@@ -757,7 +757,7 @@ $(function() {
             },
             complete: function() {
                 // Keep disabled until successful reset or manual re-enable
-                 $btn.prop('disabled', false).html('<i class="fas fa-check-circle"></i> Complete');
+                 $btn.prop('disabled', false).html('<i class="fas fa-check-circle"></i> ' + ("{{ __('pos.complete') ?? 'Complete' }}"));
             }
         });
     });
@@ -766,8 +766,8 @@ $(function() {
     function showSuccessModal(transaction) {
         $('#success-content').html(`
             <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
-            <h3 class="mt-3">Transaction Successful!</h3>
-            <p class="text-muted">Invoice Number</p>
+            <h3 class="mt-3">{{ __('pos.transaction_successful') ?? 'Transaction Successful!' }}</h3>
+            <p class="text-muted">{{ __('pos.invoice_number') ?? 'Invoice Number' }}</p>
             <h4 class="text-primary">${transaction.invoice_no}</h4>
             <hr>
             <div class="row">

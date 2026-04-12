@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Create Purchase')
+@section('title', __('purchase.create') ?? 'Create Purchase')
 
 @section('content_header')
-    <h1>Create Purchase</h1>
+    <h1>{{ __('purchase.create') ?? 'Create Purchase' }}</h1>
 @stop
 
 @section('content')
@@ -14,36 +14,36 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="supplier_id">Supplier</label>
+                            <label for="supplier_id">{{ __('supplier.singular') ?? 'Supplier' }}</label>
                             <select name="supplier_id" id="supplier_id" class="form-control" required>
-                                <option value="">Select Supplier</option>
+                                <option value="">{{ __('supplier.select') ?? 'Select Supplier' }}</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="date">Date</label>
+                            <label for="date">{{ __('general.date') ?? 'Date' }}</label>
                             <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="reference_number">Reference Number</label>
+                            <label for="reference_number">{{ __('purchase.reference_number') ?? 'Reference Number' }}</label>
                             <input type="text" name="reference_number" class="form-control" value="PO-{{ date('YmdHis') }}" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Purchase Items</label>
+                    <label>{{ __('purchase.items') ?? 'Purchase Items' }}</label>
                     <table class="table table-bordered" id="items-table">
                         <thead>
                             <tr>
-                                <th width="40%">Product</th>
-                                <th width="20%">Quantity</th>
-                                <th width="20%">Unit Cost</th>
-                                <th width="15%">Subtotal</th>
-                                <th width="5%">Action</th>
+                                <th width="40%">{{ __('product.singular') ?? 'Product' }}</th>
+                                <th width="20%">{{ __('purchase.quantity') ?? 'Quantity' }}</th>
+                                <th width="20%">{{ __('purchase.unit_cost') ?? 'Unit Cost' }}</th>
+                                <th width="15%">{{ __('purchase.subtotal') ?? 'Subtotal' }}</th>
+                                <th width="5%">{{ __('general.action') ?? 'Action' }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,22 +51,22 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3" class="text-right font-weight-bold">Total Amount:</td>
+                                <td colspan="3" class="text-right font-weight-bold">{{ __('purchase.total_amount') ?? 'Total Amount' }}:</td>
                                 <td colspan="2" class="font-weight-bold" id="total_amount">0.00</td>
                             </tr>
                         </tfoot>
                     </table>
-                    <button type="button" class="btn btn-info btn-sm" id="add-item"><i class="fas fa-plus"></i> Add Item</button>
+                    <button type="button" class="btn btn-info btn-sm" id="add-item"><i class="fas fa-plus"></i> {{ __('purchase.add_item') ?? 'Add Item' }}</button>
                 </div>
 
                 <div class="form-group">
-                    <label for="notes">Notes</label>
+                    <label for="notes">{{ __('purchase.notes') ?? 'Notes' }}</label>
                     <textarea name="notes" class="form-control" rows="3"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Create Purchase</button>
-                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ __('general.save') ?? 'Create Purchase' }}</button>
+                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">{{ __('general.cancel') ?? 'Cancel' }}</a>
                 </div>
             </form>
         </div>
@@ -82,7 +82,7 @@
             // Initialize Select2 for Supplier
             $('#supplier_id').select2({
                 theme: 'bootstrap4',
-                placeholder: 'Select Supplier',
+                placeholder: "{{ __('supplier.select') ?? 'Select Supplier' }}",
                 allowClear: true,
                 ajax: {
                     url: '{{ route("admin.suppliers.search") }}',
@@ -170,7 +170,7 @@
                         },
                         cache: true
                     },
-                    placeholder: 'Search for a product...',
+                    placeholder: "{{ __('product.search') ?? 'Search for a product...' }}",
                     minimumInputLength: 1
                 });
 

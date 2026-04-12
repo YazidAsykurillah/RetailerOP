@@ -1,0 +1,44 @@
+<?php
+
+return [
+    'singular' => 'Pelanggan',
+    'plural' => 'Pelanggan',
+    'management' => 'Manajemen Pelanggan',
+    'list' => 'Daftar Pelanggan',
+    'create' => 'Tambah Pelanggan Baru',
+    'create_title' => 'Buat Pelanggan',
+    'edit' => 'Ubah Pelanggan',
+    'edit_title' => 'Ubah Pelanggan',
+    'show' => 'Detail Pelanggan',
+    'information' => 'Informasi Pelanggan',
+    'name' => 'Nama Pelanggan',
+    'enter_name' => 'Masukkan nama pelanggan',
+    'save' => 'Simpan Pelanggan',
+    'update' => 'Perbarui Pelanggan',
+    'created' => 'Pelanggan berhasil dibuat.',
+    'updated' => 'Pelanggan berhasil diperbarui.',
+    'deleted' => 'Pelanggan berhasil dihapus.',
+    'confirm_delete' => 'Apakah Anda yakin ingin menghapus pelanggan ini?',
+    'delete_error' => 'Gagal menghapus pelanggan.',
+
+    // Customer Groups
+    'group_singular' => 'Grup Pelanggan',
+    'group_plural' => 'Grup Pelanggan',
+    'group_list' => 'Daftar Grup Pelanggan',
+    'group_create' => 'Buat Grup Pelanggan',
+    'group_edit' => 'Ubah Grup Pelanggan',
+    'group_name' => 'Nama Grup',
+    'group' => 'Grup',
+    'group_filter' => 'Grup Pelanggan',
+    'group_created' => 'Grup Pelanggan berhasil dibuat.',
+    'group_updated' => 'Grup Pelanggan berhasil diperbarui.',
+    'group_deleted' => 'Grup Pelanggan berhasil dihapus.',
+    'group_confirm_delete' => 'Apakah Anda yakin ingin menghapus grup pelanggan ini?',
+
+    // Transaction info
+    'total_transaction' => 'Total Transaksi',
+    'outstanding' => 'Sisa Tagihan',
+    'walk_in' => 'Pelanggan Langsung',
+    'customer_name_walkin' => 'Nama Pelanggan (Langsung)',
+    'phone_number' => 'Nomor Telepon',
+];

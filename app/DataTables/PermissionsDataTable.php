@@ -49,12 +49,12 @@ class PermissionsDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex')
-                  ->title('No')
+                  ->title(__('general.no'))
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
-            Column::make('name'),
+            Column::make('name')->title(__('user.permission', [], 'Permission')),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Variant - ' . $product->name)
+@section('title', __('general.edit') . ' ' . __('variant.singular') . ' - ' . $product->name)
 
 @section('content_header')
-    <h1>Edit Variant</h1>
+    <h1>{{ __('general.edit') }} {{ __('variant.singular') }}</h1>
 @stop
 
 @section('content')
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col">
                         <h6 class="mb-0">{{ $product->name }}</h6>
-                        <small class="text-muted">SKU: {{ $product->sku }}</small>
+                        <small class="text-muted">{{ __('product.sku') }}: {{ $product->sku }}</small>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         <!-- Variant Form Card -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Edit Variant Information</h3>
+                <h3 class="card-title">{{ __('general.information') }}</h3>
             </div>
             <form id="variant-form" action="{{ route('admin.products.variants.update', [$product->id, $variant->id]) }}" method="POST">
                 @csrf
@@ -42,9 +42,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="sku">SKU <span class="text-danger">*</span></label>
+                                <label for="sku">{{ __('product.sku') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="sku" id="sku" class="form-control @error('sku') is-invalid @enderror" 
-                                       value="{{ old('sku', $variant->sku) }}" placeholder="Enter variant SKU" required>
+                                       value="{{ old('sku', $variant->sku) }}" placeholder="{{ __('product.sku') }}" required>
                                 @error('sku')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -52,10 +52,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">Variant Name</label>
+                                <label for="name">{{ __('variant.name') ?? 'Variant Name' }}</label>
                                 <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" 
                                        value="{{ old('name', $variant->name) }}" placeholder="e.g. Red - Large">
-                                <small class="text-muted">Leave empty to auto-generate from attributes</small>
+                                <small class="text-muted">{{ __('variant.auto_generate') ?? 'Leave empty to auto-generate from attributes' }}</small>
                                 @error('name')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -66,7 +66,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="price">Selling Price <span class="text-danger">*</span></label>
+                                <label for="price">{{ __('product.price') }} <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Rp</span>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="cost">Cost Price</label>
+                                <label for="cost">{{ __('product.cost') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Rp</span>
@@ -103,7 +103,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="stock">Current Stock <span class="text-danger">*</span></label>
+                                <label for="stock">{{ __('product.stock') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="stock_display" id="stock" 
                                        class="form-control @error('stock') is-invalid @enderror" 
                                        value="{{ old('stock', $variant->stock) }}" required>
@@ -111,12 +111,12 @@
                                 @error('stock')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
-                                <small class="text-muted">Directly editing stock here. For proper tracking, use Stock Management.</small>
+                                <small class="text-muted">{{ __('stock.direct_edit_warning') ?? 'Directly editing stock here. For proper tracking, use Stock Management.' }}</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="min_stock">Minimum Stock Alert</label>
+                                <label for="min_stock">{{ __('stock.min_stock') }}</label>
                                 <input type="text" name="min_stock_display" id="min_stock" 
                                        class="form-control @error('min_stock') is-invalid @enderror" 
                                        value="{{ old('min_stock', $variant->min_stock) }}">
@@ -131,7 +131,7 @@
                     <!-- Variant Attributes -->
                     @if($variantTypes->count() > 0)
                     <hr>
-                    <h5>Variant Attributes</h5>
+                    <h5>{{ __('variant.attributes') ?? 'Variant Attributes' }}</h5>
                     <div id="variant-attributes-error"></div>
                     <div class="row" id="variant-attributes-row">
                         @foreach($variantTypes as $type)
@@ -149,7 +149,7 @@
                                        name="variant_values[]" 
                                        id="variant_attr_{{ $type->id }}"
                                        class="form-control" 
-                                       placeholder="Enter {{ strtolower($type->name) }} value"
+                                       placeholder="{{ __('general.enter') ?? 'Enter' }} {{ strtolower($type->name) }} {{ __('variant.value') ?? 'value' }}"
                                        value="{{ old('variant_values.'.$loop->index, $currentValue ? $currentValue->value : '') }}"
                                        list="variant_suggestions_{{ $type->id }}">
                                 <datalist id="variant_suggestions_{{ $type->id }}">
@@ -157,7 +157,7 @@
                                         <option value="{{ $value->value }}">
                                     @endforeach
                                 </datalist>
-                                <small class="text-muted">Type a value or select from suggestions</small>
+                                <small class="text-muted">{{ __('variant.type_value') ?? 'Type a value or select from suggestions' }}</small>
                             </div>
                         </div>
                         @endforeach
@@ -168,17 +168,17 @@
                         <div class="custom-control custom-switch">
                             <input type="checkbox" name="is_active" id="is_active" class="custom-control-input" 
                                    value="1" {{ old('is_active', $variant->is_active) ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="is_active">Active</label>
+                            <label class="custom-control-label" for="is_active">{{ __('general.active') }}</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Variant
+                        <i class="fas fa-save"></i> {{ __('general.update') }}
                     </button>
                     <a href="{{ route('admin.products.variants.index', $product->id) }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> {{ __('general.back') }}
                     </a>
                 </div>
             </form>
@@ -234,7 +234,7 @@
             $('#variant-attributes-error').empty();
             
             // Show loading state
-            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Updating...');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> ' + ("{{ __('general.updating') ?? 'Updating...' }}"));
             
             // Set hidden fields with raw numeric values before submission
             $('#price_hidden').val(priceAN.getNumber());
@@ -303,9 +303,9 @@
                                 }
                             }
                         });
-                        toastr.error('Please fix the validation errors.');
+                        toastr.error("{{ __('general.validation_error') ?? 'Please fix the validation errors.' }}");
                     } else {
-                        toastr.error('An error occurred. Please try again.');
+                        toastr.error("{{ __('general.error') ?? 'An error occurred. Please try again.' }}");
                     }
                 }
             });

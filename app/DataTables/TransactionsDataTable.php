@@ -22,7 +22,7 @@ class TransactionsDataTable extends DataTable
                 return $row->created_at->format('d M Y H:i');
             })
             ->addColumn('customer', function ($row) {
-                return $row->customer_name ?: '<span class="text-muted">Walk-in Customer</span>';
+                return $row->customer_name ?: '<span class="text-muted">' . __('pos.walk_in_customer') . '</span>';
             })
             ->addColumn('grand_total_formatted', function ($row) {
                 return '<span class="font-weight-bold">' . number_format($row->grand_total, 0, ',', '.') . '</span>';
@@ -46,7 +46,7 @@ class TransactionsDataTable extends DataTable
             })
             ->addColumn('payment_mode_badge', function ($row) {
                 $color = $row->payment_mode === 'full' ? 'info' : 'warning';
-                return '<span class="badge badge-pill badge-' . $color . '">' . ucfirst($row->payment_mode) . '</span>';
+                return '<span class="badge badge-pill badge-' . $color . '">' . ucfirst(__("transaction.payment_mode_{$row->payment_mode}")) . '</span>';
             })
             ->addColumn('cashier', function ($row) {
                 return $row->user->name ?? '-';
@@ -161,16 +161,16 @@ class TransactionsDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(50)->footer(''),
-            Column::make('invoice_no')->title('Invoice')->footer(''),
-            Column::computed('date')->title('Date')->footer(''),
-            Column::computed('customer')->title('Customer')->footer(''),
-            Column::computed('payment_mode_badge')->title('Payment Mode')->addClass('text-center')->footer(''),
-            Column::computed('payment_status_badge')->title('Payment Status')->addClass('text-center')->footer(''),
-            Column::computed('grand_total_formatted')->title('Total')->addClass('text-right')->footer(''),
-            Column::make('amount_paid')->title('Paid')->data('amount_paid_formatted')->addClass('text-right')->footer(''),
-            Column::make('outstanding_balance')->title('Outstanding')->data('outstanding_payment_formatted')->addClass('text-right')->footer(''),
+            Column::make('invoice_no')->title(__('transaction.invoice_no'))->footer(''),
+            Column::computed('date')->title(__('transaction.date'))->footer(''),
+            Column::computed('customer')->title(__('customer.singular'))->footer(''),
+            Column::computed('payment_mode_badge')->title(__('transaction.payment_mode'))->addClass('text-center')->footer(''),
+            Column::computed('payment_status_badge')->title(__('transaction.payment_status'))->addClass('text-center')->footer(''),
+            Column::computed('grand_total_formatted')->title(__('transaction.total_amount'))->addClass('text-right')->footer(''),
+            Column::make('amount_paid')->title(__('transaction.paid'))->data('amount_paid_formatted')->addClass('text-right')->footer(''),
+            Column::make('outstanding_balance')->title(__('transaction.balance'))->data('outstanding_payment_formatted')->addClass('text-right')->footer(''),
             
-            Column::computed('cashier')->title('Cashier')->footer(''),
+            Column::computed('cashier')->title(__('user.singular'))->footer(''),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

@@ -70,12 +70,12 @@ class PurchaseController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Purchase created successfully.',
+                    'message' => __('purchase.created'),
                     'redirect' => route('admin.purchases.index')
                 ]);
             }
 
-            return redirect()->route('admin.purchases.index')->with('success', 'Purchase created successfully.');
+            return redirect()->route('admin.purchases.index')->with('success', __('purchase.created'));
         } catch (\Exception $e) {
             DB::rollBack();
             if ($request->wantsJson()) {
@@ -196,12 +196,12 @@ class PurchaseController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Purchase updated successfully.',
+                    'message' => __('purchase.updated'),
                     'redirect' => route('admin.purchases.show', $purchase)
                 ]);
             }
 
-            return redirect()->route('admin.purchases.show', $purchase)->with('success', 'Purchase updated successfully.');
+            return redirect()->route('admin.purchases.show', $purchase)->with('success', __('purchase.updated'));
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -232,7 +232,7 @@ class PurchaseController extends Controller
          }
 
          $purchase->delete();
-         return redirect()->route('admin.purchases.index')->with('success', 'Purchase deleted.');
+         return redirect()->route('admin.purchases.index')->with('success', __('purchase.deleted'));
     }
 
     public function receiveItems(Request $request, Purchase $purchase)
@@ -280,7 +280,7 @@ class PurchaseController extends Controller
             if ($updated) {
                 $purchase->updateStatus();
                 DB::commit();
-                return redirect()->route('admin.purchases.show', $purchase)->with('success', 'Items received and stock updated.');
+                return redirect()->route('admin.purchases.show', $purchase)->with('success', __('purchase.items_received'));
             }
 
             DB::rollBack();

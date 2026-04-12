@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Supplier Management')
+@section('title', __('supplier.management') ?? 'Supplier Management')
 
 @section('content_header')
-    <h1>Supplier Management</h1>
+    <h1>{{ __('supplier.management') ?? 'Supplier Management' }}</h1>
 @stop
 
 @section('content')
@@ -11,10 +11,10 @@
     <div class="col-lg-12 margin-tb">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Supplier List</h3>
+                <h3 class="card-title">{{ __('supplier.list') ?? 'Supplier List' }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-success" href="{{ route('admin.suppliers.create') }}">
-                        <i class="fas fa-plus"></i> Create New Supplier
+                        <i class="fas fa-plus"></i> {{ __('supplier.create') ?? 'Create New Supplier' }}
                     </a>
                 </div>
             </div>
@@ -49,19 +49,19 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this supplier?")) {
+                if(confirm(window.Lang.confirm_delete || "Are you sure you want to delete this supplier?")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/suppliers') }}/" + id,
                         success: function (data) {
                             table.draw();
-                            toastr.success('Supplier deleted successfully!');
+                            toastr.success("{{ __('supplier.deleted') ?? 'Supplier deleted successfully!' }}");
                         },
                         error: function (xhr) {
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting supplier.');
+                                toastr.error("{{ __('supplier.delete_error') ?? 'Error deleting supplier.' }}");
                             }
                         }
                     });

@@ -67,13 +67,13 @@ class ProductController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Product created successfully.',
+                'message' => __('product.created'),
                 'redirect' => route('admin.products.index')
             ]);
         }
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product created successfully.');
+            ->with('success', __('product.created'));
     }
 
     /**
@@ -139,13 +139,13 @@ class ProductController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Product updated successfully.',
+                'message' => __('product.updated'),
                 'redirect' => route('admin.products.index')
             ]);
         }
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('success', __('product.updated'));
     }
 
     /**
@@ -159,7 +159,7 @@ class ProductController extends Controller
 
         if ($hasHistory) {
             return response()->json([
-                'error' => 'Cannot delete product with transaction history (Sales or Purchases). Please deactivate the product instead.'
+                'error' => __('product.cannot_delete_has_history')
             ], 422);
         }
 
@@ -172,7 +172,7 @@ class ProductController extends Controller
         // Permanently delete the product (variants will be deleted by DB cascade)
         $product->forceDelete();
 
-        return response()->json(['success' => 'Product and its variants deleted successfully.']);
+        return response()->json(['success' => __('product.deleted')]);
     }
 
     /**
@@ -251,7 +251,7 @@ class ProductController extends Controller
             );
 
             return redirect()->route('admin.products.index')
-                ->with('success', 'Products imported successfully.');
+                ->with('success', __('product.imported'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $messages = [];

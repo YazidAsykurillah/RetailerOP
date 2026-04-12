@@ -60,9 +60,9 @@ class ProductVariantController extends Controller
         // Check for duplicate variant combination
         if (!empty($variantValueIds) && ProductVariant::combinationExists($product->id, $variantValueIds)) {
             return response()->json([
-                'message' => 'A variant with this attribute combination already exists.',
+                'message' => __('variant.combination_exists'),
                 'errors' => [
-                    'variant_values' => ['A variant with this exact attribute combination already exists for this product.']
+                    'variant_values' => [__('variant.combination_exists')]
                 ]
             ], 422);
         }
@@ -85,7 +85,7 @@ class ProductVariantController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Variant created successfully.',
+            'message' => __('variant.created'),
             'redirect' => route('admin.products.variants.index', $product->id)
         ]);
     }
@@ -140,9 +140,9 @@ class ProductVariantController extends Controller
         // Check for duplicate variant combination (excluding current variant)
         if (!empty($variantValueIds) && ProductVariant::combinationExists($product->id, $variantValueIds, $variant->id)) {
             return response()->json([
-                'message' => 'A variant with this attribute combination already exists.',
+                'message' => __('variant.combination_exists'),
                 'errors' => [
-                    'variant_values' => ['A variant with this exact attribute combination already exists for this product.']
+                    'variant_values' => [__('variant.combination_exists')]
                 ]
             ], 422);
         }
@@ -162,7 +162,7 @@ class ProductVariantController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Variant updated successfully.',
+            'message' => __('variant.updated'),
             'redirect' => route('admin.products.variants.index', $product->id)
         ]);
     }
@@ -179,7 +179,7 @@ class ProductVariantController extends Controller
 
         $variant->delete();
 
-        return response()->json(['success' => 'Variant deleted successfully.']);
+        return response()->json(['success' => __('variant.deleted')]);
     }
 
     /**
@@ -226,7 +226,7 @@ class ProductVariantController extends Controller
             );
 
             return redirect()->route('admin.products.variants.index', $product->id)
-                ->with('success', 'Variants imported successfully.');
+                ->with('success', __('variant.imported'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $messages = [];

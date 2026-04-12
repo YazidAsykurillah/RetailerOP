@@ -78,7 +78,7 @@
 <body onload="window.print()">
 
     <div class="no-print" style="margin-bottom: 20px;">
-        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Print Label</button>
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">{{ __('general.print') ?? 'Print Label' }}</button>
     </div>
 
     @for($i = 0; $i < $qty; $i++)

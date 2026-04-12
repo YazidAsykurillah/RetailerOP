@@ -39,9 +39,9 @@ class StockMovementsDataTable extends DataTable
             })
             ->addColumn('type_badge', function ($row) {
                 $badges = [
-                    'in' => '<span class="badge badge-success"><i class="fas fa-arrow-down"></i> Stock In</span>',
-                    'out' => '<span class="badge badge-warning"><i class="fas fa-arrow-up"></i> Stock Out</span>',
-                    'adjustment' => '<span class="badge badge-info"><i class="fas fa-sync"></i> Adjustment</span>',
+                    'in' => '<span class="badge badge-success"><i class="fas fa-arrow-down"></i> ' . __('stock.type_in', [], 'Stock In') . '</span>',
+                    'out' => '<span class="badge badge-warning"><i class="fas fa-arrow-up"></i> ' . __('stock.type_out', [], 'Stock Out') . '</span>',
+                    'adjustment' => '<span class="badge badge-info"><i class="fas fa-sync"></i> ' . __('stock.type_adjustment', [], 'Adjustment') . '</span>',
                 ];
                 return $badges[$row->type] ?? $row->type;
             })
@@ -101,15 +101,15 @@ class StockMovementsDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(50),
-            Column::computed('date')->title('Date'),
-            Column::computed('product_variant')->title('Product / Variant'),
-            Column::computed('type_badge')->title('Type')->addClass('text-center'),
-            Column::computed('quantity_display')->title('Qty')->addClass('text-center'),
-            Column::make('stock_before')->title('Before')->addClass('text-center'),
-            Column::make('stock_after')->title('After')->addClass('text-center'),
-            Column::make('reference')->title('Reference'),
-            Column::computed('user_name')->title('By'),
-            Column::make('notes')->title('Notes'),
+            Column::computed('date')->title(__('stock.date', [], 'Date')),
+            Column::computed('product_variant')->title(__('stock.product_variant', [], 'Product / Variant')),
+            Column::computed('type_badge')->title(__('stock.type', [], 'Type'))->addClass('text-center'),
+            Column::computed('quantity_display')->title(__('stock.qty', [], 'Qty'))->addClass('text-center'),
+            Column::make('stock_before')->title(__('stock.before', [], 'Before'))->addClass('text-center'),
+            Column::make('stock_after')->title(__('stock.after', [], 'After'))->addClass('text-center'),
+            Column::make('reference')->title(__('stock.reference', [], 'Reference')),
+            Column::computed('user_name')->title(__('stock.by', [], 'By')),
+            Column::make('notes')->title(__('stock.notes', [], 'Notes')),
         ];
     }
 

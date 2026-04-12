@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchase Details')
+@section('title', __('purchase.details') ?? 'Purchase Details')
 
 @section('content_header')
     <div class="d-flex justify-content-between">
-        <h1>Purchase Details: {{ $purchase->reference_number }}</h1>
-        <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">Back to List</a>
+        <h1>{{ __('purchase.details') ?? 'Purchase Details' }}: {{ $purchase->reference_number }}</h1>
+        <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">{{ __('general.back') ?? 'Back to List' }}</a>
     </div>
 @stop
 
@@ -15,44 +15,44 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Information</h3>
+                    <h3 class="card-title">{{ __('general.information') ?? 'Information' }}</h3>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm">
                         <tr>
-                            <th>Status</th>
+                            <th>{{ __('general.status') ?? 'Status' }}</th>
                             <td>
                                 @if($purchase->status == 'pending')
-                                    <span class="badge badge-warning">Pending</span>
+                                    <span class="badge badge-warning">{{ __('purchase.status_pending') ?? 'Pending' }}</span>
                                 @elseif($purchase->status == 'partial')
-                                    <span class="badge badge-info">Partial</span>
+                                    <span class="badge badge-info">{{ __('purchase.status_partial') ?? 'Partial' }}</span>
                                 @elseif($purchase->status == 'completed')
-                                    <span class="badge badge-success">Completed</span>
+                                    <span class="badge badge-success">{{ __('purchase.status_completed') ?? 'Completed' }}</span>
                                 @elseif($purchase->status == 'cancelled')
-                                    <span class="badge badge-danger">Cancelled</span>
+                                    <span class="badge badge-danger">{{ __('purchase.status_cancelled') ?? 'Cancelled' }}</span>
                                 @endif
                             </td>
                         </tr>
                         <tr>
-                            <th>Supplier</th>
+                            <th>{{ __('supplier.singular') ?? 'Supplier' }}</th>
                             <td>{{ $purchase->supplier->name ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Date</th>
+                            <th>{{ __('general.date') ?? 'Date' }}</th>
                             <td>{{ $purchase->date->format('d M Y') }}</td>
                         </tr>
                         <tr>
-                            <th>Created By</th>
+                            <th>{{ __('general.created_by') ?? 'Created By' }}</th>
                             <td>{{ $purchase->user->name ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Total Amount</th>
+                            <th>{{ __('purchase.total_amount') ?? 'Total Amount' }}</th>
                             <td class="font-weight-bold ml-2">{{ number_format($purchase->total_amount, 2) }}</td>
                         </tr>
                     </table>
                     @if($purchase->notes)
                         <div class="mt-3">
-                            <strong>Notes:</strong>
+                            <strong>{{ __('purchase.notes') ?? 'Notes' }}:</strong>
                             <p class="text-muted">{{ $purchase->notes }}</p>
                         </div>
                     @endif
@@ -64,7 +64,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Items</h3>
+                    <h3 class="card-title">{{ __('purchase.items') ?? 'Items' }}</h3>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('admin.purchases.receive', $purchase->id) }}" method="POST">
@@ -72,14 +72,14 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th class="text-center">Ord</th>
-                                    <th class="text-center">Rec</th>
-                                    <th class="text-center">Rem</th>
-                                    <th class="text-right">Cost</th>
-                                    <th class="text-right">Subtotal</th>
+                                    <th>{{ __('product.singular') ?? 'Product' }}</th>
+                                    <th class="text-center">{{ __('purchase.ordered') ?? 'Ord' }}</th>
+                                    <th class="text-center">{{ __('purchase.received') ?? 'Rec' }}</th>
+                                    <th class="text-center">{{ __('purchase.remaining') ?? 'Rem' }}</th>
+                                    <th class="text-right">{{ __('product.cost') ?? 'Cost' }}</th>
+                                    <th class="text-right">{{ __('purchase.subtotal') ?? 'Subtotal' }}</th>
                                     @if($purchase->status !== 'completed' && $purchase->status !== 'cancelled')
-                                        <th width="150" class="table-primary">Receive Now</th>
+                                        <th width="150" class="table-primary">{{ __('purchase.receive_now') ?? 'Receive Now' }}</th>
                                     @endif
                                 </tr>
                             </thead>
@@ -107,7 +107,7 @@
                                                            max="{{ $detail->remaining_quantity }}"
                                                            value="0">
                                                 @else
-                                                    <span class="text-success small"><i class="fas fa-check"></i> Done</span>
+                                                    <span class="text-success small"><i class="fas fa-check"></i> {{ __('general.done') ?? 'Done' }}</span>
                                                 @endif
                                             </td>
                                         @endif
@@ -119,12 +119,12 @@
                         @if($purchase->status !== 'completed' && $purchase->status !== 'cancelled')
                             <div class="mt-3 text-right">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-box-open"></i> Process Receipt
+                                    <i class="fas fa-box-open"></i> {{ __('purchase.process_receipt') ?? 'Process Receipt' }}
                                 </button>
                             </div>
                         @else
                             <div class="alert alert-info mt-3">
-                                This purchase is {{ $purchase->status }}. No further actions can be taken.
+                                {{ __('purchase.cannot_process') ?? 'This purchase is ' . $purchase->status . '. No further actions can be taken.' }}
                             </div>
                         @endif
                     </form>

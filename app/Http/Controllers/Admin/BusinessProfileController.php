@@ -50,6 +50,6 @@ class BusinessProfileController extends Controller
         $businessProfile->fill($data);
         $businessProfile->save();
 
-        return redirect()->route('admin.business-profile.edit')->with('success', 'Business profile updated successfully.');
+        return redirect()->route('admin.business-profile.edit')->with('success', __('profile.business_updated'));
     }
 }

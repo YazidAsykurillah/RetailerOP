@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Purchase')
+@section('title', __('general.edit') . ' ' . (__('purchase.singular') ?? 'Purchase'))
 
 @section('content_header')
-    <h1>Edit Purchase</h1>
+    <h1>{{ __('general.edit') }} {{ __('purchase.singular') ?? 'Purchase' }}</h1>
 @stop
 
 @section('content')
@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="supplier_id">Supplier</label>
+                            <label for="supplier_id">{{ __('supplier.singular') ?? 'Supplier' }}</label>
                             <select name="supplier_id" id="supplier_id" class="form-control" {{ $isEditable ? '' : 'disabled' }}>
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
@@ -38,36 +38,36 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="date">Date</label>
+                            <label for="date">{{ __('general.date') ?? 'Date' }}</label>
                             <input type="date" name="date" class="form-control" value="{{ $purchase->date->format('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="reference_number">Reference Number</label>
+                            <label for="reference_number">{{ __('purchase.reference_number') ?? 'Reference Number' }}</label>
                             <input type="text" name="reference_number" class="form-control" value="{{ $purchase->reference_number }}" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Purchase Items</label>
+                    <label>{{ __('purchase.items') ?? 'Purchase Items' }}</label>
                     
                     @if(!$isEditable)
                         <div class="alert alert-warning py-1 px-3 mb-2">
-                            <small><i class="fas fa-info-circle"></i> Items cannot be edited because receipts have already been processed.</small>
+                            <small><i class="fas fa-info-circle"></i> {{ __('purchase.items_cannot_be_edited') ?? 'Items cannot be edited because receipts have already been processed.' }}</small>
                         </div>
                     @endif
 
                     <table class="table table-bordered" id="items-table">
                         <thead>
                             <tr>
-                                <th width="40%">Product</th>
-                                <th width="20%">Quantity</th>
-                                <th width="20%">Unit Cost</th>
-                                <th width="15%">Subtotal</th>
+                                <th width="40%">{{ __('product.singular') ?? 'Product' }}</th>
+                                <th width="20%">{{ __('purchase.quantity') ?? 'Quantity' }}</th>
+                                <th width="20%">{{ __('purchase.unit_cost') ?? 'Unit Cost' }}</th>
+                                <th width="15%">{{ __('purchase.subtotal') ?? 'Subtotal' }}</th>
                                 @if($isEditable)
-                                    <th width="5%">Action</th>
+                                    <th width="5%">{{ __('general.action') ?? 'Action' }}</th>
                                 @endif
                             </tr>
                         </thead>
@@ -76,25 +76,25 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3" class="text-right font-weight-bold">Total Amount:</td>
+                                <td colspan="3" class="text-right font-weight-bold">{{ __('purchase.total_amount') ?? 'Total Amount' }}:</td>
                                 <td colspan="{{ $isEditable ? 2 : 1 }}" class="font-weight-bold" id="total_amount">0.00</td>
                             </tr>
                         </tfoot>
                     </table>
                     
                     @if($isEditable)
-                        <button type="button" class="btn btn-info btn-sm" id="add-item"><i class="fas fa-plus"></i> Add Item</button>
+                        <button type="button" class="btn btn-info btn-sm" id="add-item"><i class="fas fa-plus"></i> {{ __('purchase.add_item') ?? 'Add Item' }}</button>
                     @endif
                 </div>
 
                 <div class="form-group">
-                    <label for="notes">Notes</label>
+                    <label for="notes">{{ __('purchase.notes') ?? 'Notes' }}</label>
                     <textarea name="notes" class="form-control" rows="3">{{ $purchase->notes }}</textarea>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Update Purchase</button>
-                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ __('general.update') ?? 'Update Purchase' }}</button>
+                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-secondary">{{ __('general.cancel') ?? 'Cancel' }}</a>
                 </div>
             </form>
         </div>
@@ -110,7 +110,7 @@
              // Initialize Select2 for Supplier
             $('#supplier_id').select2({
                 theme: 'bootstrap4',
-                placeholder: 'Select Supplier',
+                placeholder: "{{ __('supplier.select') ?? 'Select Supplier' }}",
                 allowClear: true
             });
 
@@ -213,7 +213,7 @@
                         },
                         cache: true
                     },
-                    placeholder: 'Search for a product...',
+                    placeholder: "{{ __('product.search') ?? 'Search for a product...' }}",
                     minimumInputLength: 1
                 });
 

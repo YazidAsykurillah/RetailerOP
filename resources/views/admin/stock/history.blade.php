@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock Movement History')
+@section('title', __('stock.movement_history') ?? 'Stock Movement History')
 
 @section('content_header')
-    <h1>Stock Movement History</h1>
+    <h1>{{ __('stock.movement_history') ?? 'Stock Movement History' }}</h1>
 @stop
 
 @section('content')
@@ -14,19 +14,19 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <strong>Product:</strong>
+                        <strong>{{ __('product.singular') ?? 'Product' }}:</strong>
                         <p class="text-muted">{{ $variant->product->name ?? '-' }}</p>
                     </div>
                     <div class="col-md-3">
-                        <strong>Variant:</strong>
+                        <strong>{{ __('variant.singular') ?? 'Variant' }}:</strong>
                         <p class="text-muted">{{ $variant->name ?: 'Default' }}</p>
                     </div>
                     <div class="col-md-2">
-                        <strong>SKU:</strong>
+                        <strong>{{ __('product.sku') ?? 'SKU' }}:</strong>
                         <p class="text-muted">{{ $variant->sku }}</p>
                     </div>
                     <div class="col-md-2">
-                        <strong>Current Stock:</strong>
+                        <strong>{{ __('stock.current_stock') ?? 'Current Stock' }}:</strong>
                         <p class="text-muted">
                             <span class="badge {{ $variant->is_low_stock ? 'badge-warning' : 'badge-success' }} font-weight-bold" style="font-size: 1rem;">
                                 {{ number_format($variant->stock) }}
@@ -34,7 +34,7 @@
                         </p>
                     </div>
                     <div class="col-md-2">
-                        <strong>Min Stock:</strong>
+                        <strong>{{ __('stock.min_stock') ?? 'Min Stock' }}:</strong>
                         <p class="text-muted">{{ number_format($variant->min_stock) }}</p>
                     </div>
                 </div>
@@ -44,16 +44,16 @@
         <!-- Movement History Table -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Movement History</h3>
+                <h3 class="card-title">{{ __('stock.movement_history') ?? 'Movement History' }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-success btn-sm" href="{{ route('admin.stock.in', ['variant' => $variant->id]) }}">
-                        <i class="fas fa-arrow-down"></i> Stock In
+                        <i class="fas fa-arrow-down"></i> {{ __('stock.stock_in') ?? 'Stock In' }}
                     </a>
                     <a class="btn btn-warning btn-sm" href="{{ route('admin.stock.out', ['variant' => $variant->id]) }}">
-                        <i class="fas fa-arrow-up"></i> Stock Out
+                        <i class="fas fa-arrow-up"></i> {{ __('stock.stock_out') ?? 'Stock Out' }}
                     </a>
                     <a class="btn btn-secondary btn-sm" href="{{ route('admin.stock.index') }}">
-                        <i class="fas fa-arrow-left"></i> Back to Overview
+                        <i class="fas fa-arrow-left"></i> {{ __('stock.back_to_overview') ?? 'Back to Overview' }}
                     </a>
                 </div>
             </div>
@@ -62,10 +62,10 @@
                 <div class="row mb-3">
                     <div class="col-md-3">
                         <select class="form-control" id="type-filter">
-                            <option value="">All Types</option>
-                            <option value="in">Stock In</option>
-                            <option value="out">Stock Out</option>
-                            <option value="adjustment">Adjustment</option>
+                            <option value="">{{ __('general.all_types') ?? 'All Types' }}</option>
+                            <option value="in">{{ __('stock.stock_in') ?? 'Stock In' }}</option>
+                            <option value="out">{{ __('stock.stock_out') ?? 'Stock Out' }}</option>
+                            <option value="adjustment">{{ __('stock.type_adjustment') ?? 'Adjustment' }}</option>
                         </select>
                     </div>
                 </div>

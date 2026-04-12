@@ -71,12 +71,12 @@ class StockController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Stock added successfully! New stock: ' . $variant->stock,
+                'message' => __('stock.stock_in_success'),
             ]);
         }
 
         return redirect()->route('admin.stock.index')
-            ->with('success', 'Stock added successfully! New stock: ' . $variant->stock);
+            ->with('success', __('stock.stock_in_success'));
     }
 
     /**
@@ -111,11 +111,11 @@ class StockController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Insufficient stock! Current stock: ' . $variant->stock,
+                    'message' => __('stock.insufficient_stock'),
                 ], 422);
             }
 
-            return back()->withErrors(['quantity' => 'Insufficient stock! Current stock: ' . $variant->stock])
+            return back()->withErrors(['quantity' => __('stock.insufficient_stock')])
                 ->withInput();
         }
 
@@ -130,12 +130,12 @@ class StockController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Stock removed successfully! Remaining stock: ' . $variant->stock,
+                'message' => __('stock.stock_out_success'),
             ]);
         }
 
         return redirect()->route('admin.stock.index')
-            ->with('success', 'Stock removed successfully! Remaining stock: ' . $variant->stock);
+            ->with('success', __('stock.stock_out_success'));
     }
 
     /**

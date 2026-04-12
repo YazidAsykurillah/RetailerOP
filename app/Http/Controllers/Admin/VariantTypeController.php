@@ -44,7 +44,7 @@ class VariantTypeController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Variant type created successfully.',
+            'message' => __('variant.type_created'),
             'redirect' => route('admin.variant-types.index')
         ]);
     }
@@ -75,7 +75,7 @@ class VariantTypeController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Variant type updated successfully.',
+            'message' => __('variant.type_updated'),
             'redirect' => route('admin.variant-types.index')
         ]);
     }
@@ -92,12 +92,12 @@ class VariantTypeController extends Controller
 
         if ($usedValuesCount > 0) {
             return response()->json([
-                'error' => 'Cannot delete variant type. Some values are being used by product variants.'
+                'error' => __('variant.cannot_delete_type')
             ], 422);
         }
 
         $variantType->delete();
 
-        return response()->json(['success' => 'Variant type deleted successfully.']);
+        return response()->json(['success' => __('variant.type_deleted')]);
     }
 }

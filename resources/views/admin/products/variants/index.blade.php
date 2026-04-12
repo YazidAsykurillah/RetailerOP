@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Manage Variants - ' . $product->name)
+@section('title', __('variant.manage_variants') . ' - ' . $product->name)
 
 @section('content_header')
-    <h1>Manage Variants</h1>
+    <h1>{{ __('variant.manage_variants') }}</h1>
 @stop
 
 @section('content')
@@ -24,11 +24,11 @@
                     </div>
                     <div class="col">
                         <h5 class="mb-0">{{ $product->name }}</h5>
-                        <small class="text-muted">SKU: {{ $product->sku }} | Base Price: {{ number_format($product->base_price, 0, ',', '.') }}</small>
+                        <small class="text-muted">{{ __('product.sku') }}: {{ $product->sku }} | {{ __('product.price') }}: {{ number_format($product->base_price, 0, ',', '.') }}</small>
                     </div>
                     <div class="col-auto">
                         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-arrow-left"></i> Back to Products
+                            <i class="fas fa-arrow-left"></i> {{ __('general.back') ?? 'Back to Products' }}
                         </a>
                     </div>
                 </div>
@@ -38,13 +38,13 @@
         <!-- Variants Table Card -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Product Variants</h3>
+                <h3 class="card-title">{{ __('product.variants') }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-info mr-2" href="{{ route('admin.products.variants.import', $product->id) }}">
-                        <i class="fas fa-file-import"></i> Import Variants
+                        <i class="fas fa-file-import"></i> {{ __('general.import') }}
                     </a>
                     <a class="btn btn-success" href="{{ route('admin.products.variants.create', $product->id) }}">
-                        <i class="fas fa-plus"></i> Add Variant
+                        <i class="fas fa-plus"></i> {{ __('variant.add_variant') ?? 'Add Variant' }}
                     </a>
                 </div>
             </div>
@@ -79,19 +79,19 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this variant?")) {
+                if(confirm(window.Lang.confirm_delete || "{{ __('general.confirm_delete') ?? 'Are you sure you want to delete this item?' }}")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/products/' . $product->id . '/variants') }}/" + id,
                         success: function (data) {
                             table.draw();
-                            toastr.success('Variant deleted successfully!');
+                            toastr.success("{{ __('variant.delete_success') ?? 'Variant deleted successfully!' }}");
                         },
                         error: function (xhr) {
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting variant.');
+                                toastr.error(window.Lang.error || 'An error occurred.');
                             }
                         }
                     });

@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'singular' => 'Brand',
+    'plural' => 'Brands',
+    'management' => 'Brand Management',
+    'list' => 'Brand List',
+    'create' => 'Create New Brand',
+    'create_title' => 'Create Brand',
+    'edit' => 'Edit Brand',
+    'edit_title' => 'Edit Brand',
+    'information' => 'Brand Information',
+    'name' => 'Brand Name',
+    'logo' => 'Brand Logo',
+    'enter_name' => 'Enter brand name',
+    'enter_description' => 'Enter description',
+    'save' => 'Save Brand',
+    'update' => 'Update Brand',
+    'created' => 'Brand created successfully.',
+    'updated' => 'Brand updated successfully.',
+    'deleted' => 'Brand deleted successfully.',
+    'cannot_delete' => 'Cannot delete brand with products.',
+    'confirm_delete' => 'Are you sure you want to delete this brand?',
+    'delete_error' => 'Error deleting brand.',
+];

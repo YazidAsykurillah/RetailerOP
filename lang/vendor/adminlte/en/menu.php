@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'main_navigation' => 'MAIN NAVIGATION',
     'blog' => 'Blog',
     'pages' => 'Pages',
@@ -16,4 +15,29 @@ return [
     'important' => 'Important',
     'warning' => 'Warning',
     'information' => 'Information',
+
+    // Application Menu Items
+    'dashboard' => 'Dashboard',
+    'user_management' => 'User Management',
+    'role_management' => 'Role Management',
+    'permission_management' => 'Permission Management',
+    'store_management' => 'STORE MANAGEMENT',
+    'categories' => 'Categories',
+    'brands' => 'Brands',
+    'suppliers' => 'Suppliers',
+    'customers' => 'Customers',
+    'customer_groups' => 'Customer Groups',
+    'products' => 'Products',
+    'variant_types' => 'Variant Types',
+    'purchasing' => 'PURCHASING',
+    'purchases' => 'Purchases',
+    'inventory' => 'INVENTORY',
+    'stock_overview' => 'Stock Overview',
+    'stock_in' => 'Stock In',
+    'stock_out' => 'Stock Out',
+    'pos_sales' => 'POS / SALES',
+    'new_transaction' => 'New Transaction',
+    'transaction_history' => 'Transaction History',
+    'business_profile' => 'Business Profile',
+    'search' => 'Search',
 ];

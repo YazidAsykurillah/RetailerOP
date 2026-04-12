@@ -44,7 +44,7 @@ class CustomersDataTable extends DataTable
                 return '<span class="badge badge-success">Rp 0</span>';
             })
             ->editColumn('is_active', function($row) {
-                return $row->is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>';
+                return $row->is_active ? '<span class="badge badge-success">' . __('general.active') . '</span>' : '<span class="badge badge-danger">' . __('general.inactive') . '</span>';
             })
             ->rawColumns(['action', 'is_active', 'outstanding_amount'])
             ->setRowId('id');
@@ -102,10 +102,10 @@ class CustomersDataTable extends DataTable
             Column::make('name'),
             Column::make('email'),
             Column::make('phone'),
-            Column::make('group_name')->title('Group')->name('customerGroup.name'),
-            Column::make('total_transaction_value')->title('Total Transaction')->addClass('text-center')->searchable(false)->orderData(5),
-            Column::make('outstanding_amount')->title('Outstanding')->addClass('text-center')->searchable(false)->orderData(6),
-            Column::make('is_active')->title('Status')->addClass('text-center'),
+            Column::make('group_name')->title(__('customer.group'))->name('customerGroup.name'),
+            Column::make('total_transaction_value')->title(__('customer.total_transaction'))->addClass('text-center')->searchable(false)->orderData(5),
+            Column::make('outstanding_amount')->title(__('customer.outstanding'))->addClass('text-center')->searchable(false)->orderData(6),
+            Column::make('is_active')->title(__('general.status'))->addClass('text-center'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

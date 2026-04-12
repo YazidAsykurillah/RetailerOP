@@ -226,14 +226,14 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Transaction updated successfully!',
+                'message' => __('transaction.updated'),
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update transaction: ' . $e->getMessage(),
+                'message' => __('transaction.update_failed') . ': ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -271,14 +271,14 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Transaction deleted and stock restored successfully!',
+                'message' => __('transaction.deleted'),
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete transaction: ' . $e->getMessage(),
+                'message' => __('transaction.delete_failed') . ': ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -295,7 +295,7 @@ class TransactionController extends Controller
         if ($request->amount > $remainingBalance + 0.01) {
              return response()->json([
                 'success' => false,
-                'message' => 'Payment amount exceeds remaining balance.',
+                'message' => __('transaction.payment_exceeds_balance'),
             ], 422);
         }
 
@@ -324,14 +324,14 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment recorded successfully!',
+                'message' => __('transaction.payment_recorded'),
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to record payment: ' . $e->getMessage(),
+                'message' => __('general.something_went_wrong') . ': ' . $e->getMessage(),
             ], 500);
         }
     }

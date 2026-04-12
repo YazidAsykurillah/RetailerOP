@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'singular' => 'Supplier',
+    'plural' => 'Suppliers',
+    'management' => 'Supplier Management',
+    'list' => 'Supplier List',
+    'create' => 'Create New Supplier',
+    'create_title' => 'Create Supplier',
+    'edit' => 'Edit Supplier',
+    'edit_title' => 'Edit Supplier',
+    'information' => 'Supplier Information',
+    'name' => 'Supplier Name',
+    'contact_person' => 'Contact Person',
+    'enter_name' => 'Enter supplier name',
+    'enter_description' => 'Enter description',
+    'save' => 'Save Supplier',
+    'update' => 'Update Supplier',
+    'created' => 'Supplier created successfully.',
+    'updated' => 'Supplier updated successfully.',
+    'deleted' => 'Supplier deleted successfully.',
+    'cannot_delete' => 'Cannot delete supplier with purchases.',
+    'confirm_delete' => 'Are you sure you want to delete this supplier?',
+    'delete_error' => 'Error deleting supplier.',
+    'purchase_history' => 'Purchase History',
+];

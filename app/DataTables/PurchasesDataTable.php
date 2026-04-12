@@ -26,10 +26,10 @@ class PurchasesDataTable extends DataTable
             })
             ->addColumn('status_badge', function ($row) {
                 $badges = [
-                    'pending' => '<span class="badge badge-warning">Pending</span>',
-                    'partial' => '<span class="badge badge-info">Partial</span>',
-                    'completed' => '<span class="badge badge-success">Completed</span>',
-                    'cancelled' => '<span class="badge badge-danger">Cancelled</span>',
+                    'pending' => '<span class="badge badge-warning">' . __('purchase.status_pending') . '</span>',
+                    'partial' => '<span class="badge badge-info">' . __('purchase.status_partial') . '</span>',
+                    'completed' => '<span class="badge badge-success">' . __('purchase.status_completed') . '</span>',
+                    'cancelled' => '<span class="badge badge-danger">' . __('purchase.status_cancelled') . '</span>',
                 ];
                 return $badges[$row->status] ?? $row->status;
             })
@@ -45,7 +45,7 @@ class PurchasesDataTable extends DataTable
                 }
 
                 if ($row->status === 'pending') {
-                    $btn .= '<form action="' . route('admin.purchases.destroy', $row->id) . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this purchase?\')">';
+                    $btn .= '<form action="' . route('admin.purchases.destroy', $row->id) . '" method="POST" class="d-inline" onsubmit="return confirm(\'' . __('purchase.confirm_delete') . '\')">';
                     $btn .= csrf_field();
                     $btn .= method_field('DELETE');
                     $btn .= '<button type="submit" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i></button>';
@@ -127,11 +127,11 @@ class PurchasesDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(30)->addClass('text-center')->orderable(false)->footer(''),
-            Column::make('reference_number')->title('Ref No')->footer(''),
-            Column::make('date')->title('Date')->orderable(true)->searchable(true)->footer(''),
-            Column::computed('supplier_name')->title('Supplier')->footer(''),
-            Column::computed('status_badge')->title('Status')->addClass('text-center')->footer(''),
-            Column::computed('total_amount_display')->title('Total')->addClass('text-right')->footer(''),
+            Column::make('reference_number')->title(__('purchase.reference_number'))->footer(''),
+            Column::make('date')->title(__('purchase.date'))->orderable(true)->searchable(true)->footer(''),
+            Column::computed('supplier_name')->title(__('supplier.singular'))->footer(''),
+            Column::computed('status_badge')->title(__('purchase.status'))->addClass('text-center')->footer(''),
+            Column::computed('total_amount_display')->title(__('purchase.total_amount'))->addClass('text-right')->footer(''),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

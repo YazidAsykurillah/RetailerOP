@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock Overview')
+@section('title', __('stock.overview') ?? 'Stock Overview')
 
 @section('content_header')
-    <h1>Stock Overview</h1>
+    <h1>{{ __('stock.overview') ?? 'Stock Overview' }}</h1>
 @stop
 
 @section('content')
@@ -13,7 +13,7 @@
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>{{ number_format($totalItems) }}</h3>
-                <p>Total Product Variants</p>
+                <p>{{ __('stock.total_variants') ?? 'Total Product Variants' }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-boxes"></i>
@@ -24,13 +24,13 @@
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3>{{ number_format($lowStockCount) }}</h3>
-                <p>Low Stock Items</p>
+                <p>{{ __('stock.low_stock_items') ?? 'Low Stock Items' }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <a href="{{ route('admin.stock.index', ['low_stock' => 1]) }}" class="small-box-footer">
-                View Low Stock <i class="fas fa-arrow-circle-right"></i>
+                {{ __('stock.view_low_stock') ?? 'View Low Stock' }} <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3>{{ number_format($outOfStockCount) }}</h3>
-                <p>Out of Stock</p>
+                <p>{{ __('stock.out_of_stock') ?? 'Out of Stock' }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-times-circle"></i>
@@ -52,7 +52,7 @@
 <div class="card card-outline card-primary">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-filter"></i> Filters
+            <i class="fas fa-filter"></i> {{ __('general.filter') ?? 'Filters' }}
         </h3>
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -65,12 +65,12 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Status</label>
+                        <label>{{ __('general.status') ?? 'Status' }}</label>
                         <select class="form-control" id="status" name="status">
-                            <option value="">All Statuses</option>
-                            <option value="in_stock" {{ request('status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
-                            <option value="low_stock" {{ request('low_stock') == '1' || request('status') == 'low_stock' ? 'selected' : '' }}>Low Stock</option>
-                            <option value="out_of_stock" {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+                            <option value="">{{ __('general.all_status') ?? 'All Statuses' }}</option>
+                            <option value="in_stock" {{ request('status') == 'in_stock' ? 'selected' : '' }}>{{ __('stock.status_in_stock') ?? 'In Stock' }}</option>
+                            <option value="low_stock" {{ request('low_stock') == '1' || request('status') == 'low_stock' ? 'selected' : '' }}>{{ __('stock.status_low_stock') ?? 'Low Stock' }}</option>
+                            <option value="out_of_stock" {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>{{ __('stock.out_of_stock') ?? 'Out of Stock' }}</option>
                         </select>
                     </div>
                 </div>
@@ -79,10 +79,10 @@
                         <label>&nbsp;</label>
                         <div>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Filter
+                                <i class="fas fa-search"></i> {{ __('general.filter') ?? 'Filter' }}
                             </button>
                             <button type="button" class="btn btn-secondary" id="reset-filter">
-                                <i class="fas fa-times"></i> Reset
+                                <i class="fas fa-times"></i> {{ __('general.reset') ?? 'Reset' }}
                             </button>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Stock List</h3>
+                <h3 class="card-title">{{ __('stock.list') ?? 'Stock List' }}</h3>
                 
             </div>
             <div class="card-body">

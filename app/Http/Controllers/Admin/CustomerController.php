@@ -55,7 +55,7 @@ class CustomerController extends Controller
         Customer::create($data);
 
         return redirect()->route('admin.customers.index')
-            ->with('success', 'Customer created successfully.');
+            ->with('success', __('customer.created'));
     }
 
     public function show(Customer $customer, CustomerTransactionsDataTable $dataTable)
@@ -75,18 +75,18 @@ class CustomerController extends Controller
         $customer->update($data);
 
         return redirect()->route('admin.customers.index')
-            ->with('success', 'Customer updated successfully.');
+            ->with('success', __('customer.updated'));
     }
 
     public function destroy(Customer $customer)
     {
         // Check for transactions
         if ($customer->transactions()->count() > 0) {
-             return response()->json(['error' => 'Cannot delete customer with transaction history.'], 422);
+             return response()->json(['error' => __('general.cannot_delete_has_relations', ['item' => __('customer.singular'), 'relation' => __('transaction.plural')])], 422);
         }
 
         $customer->delete();
 
-        return response()->json(['success' => 'Customer deleted successfully.']);
+        return response()->json(['success' => __('customer.deleted')]);
     }
 }

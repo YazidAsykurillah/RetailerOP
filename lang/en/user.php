@@ -1,0 +1,52 @@
+<?php
+
+return [
+    // User Management
+    'singular' => 'User',
+    'plural' => 'Users',
+    'management' => 'User Management',
+    'list' => 'User List',
+    'create' => 'Create New User',
+    'create_title' => 'Create User',
+    'edit' => 'Edit User',
+    'edit_title' => 'Edit User',
+    'name' => 'Name',
+    'email' => 'Email',
+    'password' => 'Password',
+    'confirm_password' => 'Confirm Password',
+    'role' => 'Role',
+    'roles' => 'Roles',
+    'save' => 'Save User',
+    'update' => 'Update User',
+    'created' => 'User created successfully.',
+    'updated' => 'User updated successfully.',
+    'deleted' => 'User deleted successfully.',
+    'confirm_delete' => 'Are you sure you want to delete this user?',
+
+    // Role Management
+    'role_singular' => 'Role',
+    'role_plural' => 'Roles',
+    'role_management' => 'Role Management',
+    'role_list' => 'Role List',
+    'role_create' => 'Create New Role',
+    'role_edit' => 'Edit Role',
+    'role_name' => 'Role Name',
+    'role_permissions' => 'Role Permissions',
+    'role_created' => 'Role created successfully.',
+    'role_updated' => 'Role updated successfully.',
+    'role_deleted' => 'Role deleted successfully.',
+    'role_confirm_delete' => 'Are you sure you want to delete this role?',
+
+    // Permission Management
+    'permission_singular' => 'Permission',
+    'permission_plural' => 'Permissions',
+    'permission_management' => 'Permission Management',
+    'permission_list' => 'Permission List',
+    'permission_create' => 'Create New Permission',
+    'permission_edit' => 'Edit Permission',
+    'permission_name' => 'Permission Name',
+    'permission_created' => 'Permission created successfully.',
+    'permission_updated' => 'Permission updated successfully.',
+    'permission_deleted' => 'Permission deleted successfully.',
+    'permission_confirm_delete' => 'Are you sure you want to delete this permission?',
+];

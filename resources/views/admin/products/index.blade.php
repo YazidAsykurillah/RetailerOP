@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Product Management')
+@section('title', __('product.management'))
 
 @section('content_header')
-    <h1>Product Management</h1>
+    <h1>{{ __('product.management') }}</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
         <div class="card card-outline card-primary collapsed-card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-filter"></i> Filters
+                    <i class="fas fa-filter"></i> {{ __('general.filter') }}
                 </h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -25,9 +25,9 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Category</label>
+                                <label>{{ __('category.singular') }}</label>
                                 <select class="form-control" id="category_id" name="category_id">
-                                    <option value="">All Categories</option>
+                                    <option value="">{{ __('category.plural') }}</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -36,9 +36,9 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Brand</label>
+                                <label>{{ __('brand.singular') }}</label>
                                 <select class="form-control" id="brand_id" name="brand_id">
-                                    <option value="">All Brands</option>
+                                    <option value="">{{ __('brand.plural') }}</option>
                                     @foreach($brands as $brand)
                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                     @endforeach
@@ -50,10 +50,10 @@
                                 <label>&nbsp;</label>
                                 <div>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-search"></i> Filter
+                                        <i class="fas fa-search"></i> {{ __('general.filter') }}
                                     </button>
                                     <button type="button" class="btn btn-secondary" id="reset-filter">
-                                        <i class="fas fa-times"></i> Reset
+                                        <i class="fas fa-times"></i> {{ __('general.reset') }}
                                     </button>
                                 </div>
                             </div>
@@ -65,21 +65,21 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Product List</h3>
+                <h3 class="card-title">{{ __('product.list') }}</h3>
                 <div class="card-tools">
                     @can('delete-multiple-product')
                         <button class="btn btn-danger mr-2" id="bulk-delete" style="display: none;">
-                            <i class="fas fa-trash"></i> Bulk Delete
+                            <i class="fas fa-trash"></i> {{ __('general.delete') }}
                         </button>
                     @endcan
                     <a class="btn btn-info mr-2" href="{{ route('admin.products.import') }}">
-                        <i class="fas fa-file-import"></i> Import
+                        <i class="fas fa-file-import"></i> {{ __('general.import') ?? 'Import' }}
                     </a>
                     <a id="export-pdf-btn" class="btn btn-dark mr-2" href="{{ route('admin.products.export-pdf') }}">
-                        <i class="fas fa-file-pdf"></i> Export PDF
+                        <i class="fas fa-file-pdf"></i> {{ __('general.export_pdf') ?? 'Export PDF' }}
                     </a>
                     <a class="btn btn-success" href="{{ route('admin.products.create') }}">
-                        <i class="fas fa-plus"></i> Create New Product
+                        <i class="fas fa-plus"></i> {{ __('product.create') }}
                     </a>
                 </div>
             </div>
@@ -199,7 +199,7 @@
                 });
 
                 if (ids.length > 0) {
-                    if (confirm("Are you sure you want to delete " + ids.length + " selected products?")) {
+                    if (confirm(window.Lang.confirm_delete || "{{ __('general.confirm_delete') ?? 'Are you sure you want to delete the selected items?' }}")) {
                         overlay.show();
                         $.ajax({
                             type: "DELETE",
@@ -214,7 +214,7 @@
                                 if (xhr.responseJSON && xhr.responseJSON.error) {
                                     toastr.error(xhr.responseJSON.error);
                                 } else {
-                                    toastr.error('Error deleting products.');
+                                    toastr.error(window.Lang.error || 'An error occurred.');
                                 }
                             }
                         });
@@ -224,19 +224,19 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this product?")) {
+                if(confirm(window.Lang.confirm_delete || "{{ __('general.confirm_delete') ?? 'Are you sure you want to delete this item?' }}")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/products') }}/" + id,
                         success: function (data) {
                             table.draw();
-                            toastr.success('Product deleted successfully!');
+                            toastr.success("{{ __('product.delete_success') ?? 'Product deleted successfully!' }}");
                         },
                         error: function (xhr) {
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting product.');
+                                toastr.error(window.Lang.error || 'An error occurred.');
                             }
                         }
                     });

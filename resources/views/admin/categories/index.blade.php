@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Category Management')
+@section('title', __('category.management'))
 
 @section('content_header')
-    <h1>Category Management</h1>
+    <h1>{{ __('category.management') }}</h1>
 @stop
 
 @section('content')
@@ -11,10 +11,10 @@
     <div class="col-lg-12 margin-tb">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Category List</h3>
+                <h3 class="card-title">{{ __('category.list') }}</h3>
                 <div class="card-tools">
                     <a class="btn btn-success" href="{{ route('admin.categories.create') }}">
-                        <i class="fas fa-plus"></i> Create New Category
+                        <i class="fas fa-plus"></i> {{ __('category.create') }}
                     </a>
                 </div>
             </div>
@@ -41,6 +41,12 @@
 @section('js')
     {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
     <script>
+        var Lang = {
+            confirm_delete: "{{ __('category.confirm_delete') }}",
+            deleted_success: "{{ __('category.deleted') }}",
+            delete_error: "{{ __('category.delete_error') }}"
+        };
+
         $(function () {
             $.ajaxSetup({
                 headers: {
@@ -52,19 +58,19 @@
 
             $('body').on('click', '.delete', function () {
                 var id = $(this).data("id");
-                if(confirm("Are you sure you want to delete this category?")) {
+                if(confirm(Lang.confirm_delete)) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url('admin/categories') }}/" + id,
                         success: function (data) {
                             table.draw();
-                            toastr.success('Category deleted successfully!');
+                            toastr.success(Lang.deleted_success);
                         },
                         error: function (xhr) {
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 toastr.error(xhr.responseJSON.error);
                             } else {
-                                toastr.error('Error deleting category.');
+                                toastr.error(Lang.delete_error);
                             }
                         }
                     });
