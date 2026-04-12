@@ -4,6 +4,7 @@ namespace App\DataTables;
 
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
@@ -33,11 +34,10 @@ class CustomersDataTable extends DataTable
                 return $row->customerGroup->name ?? '-';
             })
             ->addColumn('total_transaction_value', function($row) {
-                return 'Rp ' . number_format($row->transactions_sum_grand_total ?? 0, 0, ',', '.');
+                return 'Rp ' . number_format($row->total_transaction ?? 0, 0, ',', '.');
             })
             ->addColumn('outstanding_amount', function($row) {
-                $outstanding = ($row->transactions_sum_grand_total ?? 0) - ($row->transactions_sum_amount_paid ?? 0);
-                $outstanding = max(0, $outstanding);
+                $outstanding = max(0, $row->outstanding ?? 0);
                 if ($outstanding > 0) {
                     return '<span class="badge badge-warning">Rp ' . number_format($outstanding, 0, ',', '.') . '</span>';
                 }
@@ -57,10 +57,22 @@ class CustomersDataTable extends DataTable
      */
     public function query(Customer $model): QueryBuilder
     {
+        $transactionSummary = DB::table('transactions')
+            ->select(
+                'customer_id',
+                DB::raw('COALESCE(SUM(grand_total), 0) as total_transaction'),
+                DB::raw('COALESCE(SUM(grand_total) - SUM(amount_paid), 0) as outstanding')
+            )
+            ->groupBy('customer_id');
+
         return $model->newQuery()
+            ->select('customers.*')
+            ->selectRaw('COALESCE(transaction_summary.total_transaction, 0) as total_transaction')
+            ->selectRaw('COALESCE(transaction_summary.outstanding, 0) as outstanding')
             ->with('customerGroup')
-            ->withSum('transactions', 'grand_total')
-            ->withSum('transactions', 'amount_paid')
+            ->leftJoinSub($transactionSummary, 'transaction_summary', function ($join) {
+                $join->on('customers.id', '=', 'transaction_summary.customer_id');
+            })
             ->when($this->request()->get('customer_group_id'), function($query) {
                 return $query->where('customer_group_id', $this->request()->get('customer_group_id'));
             });
@@ -91,8 +103,8 @@ class CustomersDataTable extends DataTable
             Column::make('email'),
             Column::make('phone'),
             Column::make('group_name')->title('Group')->name('customerGroup.name'),
-            Column::make('total_transaction_value')->title('Total Transaction')->addClass('text-center')->searchable(false)->orderable(false),
-            Column::make('outstanding_amount')->title('Outstanding')->addClass('text-center')->searchable(false)->orderable(false),
+            Column::make('total_transaction_value')->title('Total Transaction')->addClass('text-center')->searchable(false)->orderData(5),
+            Column::make('outstanding_amount')->title('Outstanding')->addClass('text-center')->searchable(false)->orderData(6),
             Column::make('is_active')->title('Status')->addClass('text-center'),
             Column::computed('action')
                   ->exportable(false)
