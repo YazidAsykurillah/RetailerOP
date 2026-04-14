@@ -21,6 +21,7 @@ return [
     'search_product' => '-- Search Product --',
     'disc_percent' => 'Discount (%)',
     'discount_value' => 'Discount Value',
+    'price_deduction' => 'Price Deduction',
     'subtotal' => 'Sub Total',
     'add_product' => 'Add Product',
 

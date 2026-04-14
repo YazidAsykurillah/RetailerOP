@@ -11,6 +11,7 @@ return [
     'transaction_notes' => 'Catatan Transaksi',
     'disc_percent'=>'Diskon (%)',
     'discount_value'=>'Nilai Diskon',
+    'price_deduction'=>'Potongan Harga',
     'subtotal'=>'Sub Total',
     'search_customer'=>'Pilih Customer',
     'customer_name'=>'Nama Customer',

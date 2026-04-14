@@ -43,7 +43,7 @@
             <div class="col-md-1 text-center">{{ __('general.qty') ?? 'Qty' }}</div>
             <div class="col-md-2">{{ __('product.price') ?? 'Price' }}</div>
             <div class="col-md-1 text-center">{{ __('pos.disc_percent') ?? 'Disc %' }}</div>
-            <div class="col-md-1">{{ __('pos.discount_value') ?? 'Potongan Harga' }}</div>
+            <div class="col-md-1">{{ __('pos.price_deduction') ?? 'Potongan Harga' }}</div>
             <div class="col-md-2 text-right">{{ __('pos.subtotal') ?? 'Subtotal' }}</div>
             <div class="col-md-1 text-center">{{ __('general.action') ?? 'Action' }}</div>
         </div>

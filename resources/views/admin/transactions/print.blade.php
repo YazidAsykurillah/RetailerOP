@@ -287,9 +287,12 @@
                     <td class="value">{{ number_format($transaction->subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @if($transaction->discount > 0)
+                @php
+                    $discountPercent = $transaction->subtotal > 0 ? ($transaction->discount / $transaction->subtotal) * 100 : 0;
+                @endphp
                 <tr>
-                    <td class="label">Discount</td>
-                    <td class="value">-{{ number_format($transaction->discount, 0, ',', '.') }}</td>
+                    <td class="label">Discount ({{ round($discountPercent) }}%)</td>
+                    <!-- <td class="value">-{{ number_format($transaction->discount, 0, ',', '.') }}</td> -->
                 </tr>
                 @endif
                 @if($transaction->tax > 0)
