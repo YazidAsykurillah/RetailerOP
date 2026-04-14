@@ -318,7 +318,7 @@
                 </tr>
                 @if($transaction->grand_total > $transaction->amount_paid)
                 <tr>
-                    <td class="label" style="color: #000; font-weight: bold;">REMAINING</td>
+                    <td class="label" style="color: #000; font-weight: bold;">{{ __('transaction.label_remaining') }}</td>
                     <td class="value" style="color: #000; font-weight: bold;">Rp {{ number_format($transaction->grand_total - $transaction->amount_paid, 0, ',', '.') }}</td>
                 </tr>
                 @endif

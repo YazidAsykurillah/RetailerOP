@@ -43,4 +43,5 @@ return [
     'customer' => 'Pelanggan',
     'items' => 'Item',
     'thank_you' => 'Terima kasih atas pembelian Anda!',
+    'label_remaining' => 'Hutang',
 ];

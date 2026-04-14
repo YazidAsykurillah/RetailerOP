@@ -43,4 +43,5 @@ return [
     'customer' => 'Customer',
     'items' => 'Items',
     'thank_you' => 'Thank you for your purchase!',
+    'label_remaining' => 'Remaining',
 ];
