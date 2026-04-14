@@ -216,7 +216,7 @@ class POSController extends Controller
             'payment_method' => 'required_if:payment_mode,full|string',
             'amount_paid' => 'required_if:payment_mode,full|numeric',
             'payments' => 'required|array|min:1',
-            'payments.*.amount' => 'required|numeric|min:1', // Enforce minimum 1 for the initial payment
+            'payments.*.amount' => 'required|numeric|min:0', // Allow 0 for the initial payment
             'payments.*.payment_method' => 'required|string',
             'payments.*.payment_date' => 'required|date',
             'payments.*.status' => 'required|in:paid,pending',

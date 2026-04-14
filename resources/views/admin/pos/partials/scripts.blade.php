@@ -707,7 +707,7 @@ $(function() {
             });
         } else {
             const initialAmount = initialPaymentAmountAN.getNumber() || 0;
-            if (initialAmount <= 0) {
+            if (initialAmount < 0) {
                 toastr.error("{{ __('pos.enter_initial_amount') ?? 'Please enter an initial payment amount!' }}");
                 return;
             }

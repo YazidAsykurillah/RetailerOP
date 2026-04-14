@@ -13,6 +13,7 @@ return [
     'search_customer' => '-- Search Customer --',
     'customer_name' => 'Type customer name',
     'phone' => 'Customer Phone Number',
+    'walk_in_customer' => 'Walk In customer',
 
     // Summary
     'items' => 'Items',

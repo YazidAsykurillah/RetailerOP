@@ -13,6 +13,9 @@ return [
     'todays_transactions' => 'Today\'s Transactions',
     'todays_sales' => 'Today\'s Sales',
     'this_months_sales' => 'This Month\'s Sales',
+    'total_amount' => 'Total Amount',
+    'paid' => 'Amount Paid',
+    'balance' => 'Balance',
 
     // Payment
     'payment_mode' => 'Payment Mode',
