@@ -227,7 +227,7 @@ class POSController extends Controller
         ]);
 
         $paymentsTotal = collect($request->payments)->sum('amount');
-        if ($paymentsTotal > $request->grand_total) {
+        if ($request->payment_mode === 'partial' && $paymentsTotal > $request->grand_total) {
             return response()->json([
                 'success' => false,
                 'message' => __('pos.amount_insufficient'),

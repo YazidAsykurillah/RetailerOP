@@ -9,10 +9,19 @@ return [
     'select_product' => 'Select product...',
     'add_another_product' => 'Add Another Product',
     'transaction_notes' => 'Transaction Notes',
+    'open_dedicated_mode' => 'Open Dedicated Mode',
+    'search_customer' => '-- Search Customer --',
+    'customer_name' => 'Type customer name',
+    'phone' => 'Customer Phone Number',
 
     // Summary
     'items' => 'Items',
     'change' => 'Change',
+    'search_product' => '-- Search Product --',
+    'disc_percent' => 'Discount (%)',
+    'discount_value' => 'Discount Value',
+    'subtotal' => 'Sub Total',
+    'add_product' => 'Add Product',
 
     // Payment
     'full_payment' => 'Full Payment',
@@ -36,6 +45,8 @@ return [
     'transaction_complete' => 'Transaction Complete',
     'view_all_transactions' => 'View All Transactions',
     'print_receipt' => 'Print Receipt',
+    'transaction_successful' => 'Transaction Successfull',
+    'invoice_number' => 'Invoice Number',
 
     // Messages
     'checkout_success' => 'Transaction completed successfully!',

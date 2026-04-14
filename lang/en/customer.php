@@ -20,6 +20,7 @@ return [
     'deleted' => 'Customer deleted successfully.',
     'confirm_delete' => 'Are you sure you want to delete this customer?',
     'delete_error' => 'Error deleting customer.',
+    'add_new' => 'Add New Customer',
 
     // Customer Groups
     'group_singular' => 'Customer Group',
@@ -34,6 +35,7 @@ return [
     'group_updated' => 'Customer Group updated successfully.',
     'group_deleted' => 'Customer Group deleted successfully.',
     'group_confirm_delete' => 'Are you sure you want to delete this customer group?',
+    'all_groups' => '-- All Groups --',
 
     // Transaction info
     'total_transaction' => 'Total Transaction',
@@ -41,4 +43,5 @@ return [
     'walk_in' => 'Walk-in Customer',
     'customer_name_walkin' => 'Customer Name (Walk-in)',
     'phone_number' => 'Phone Number',
+    'phone' => 'Phone Number',
 ];
