@@ -83,8 +83,6 @@
                 <th width="30">{{ __('general.no') }}</th>
                 <th width="100">{{ __('product.sku') }}</th>
                 <th>{{ __('product.name') }}</th>
-                <th>{{ __('category.singular') }}</th>
-                <th>{{ __('brand.singular') }}</th>
                 <th width="120" class="text-right">{{ __('product.price') }}</th>
                 <th width="50" class="text-right">{{ __('product.stock') }}</th>
             </tr>
@@ -95,8 +93,6 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $product->sku ?: '-' }}</td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->category ? $product->category->name : '-' }}</td>
-                    <td>{{ $product->brand ? $product->brand->name : '-' }}</td>
                     <td class="text-right"></td>
                     <td class="text-right"></td>
                 </tr>
@@ -105,8 +101,6 @@
                         <td></td>
                         <td style="padding-left: 15px;">{{ $variant->sku ?: '-' }}</td>
                         <td>{{ $variant->name ?: (__('variant.standard') ?? 'Standard') }}</td>
-                        <td></td>
-                        <td></td>
                         <td class="text-right">{{ number_format($variant->price, 0, ',', '.') }}</td>
                         <td class="text-right">{{ $variant->stock }}</td>
                     </tr>
