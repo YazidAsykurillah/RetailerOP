@@ -130,7 +130,7 @@ class Transaction extends Model
     {
         $totalPaid = $this->payments()
             ->where('status', 'paid')
-            ->sum('amount');
+            ->sum(\Illuminate\Support\Facades\DB::raw('amount - `change`'));
         
         $this->amount_paid = $totalPaid;
         
@@ -172,6 +172,6 @@ class Transaction extends Model
      */
     public function getOutstandingBalanceAttribute()
     {
-        return max(0, $this->grand_total - ($this->amount_paid - $this->total_change));
+        return max(0, $this->grand_total - $this->amount_paid);
     }
 }

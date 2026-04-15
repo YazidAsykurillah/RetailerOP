@@ -265,10 +265,18 @@ class POSController extends Controller
             // Calculate initial paid amount and status
             $totalPaidNow = collect($request->payments)
                 ->where('status', 'paid')
-                ->sum('amount');
+                ->sum(function($p) use ($request) {
+                    // For POS checkout, only the last payment carries the change in 'full' mode
+                    // But typically there's only one payment here.
+                    // A more robust way is to calculate total change and subtract it from total paid.
+                    return (float)$p['amount'];
+                });
+            
+            $totalChange = $request->payment_mode === 'full' ? max(0, $request->amount_paid - $request->grand_total) : 0;
+            $totalNetPaidNow = max(0, $totalPaidNow - $totalChange);
             
             $paymentStatus = 'unpaid';
-            if ($totalPaidNow >= $request->grand_total) {
+            if ($totalNetPaidNow >= $request->grand_total) {
                 $paymentStatus = 'paid';
             } elseif ($totalPaidNow > 0) {
                 $paymentStatus = 'partial';
@@ -285,7 +293,7 @@ class POSController extends Controller
                 'payment_mode' => $request->payment_mode,
                 'payment_status' => $paymentStatus,
                 'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
-                'amount_paid' => $totalPaidNow,
+                'amount_paid' => $totalNetPaidNow,
                 'notes' => $request->notes,
                 'customer_id' => $request->customer_id,
                 'user_id' => auth()->id(),

@@ -158,7 +158,7 @@ class TransactionController extends Controller
                 'grand_total' => $request->grand_total,
                 'payment_mode' => $request->payment_mode,
                 'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
-                'amount_paid' => $request->payment_mode === 'full' ? $request->amount_paid : 0, // Will be recalculated from payments
+                'amount_paid' => $request->payment_mode === 'full' ? $request->grand_total : 0, // Will be recalculated from payments
                 'notes' => $request->notes,
             ]);
 

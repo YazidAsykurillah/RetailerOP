@@ -325,30 +325,27 @@
                     <td class="value" style="color: #000; font-weight: bold;">Rp {{ number_format($transaction->grand_total - $transaction->amount_paid, 0, ',', '.') }}</td>
                 </tr>
                 @endif
-                @if($transaction->total_change > 0)
-                <tr>
-                    <td class="label change">Change</td>
-                    <td class="value change">Rp {{ number_format($transaction->total_change, 0, ',', '.') }}</td>
-                </tr>
-                @endif
             </table>
         </div>
 
-        @if($transaction->payments->count() > 1 || ($transaction->payments->count() == 1 && $transaction->payment_mode == 'partial'))
         <!-- Payment History -->
         <div class="payment-history" style="margin-bottom: 10px; font-size: 10px; border-top: 1px dashed #000; padding-top: 5px;">
             <div style="font-weight: bold; margin-bottom: 3px; text-transform: uppercase;">Payment History</div>
             <table style="width: 100%; border-collapse: collapse;">
                 @foreach($transaction->payments as $payment)
                 <tr>
-                    <td>{{ $payment->payment_date->format('d/m/y') }} ({{ ucfirst($payment->payment_method) }})</td>
-                    <td style="text-align: right;">{{ number_format($payment->amount, 0, ',', '.') }}</td>
-                    <td style="text-align: right; width: 50px;">[{{ ucfirst($payment->status) }}]</td>
+                    <td>
+                        {{ $payment->payment_date->format('d/m/y') }} ({{ ucfirst($payment->payment_method) }})
+                        @if($payment->change > 0)
+                            <br><span style="font-size: 8px; opacity: 0.8;">(Change: {{ number_format($payment->change, 0, ',', '.') }})</span>
+                        @endif
+                    </td>
+                    <td style="text-align: right; vertical-align: top;">{{ number_format($payment->amount, 0, ',', '.') }}</td>
+                    <td style="text-align: right; width: 50px; vertical-align: top;">[{{ ucfirst($payment->status) }}]</td>
                 </tr>
                 @endforeach
             </table>
         </div>
-        @endif
 
         <!-- Footer -->
         <div class="footer">
