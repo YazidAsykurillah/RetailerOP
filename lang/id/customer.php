@@ -37,7 +37,11 @@ return [
 
     // Transaction info
     'total_transaction' => 'Total Transaksi',
+    'total_paid' => 'Total Bayar',
     'outstanding' => 'Sisa Tagihan',
+    'outstanding_filter' => 'Status Tagihan',
+    'has_outstanding' => 'Punya Tagihan',
+    'all' => 'Semua',
     'walk_in' => 'Pelanggan Langsung',
     'customer_name_walkin' => 'Nama Pelanggan (Langsung)',
     'phone_number' => 'Nomor Telepon',

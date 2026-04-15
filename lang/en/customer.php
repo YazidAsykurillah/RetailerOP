@@ -39,7 +39,11 @@ return [
 
     // Transaction info
     'total_transaction' => 'Total Transaction',
+    'total_paid' => 'Total Paid',
     'outstanding' => 'Outstanding',
+    'outstanding_filter' => 'Outstanding Status',
+    'has_outstanding' => 'Has Outstanding',
+    'all' => 'All',
     'walk_in' => 'Walk-in Customer',
     'customer_name_walkin' => 'Customer Name (Walk-in)',
     'phone_number' => 'Phone Number',

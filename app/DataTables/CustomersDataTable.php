@@ -34,14 +34,17 @@ class CustomersDataTable extends DataTable
                 return $row->customerGroup->name ?? '-';
             })
             ->addColumn('total_transaction_value', function($row) {
-                return 'Rp ' . number_format($row->total_transaction ?? 0, 0, ',', '.');
+                return number_format($row->total_transaction ?? 0, 0, ',', '.');
+            })
+            ->addColumn('total_paid_value', function($row) {
+                return number_format($row->total_paid ?? 0, 0, ',', '.');
             })
             ->addColumn('outstanding_amount', function($row) {
                 $outstanding = max(0, $row->outstanding ?? 0);
                 if ($outstanding > 0) {
-                    return '<span class="badge badge-warning">Rp ' . number_format($outstanding, 0, ',', '.') . '</span>';
+                    return '<span class="badge badge-warning">' . number_format($outstanding, 0, ',', '.') . '</span>';
                 }
-                return '<span class="badge badge-success">Rp 0</span>';
+                return '<span class="badge badge-success">0</span>';
             })
             ->editColumn('is_active', function($row) {
                 return $row->is_active ? '<span class="badge badge-success">' . __('general.active') . '</span>' : '<span class="badge badge-danger">' . __('general.inactive') . '</span>';
@@ -61,6 +64,7 @@ class CustomersDataTable extends DataTable
             ->select(
                 'customer_id',
                 DB::raw('COALESCE(SUM(grand_total), 0) as total_transaction'),
+                DB::raw('COALESCE(SUM(amount_paid), 0) as total_paid'),
                 DB::raw('COALESCE(SUM(grand_total) - SUM(amount_paid), 0) as outstanding')
             )
             ->groupBy('customer_id');
@@ -68,6 +72,7 @@ class CustomersDataTable extends DataTable
         return $model->newQuery()
             ->select('customers.*')
             ->selectRaw('COALESCE(transaction_summary.total_transaction, 0) as total_transaction')
+            ->selectRaw('COALESCE(transaction_summary.total_paid, 0) as total_paid')
             ->selectRaw('COALESCE(transaction_summary.outstanding, 0) as outstanding')
             ->with('customerGroup')
             ->leftJoinSub($transactionSummary, 'transaction_summary', function ($join) {
@@ -75,6 +80,9 @@ class CustomersDataTable extends DataTable
             })
             ->when($this->request()->get('customer_group_id'), function($query) {
                 return $query->where('customer_group_id', $this->request()->get('customer_group_id'));
+            })
+            ->when($this->request()->get('has_outstanding'), function($query) {
+                return $query->where('transaction_summary.outstanding', '>', 0);
             });
     }
 
@@ -100,10 +108,10 @@ class CustomersDataTable extends DataTable
         return [
             Column::computed('DT_RowIndex', '#')->width(50),
             Column::make('name'),
-            Column::make('email'),
             Column::make('phone'),
             Column::make('group_name')->title(__('customer.group'))->name('customerGroup.name'),
-            Column::make('total_transaction_value')->title(__('customer.total_transaction'))->addClass('text-center')->searchable(false)->orderData(5),
+            Column::make('total_transaction_value')->title(__('customer.total_transaction'))->addClass('text-center')->searchable(false)->orderData(4),
+            Column::make('total_paid_value')->title(__('customer.total_paid'))->addClass('text-center')->searchable(false)->orderData(5),
             Column::make('outstanding_amount')->title(__('customer.outstanding'))->addClass('text-center')->searchable(false)->orderData(6),
             Column::make('is_active')->title(__('general.status'))->addClass('text-center'),
             Column::computed('action')

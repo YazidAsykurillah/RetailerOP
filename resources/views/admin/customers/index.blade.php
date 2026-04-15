@@ -20,7 +20,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="filter_group_id">{{ __('customer.group') ?? 'Customer Group' }}</label>
                                 <select name="filter_group_id" id="filter_group_id" class="form-control select2">
@@ -28,6 +28,15 @@
                                     @foreach($groups as $group)
                                         <option value="{{ $group->id }}">{{ $group->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="filter_outstanding">{{ __('customer.outstanding_filter') ?? 'Outstanding Status' }}</label>
+                                <select name="filter_outstanding" id="filter_outstanding" class="form-control select2">
+                                    <option value="">{{ __('customer.all') ?? 'All' }}</option>
+                                    <option value="1">{{ __('customer.has_outstanding') ?? 'Has Outstanding' }}</option>
                                 </select>
                             </div>
                         </div>
@@ -83,12 +92,14 @@
             // Reset button click event
             $('#btn-reset').click(function() {
                 $('#filter_group_id').val('').trigger('change');
+                $('#filter_outstanding').val('').trigger('change');
                 $('#customers-table').DataTable().draw();
             });
             
              // Pass parameters to DataTable
             $('#customers-table').on('preXhr.dt', function (e, settings, data) {
                  data.customer_group_id = $('#filter_group_id').val();
+                 data.has_outstanding = $('#filter_outstanding').val();
             });
         });
         $(document).on('click', '.delete-btn', function() {
