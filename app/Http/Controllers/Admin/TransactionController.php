@@ -290,7 +290,7 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::findOrFail($id);
 
-        $remainingBalance = (float) $transaction->grand_total - (float) $transaction->amount_paid;
+        $remainingBalance = (float) $transaction->outstanding_balance;
 
         if ($request->amount > $remainingBalance + 0.01) {
              return response()->json([

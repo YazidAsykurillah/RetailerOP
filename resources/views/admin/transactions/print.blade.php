@@ -337,7 +337,7 @@
         @if($transaction->payments->count() > 1 || ($transaction->payments->count() == 1 && $transaction->payment_mode == 'partial'))
         <!-- Payment History -->
         <div class="payment-history" style="margin-bottom: 10px; font-size: 10px; border-top: 1px dashed #000; padding-top: 5px;">
-            <div style="font-weight: bold; margin-bottom: 3px; text-transform: uppercase;">Payment Schedule</div>
+            <div style="font-weight: bold; margin-bottom: 3px; text-transform: uppercase;">Payment History</div>
             <table style="width: 100%; border-collapse: collapse;">
                 @foreach($transaction->payments as $payment)
                 <tr>

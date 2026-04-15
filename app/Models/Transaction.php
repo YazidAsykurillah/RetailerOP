@@ -162,4 +162,12 @@ class Transaction extends Model
 
         return $this;
     }
+
+    /**
+     * Get the outstanding balance (remaining amount due)
+     */
+    public function getOutstandingBalanceAttribute()
+    {
+        return max(0, $this->grand_total - ($this->amount_paid - $this->change));
+    }
 }
