@@ -9,6 +9,8 @@ return [
     'transaction_overview' => 'Ringkasan Transaksi',
     'todays_transactions' => 'Transaksi Hari Ini',
     'todays_sales' => 'Penjualan Hari Ini',
+    'todays_income' => 'Pendapatan Hari Ini',
+    'months_income' => 'Pendapatan Bulan Ini',
     'view_transactions' => 'Lihat Transaksi',
 
     // Stock Overview

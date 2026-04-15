@@ -45,8 +45,8 @@ class HomeController extends Controller
 
         // Transaction Statistics
         $todayTransactions = Transaction::whereDate('created_at', today())->count();
-        $todayRevenue = Transaction::whereDate('created_at', today())
-            ->sum('grand_total');
+        $todayIncome = Transaction::whereDate('created_at', today())
+            ->sum('amount_paid');
 
         // User Statistics
         $totalUsers = User::count();
@@ -78,7 +78,7 @@ class HomeController extends Controller
             'outOfStockCount',
             'totalStockValue',
             'todayTransactions',
-            'todayRevenue',
+            'todayIncome',
             'totalUsers',
             'recentStockIn',
             'recentStockOut',

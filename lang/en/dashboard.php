@@ -9,6 +9,8 @@ return [
     'transaction_overview' => 'Transaction Overview',
     'todays_transactions' => 'Today\'s Transactions',
     'todays_sales' => 'Today\'s Sales',
+    'todays_income' => 'Today\'s Income',
+    'months_income' => 'Month\'s Income',
     'view_transactions' => 'View Transactions',
 
     // Stock Overview

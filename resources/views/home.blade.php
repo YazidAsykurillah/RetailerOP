@@ -40,8 +40,8 @@
     <div class="col-lg-6 col-6">
         <div class="small-box bg-olive">
             <div class="inner">
-                <h3>{{ number_format($todayRevenue, 0, ',', '.') }}</h3>
-                <p>{{ __('dashboard.todays_sales') }}</p>
+                <h3>{{ number_format($todayIncome, 0, ',', '.') }}</h3>
+                <p>{{ __('dashboard.todays_income') }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-coins"></i>

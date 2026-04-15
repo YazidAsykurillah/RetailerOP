@@ -21,17 +21,17 @@ class TransactionController extends Controller
     public function index(TransactionsDataTable $dataTable)
     {
         // Get summary statistics
-        $todaySales = Transaction::whereDate('created_at', today())->sum('grand_total');
+        $todayIncomes = Transaction::whereDate('created_at', today())->sum('amount_paid');
         $todayTransactions = Transaction::whereDate('created_at', today())->count();
-        $monthSales = Transaction::whereMonth('created_at', now()->month)
+        $monthIncomes = Transaction::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
-            ->sum('grand_total');
+            ->sum('amount_paid');
         $totalTransactions = Transaction::count();
 
         return $dataTable->render('admin.transactions.index', compact(
-            'todaySales',
+            'todayIncomes',
             'todayTransactions',
-            'monthSales',
+            'monthIncomes',
             'totalTransactions'
         ));
     }

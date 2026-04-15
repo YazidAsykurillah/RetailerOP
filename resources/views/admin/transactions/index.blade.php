@@ -34,8 +34,8 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>Rp {{ number_format($todaySales, 0, ',', '.') }}</h3>
-                <p>Today's Sales</p>
+                <h3>Rp {{ number_format($todayIncomes, 0, ',', '.') }}</h3>
+                <p>{{ __('dashboard.todays_income') }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-cash-register"></i>
@@ -45,8 +45,8 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-primary">
             <div class="inner">
-                <h3>Rp {{ number_format($monthSales, 0, ',', '.') }}</h3>
-                <p>This Month's Sales</p>
+                <h3>Rp {{ number_format($monthIncomes, 0, ',', '.') }}</h3>
+                <p>{{ __('dashboard.months_income') }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-chart-line"></i>
