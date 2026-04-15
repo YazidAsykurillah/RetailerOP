@@ -21,7 +21,6 @@ class Transaction extends Model
         'payment_mode',
         'payment_status',
         'amount_paid',
-        'change',
         'notes',
         'customer_id',
         'user_id',
@@ -33,7 +32,6 @@ class Transaction extends Model
         'tax' => 'decimal:2',
         'grand_total' => 'decimal:2',
         'amount_paid' => 'decimal:2',
-        'change' => 'decimal:2',
     ];
 
     /**
@@ -144,10 +142,17 @@ class Transaction extends Model
             $this->payment_status = 'unpaid';
         }
 
-        $this->change = $totalPaid > $this->grand_total ? ($totalPaid - $this->grand_total) : 0;
         $this->save();
 
         return $this;
+    }
+    
+    /**
+     * Get the total change from all payments
+     */
+    public function getTotalChangeAttribute()
+    {
+        return $this->payments()->sum('change');
     }
 
     /**
@@ -157,7 +162,6 @@ class Transaction extends Model
     {
         $this->subtotal = $this->items->sum('subtotal');
         $this->grand_total = $this->subtotal - $this->discount + $this->tax;
-        $this->change = $this->amount_paid - $this->grand_total;
         $this->save();
 
         return $this;
@@ -168,6 +172,6 @@ class Transaction extends Model
      */
     public function getOutstandingBalanceAttribute()
     {
-        return max(0, $this->grand_total - ($this->amount_paid - $this->change));
+        return max(0, $this->grand_total - ($this->amount_paid - $this->total_change));
     }
 }

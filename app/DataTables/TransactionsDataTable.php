@@ -89,7 +89,7 @@ class TransactionsDataTable extends DataTable
     {
         $query = $model->newQuery()
             ->select('transactions.*')
-            ->selectRaw('(grand_total - (amount_paid - transactions.change)) as outstanding_balance')
+            ->selectRaw('(grand_total - (amount_paid - (SELECT COALESCE(SUM(`change`), 0) FROM transaction_payments WHERE transaction_id = transactions.id))) as outstanding_balance')
             ->with(['user', 'customer']);
 
         // Filter by date range

@@ -9,6 +9,7 @@ class TransactionPayment extends Model
     protected $fillable = [
         'transaction_id',
         'amount',
+        'change',
         'payment_method',
         'payment_date',
         'status',
@@ -18,6 +19,7 @@ class TransactionPayment extends Model
     protected $casts = [
         'payment_date' => 'date',
         'amount' => 'decimal:2',
+        'change' => 'decimal:2',
     ];
 
     /**

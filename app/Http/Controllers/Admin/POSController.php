@@ -286,17 +286,24 @@ class POSController extends Controller
                 'payment_status' => $paymentStatus,
                 'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
                 'amount_paid' => $totalPaidNow,
-                'change' => $request->payment_mode === 'full' ? ($request->amount_paid - $request->grand_total) : 0,
                 'notes' => $request->notes,
                 'customer_id' => $request->customer_id,
                 'user_id' => auth()->id(),
             ]);
 
             // Create transaction payments
-            foreach ($request->payments as $paymentData) {
+            $totalChangeToAssign = $request->payment_mode === 'full' ? max(0, $request->amount_paid - $request->grand_total) : 0;
+            $paymentsCount = count($request->payments);
+            
+            foreach ($request->payments as $index => $paymentData) {
+                // If there are multiple payments (unlikely in POS full mode but possible in some setups), 
+                // assign the change to the last payment.
+                $changeForThisPayment = ($index === $paymentsCount - 1) ? $totalChangeToAssign : 0;
+
                 TransactionPayment::create([
                     'transaction_id' => $transaction->id,
                     'amount' => $paymentData['amount'],
+                    'change' => $changeForThisPayment,
                     'payment_method' => $paymentData['payment_method'],
                     'payment_date' => $paymentData['payment_date'],
                     'status' => $paymentData['status'],
@@ -340,7 +347,7 @@ class POSController extends Controller
                     'id' => $transaction->id,
                     'invoice_no' => $transaction->invoice_no,
                     'grand_total' => $transaction->grand_total,
-                    'change' => $transaction->change,
+                    'change' => $transaction->total_change,
                 ],
             ]);
 

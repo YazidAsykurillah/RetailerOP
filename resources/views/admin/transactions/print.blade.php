@@ -325,10 +325,10 @@
                     <td class="value" style="color: #000; font-weight: bold;">Rp {{ number_format($transaction->grand_total - $transaction->amount_paid, 0, ',', '.') }}</td>
                 </tr>
                 @endif
-                @if($transaction->change > 0 && $transaction->payment_mode === 'full')
+                @if($transaction->total_change > 0)
                 <tr>
                     <td class="label change">Change</td>
-                    <td class="value change">Rp {{ number_format($transaction->change, 0, ',', '.') }}</td>
+                    <td class="value change">Rp {{ number_format($transaction->total_change, 0, ',', '.') }}</td>
                 </tr>
                 @endif
             </table>

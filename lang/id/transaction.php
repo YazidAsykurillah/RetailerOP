@@ -13,7 +13,7 @@ return [
     'todays_transactions' => 'Transaksi Hari Ini',
     'todays_sales' => 'Penjualan Hari Ini',
     'this_months_sales' => 'Penjualan Bulan Ini',
-    'total_amount' => 'Total Amount',
+    'total_amount' => 'Nilai Total',
     'paid' => 'Terbayar',
     'balance' => 'Sisa',
 

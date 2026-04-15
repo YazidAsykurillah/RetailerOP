@@ -159,7 +159,6 @@ class TransactionController extends Controller
                 'payment_mode' => $request->payment_mode,
                 'payment_method' => $request->payment_mode === 'full' ? $request->payment_method : 'multiple',
                 'amount_paid' => $request->payment_mode === 'full' ? $request->amount_paid : 0, // Will be recalculated from payments
-                'change' => $request->payment_mode === 'full' ? ($request->amount_paid - $request->grand_total) : 0,
                 'notes' => $request->notes,
             ]);
 
@@ -169,19 +168,25 @@ class TransactionController extends Controller
             if ($request->payment_mode === 'full') {
                 $transaction->payments()->create([
                     'amount' => $request->amount_paid,
+                    'change' => max(0, $request->amount_paid - $request->grand_total),
                     'payment_method' => $request->payment_method,
                     'payment_date' => now(),
                     'status' => $request->amount_paid >= $request->grand_total ? 'paid' : 'partial',
                     'processed_by' => auth()->id(),
                 ]);
             } else {
-                foreach ($request->payments as $p) {
+                $totalPayments = count($request->payments);
+                foreach ($request->payments as $index => $p) {
+                    // Usually installments don't have change, but if they overpay on the last one, 
+                    // we can't easily calculate here without total sum.
+                    // For simplicity, change during Edit is primarily for Full Payment mode.
                     $transaction->payments()->create([
                         'amount' => $p['amount'],
+                        'change' => 0,
                         'payment_method' => $p['payment_method'],
                         'payment_date' => $p['payment_date'],
                         'notes' => $p['notes'] ?? null,
-                        'status' => 'paid', // Installments are usually marked paid once recorded
+                        'status' => 'paid',
                         'processed_by' => auth()->id(),
                     ]);
                 }
@@ -291,13 +296,9 @@ class TransactionController extends Controller
         $transaction = Transaction::findOrFail($id);
 
         $remainingBalance = (float) $transaction->outstanding_balance;
-
-        if ($request->amount > $remainingBalance + 0.01) {
-             return response()->json([
-                'success' => false,
-                'message' => __('transaction.payment_exceeds_balance'),
-            ], 422);
-        }
+        
+        // We now allow overpayment, which will be recorded as change
+        // No longer returning 422 if amount > balance
 
         $request->validate([
             'amount' => 'required|numeric|min:0.01',
@@ -309,9 +310,12 @@ class TransactionController extends Controller
         DB::beginTransaction();
 
         try {
+            $change = max(0, $request->amount - $remainingBalance);
+
             TransactionPayment::create([
                 'transaction_id' => $transaction->id,
                 'amount' => $request->amount,
+                'change' => $change,
                 'payment_method' => $request->payment_method,
                 'payment_date' => $request->payment_date,
                 'status' => 'paid',

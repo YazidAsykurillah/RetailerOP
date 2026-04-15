@@ -357,9 +357,9 @@
                 
                 <input type="text" class="amount-input" id="amount-paid" placeholder="Amount Paid" value="{{ $transaction->payment_mode === 'full' ? (float)$transaction->amount_paid : 0 }}">
                 
-                <div class="change-display {{ $transaction->change >= 0 ? 'positive' : 'negative' }}" id="change-display" style="{{ $transaction->payment_mode === 'partial' ? 'display: none;' : '' }}">
+                <div class="change-display {{ $transaction->total_change >= 0 ? 'positive' : 'negative' }}" id="change-display" style="{{ $transaction->payment_mode === 'partial' ? 'display: none;' : '' }}">
                     <small>Change</small><br>
-                    <span id="change-amount">{{ number_format(abs($transaction->change), 0, ',', '.') }}</span>
+                    <span id="change-amount">{{ number_format(abs($transaction->total_change), 0, ',', '.') }}</span>
                 </div>
             </div>
 
