@@ -57,6 +57,9 @@
 @stop
 
 @section('adminlte_js')
+    <script>
+        window.Lang = window.Lang || {};
+    </script>
     @stack('js')
     @yield('js')
 @stop
