@@ -424,15 +424,59 @@ $(function() {
         });
     }
 
+    // Helper to get numeric value from inputs (handles AutoNumeric or raw)
+    function getNumericValue(element) {
+        if (!element || element.length === 0) return 0;
+        const autoNumericInstance = AutoNumeric.getAutoNumericElement(element.get(0));
+        if (autoNumericInstance) {
+            return autoNumericInstance.getNumber() || 0;
+        }
+        // Fallback for non-autonumeric or raw values
+        let val = element.val() || '0';
+        return parseFloat(val.replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+
+    // Centralized function to calculate current transaction state
+    function calculateTransactionData() {
+        let itemsCount = 0;
+        let subtotal = 0;
+        let totalDiscount = 0;
+
+        $('.item-row').each(function() {
+            const variantId = $(this).data('variant-id');
+            if (variantId) {
+                const price = parseFloat($(this).data('price')) || 0;
+                const qty = parseInt($(this).find('.qty-input').val()) || 0;
+                const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
+                const cutAmount = getNumericValue($(this).find('.cut-input'));
+
+                const lineTotal = price * qty;
+                const discountAmount = lineTotal * (discountPercent / 100);
+                
+                let actualDeduction = discountAmount + cutAmount;
+                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
+                
+                subtotal += lineTotal;
+                totalDiscount += actualDeduction;
+                itemsCount += qty;
+            }
+        });
+
+        const grandTotal = subtotal - totalDiscount;
+        return {
+            itemsCount,
+            subtotal,
+            totalDiscount,
+            grandTotal
+        };
+    }
+
     // Update row subtotal
     function updateRowSubtotal($row) {
         const price = parseFloat($row.data('price')) || 0;
         const qty = parseInt($row.find('.qty-input').val()) || 0;
         const discountPercent = parseFloat($row.find('.discount-input').val()) || 0;
-        
-        // Get cut amount (parse from AutoNumeric format: 1.000 -> 1000)
-        let cutAmountStr = $row.find('.cut-input').val() || '0';
-        let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+        const cutAmount = getNumericValue($row.find('.cut-input'));
 
         const lineTotal = price * qty;
         const discountAmount = lineTotal * (discountPercent / 100);
@@ -460,55 +504,19 @@ $(function() {
 
     // Update summary
     function updateSummary() {
-        let itemsCount = 0;
-        let subtotal = 0;
-        let totalDiscount = 0;
+        const data = calculateTransactionData();
 
-        $('.item-row').each(function() {
-            const variantId = $(this).data('variant-id');
-            if (variantId) {
-                const price = parseFloat($(this).data('price')) || 0;
-                const qty = parseInt($(this).find('.qty-input').val()) || 0;
-                const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
-                
-                let cutAmountStr = $(this).find('.cut-input').val() || '0';
-                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
-
-                const lineTotal = price * qty;
-                const discountAmount = lineTotal * (discountPercent / 100);
-                
-                // Calculate item subtotal (gross - discount - cut)
-                // But realistically, cut shouldn't exceed subtotal? 
-                // Let's assume valid inputs or clamp:
-                let actualDeduction = discountAmount + cutAmount;
-                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
-
-                // We want summary subtotal to be GROSS total? Or total after line discounts?
-                // Usually Subtotal is Gross, Discount is total deductions, Total is Net.
-                // let's stick to: Subtotal = sum(price * qty)
-                // Total Discount = sum(percent_disc + cut)
-                
-                subtotal += lineTotal;
-                totalDiscount += actualDeduction;
-                itemsCount += qty;
-            }
-        });
-
-        const total = subtotal - totalDiscount;
-
-        $('#items-count').text(itemsCount);
-        $('#summary-subtotal').text(formatNumber(subtotal));
-        $('#summary-discount').text(formatNumber(totalDiscount));
-        $('#summary-total').text(formatNumber(total));
+        $('#items-count').text(data.itemsCount);
+        $('#summary-subtotal').text(formatNumber(data.subtotal));
+        $('#summary-discount').text(formatNumber(data.totalDiscount));
+        $('#summary-total').text(formatNumber(data.grandTotal));
 
         // Enable/disable submit button
-        const hasItems = $('.item-row').filter(function() {
-            return $(this).data('variant-id');
-        }).length > 0;
+        const hasItems = data.itemsCount > 0;
         
         let canSubmit = hasItems;
         if (selectedPaymentMode === 'partial') {
-            const balance = getGrandTotal() - getPartialTotal();
+            const balance = data.grandTotal - getPartialTotal();
             if (balance < 0) {
                 canSubmit = false;
             }
@@ -516,8 +524,8 @@ $(function() {
 
         $('#submit-btn').prop('disabled', !canSubmit);
 
-        updateChangeDisplay();
-        updateRemainingBalance();
+        updateChangeDisplay(data.grandTotal);
+        updateRemainingBalance(data.grandTotal);
     }
 
     function getPartialTotal() {
@@ -532,7 +540,7 @@ $(function() {
     });
 
     // Amount paid
-    $('#amount-paid').on('input', function() {
+    $('#amount-paid').on('autoNumeric:rawValueModified', function() {
         updateChangeDisplay();
     });
 
@@ -550,14 +558,14 @@ $(function() {
     });
 
     // Update Remaining Balance on input
-    $('#initial-payment-amount').on('input', function() {
+    $('#initial-payment-amount').on('autoNumeric:rawValueModified', function() {
         updateRemainingBalance();
         updateSummary();
     });
 
-    function updateRemainingBalance() {
+    function updateRemainingBalance(providedTotal) {
         let totalAllocated = getPartialTotal();
-        const grandTotal = getGrandTotal();
+        const grandTotal = providedTotal !== undefined ? providedTotal : calculateTransactionData().grandTotal;
         const balance = grandTotal - totalAllocated;
         
         $('#remaining-balance').text(formatNumber(balance));
@@ -571,52 +579,14 @@ $(function() {
         }
     }
 
+    // This is now redundant but kept for any external references if any
     function getGrandTotal() {
-        let subtotal = 0;
-        let totalDiscount = 0;
-        $('.item-row').each(function() {
-            if ($(this).data('variant-id')) {
-                const price = parseFloat($(this).data('price')) || 0;
-                const qty = parseInt($(this).find('.qty-input').val()) || 0;
-                const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
-                let cutAmountStr = $(this).find('.cut-input').val() || '0';
-                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
-
-                const lineTotal = price * qty;
-                let actualDeduction = (lineTotal * (discountPercent / 100)) + cutAmount;
-                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
-                
-                subtotal += lineTotal;
-                totalDiscount += actualDeduction;
-            }
-        });
-        return subtotal - totalDiscount;
+        return calculateTransactionData().grandTotal;
     }
 
     // Update change display
-    function updateChangeDisplay() {
-        // Recalculate total here or reuse from global/DOM? 
-        // Safer to recalculate to match updateSummary logic
-        let subtotal = 0;
-        let totalDiscount = 0;
-        $('.item-row').each(function() {
-            if ($(this).data('variant-id')) {
-                const price = parseFloat($(this).data('price')) || 0;
-                const qty = parseInt($(this).find('.qty-input').val()) || 0;
-                const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
-                let cutAmountStr = $(this).find('.cut-input').val() || '0';
-                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
-
-                const lineTotal = price * qty;
-                let actualDeduction = (lineTotal * (discountPercent / 100)) + cutAmount;
-                if (actualDeduction > lineTotal) actualDeduction = lineTotal;
-                
-                subtotal += lineTotal;
-                totalDiscount += actualDeduction;
-            }
-        });
-
-        const total = subtotal - totalDiscount;
+    function updateChangeDisplay(providedTotal) {
+        const total = providedTotal !== undefined ? providedTotal : calculateTransactionData().grandTotal;
         const amountPaid = amountPaidAN.getNumber() || 0;
         const change = amountPaid - total;
 
@@ -647,8 +617,7 @@ $(function() {
                 const price = parseFloat($(this).data('price')) || 0;
                 const discountPercent = parseFloat($(this).find('.discount-input').val()) || 0;
                 
-                let cutAmountStr = $(this).find('.cut-input').val() || '0';
-                let cutAmount = parseFloat(cutAmountStr.replace(/\./g, '').replace(/,/g, '.')) || 0;
+                const cutAmount = getNumericValue($(this).find('.cut-input'));
 
                 const lineTotal = price * qty;
                 const discountAmount = lineTotal * (discountPercent / 100);
