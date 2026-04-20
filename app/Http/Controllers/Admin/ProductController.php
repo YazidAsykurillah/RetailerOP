@@ -280,7 +280,7 @@ class ProductController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $query = Product::with(['category', 'brand', 'variants']);
+        $query = Product::query();
         $filenameParts = ['product_list'];
 
         if ($request->has('category_id') && $request->category_id) {
@@ -297,6 +297,20 @@ class ProductController extends Controller
             if ($brand) {
                 $filenameParts[] = Str::slug($brand->name);
             }
+        }
+
+        $stockOnly = $request->has('stock_only') && $request->stock_only == 'true';
+        
+        if ($stockOnly) {
+            $query->whereHas('variants', function($q) {
+                $q->where('stock', '>', 0);
+            });
+            $query->with(['category', 'brand', 'variants' => function($q) {
+                $q->where('stock', '>', 0);
+            }]);
+            $filenameParts[] = 'stock_only';
+        } else {
+            $query->with(['category', 'brand', 'variants']);
         }
 
         $products = $query->orderBy('name', 'asc')->get();

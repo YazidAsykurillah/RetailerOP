@@ -23,6 +23,7 @@ return [
     'pos_sales' => 'POS & PENJUALAN',
     'new_transaction' => 'Transaksi Baru',
     'transaction_history' => 'Riwayat Transaksi',
+    'payment_list' => 'Daftar Pembayaran',
     'account_settings' => 'AKUN & PENGATURAN',
     'profile' => 'Profil',
     'change_password' => 'Ubah Kata Sandi',

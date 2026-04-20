@@ -433,6 +433,12 @@ return [
             'icon' => 'fas fa-fw fa-receipt',
             'can'=>'Access Pos',
         ],
+        [
+            'text' => 'payment_list',
+            'url' => 'admin/payments',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'can'=>'Access Pos',
+        ],
         ['header' => 'account_settings'],
         [
             'text' => 'profile',

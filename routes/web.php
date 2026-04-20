@@ -80,6 +80,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::get('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'edit'])->name('business-profile.edit');
     Route::put('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'update'])->name('business-profile.update');
 
+    // Payment Management Routes
+    Route::get('payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
+
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');

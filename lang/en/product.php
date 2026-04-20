@@ -43,4 +43,8 @@ return [
     'product_report' => 'Product Report',
     'inventory_report' => 'Inventory Report',
     'price' => 'Harga',
+    'export_options' => 'Export PDF Options',
+    'export_all' => 'Export All Products',
+    'export_stock_only' => 'Export with Stock Only',
+    'include_empty_stock' => 'Include empty stock products',
 ];

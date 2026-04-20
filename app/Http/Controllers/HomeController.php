@@ -11,6 +11,8 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\StockMovement;
 use App\Models\Purchase;
+use App\Models\TransactionPayment;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -45,8 +47,8 @@ class HomeController extends Controller
 
         // Transaction Statistics
         $todayTransactions = Transaction::whereDate('created_at', today())->count();
-        $todayIncome = Transaction::whereDate('created_at', today())
-            ->sum('amount_paid');
+        $todayIncome = TransactionPayment::whereDate('payment_date', today())
+            ->sum(DB::raw('amount - `change`'));
 
         // User Statistics
         $totalUsers = User::count();

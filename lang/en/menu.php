@@ -23,6 +23,7 @@ return [
     'pos_sales' => 'POS & SALES',
     'new_transaction' => 'New Transaction',
     'transaction_history' => 'Transaction History',
+    'payment_list' => 'Payment List',
     'account_settings' => 'ACCOUNT & SETTINGS',
     'profile' => 'Profile',
     'change_password' => 'Change Password',

@@ -42,4 +42,8 @@ return [
     'additional_images' => 'Gambar Tambahan',
     'product_report' => 'Laporan Produk',
     'inventory_report' => 'Laporan Inventaris',
+    'export_options' => 'Opsi Ekspor PDF',
+    'export_all' => 'Ekspor Semua Produk',
+    'export_stock_only' => 'Ekspor Produk dengan Stok Saja',
+    'include_empty_stock' => 'Sertakan produk dengan stok kosong',
 ];

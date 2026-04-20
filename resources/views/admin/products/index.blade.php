@@ -9,18 +9,18 @@
 @section('content')
 <div class="row">
     <div class="col-lg-12 margin-tb">
-        <div class="card card-outline card-primary collapsed-card">
+        <div class="card card-outline card-primary">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-filter"></i> {{ __('general.filter') }}
                 </h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-minus"></i>
                     </button>
                 </div>
             </div>
-            <div class="card-body" style="display: none;">
+            <div class="card-body">
                 <form id="filter-form">
                     <div class="row">
                         <div class="col-md-4">
@@ -75,9 +75,9 @@
                     <a class="btn btn-info mr-2" href="{{ route('admin.products.import') }}">
                         <i class="fas fa-file-import"></i> {{ __('general.import') ?? 'Import' }}
                     </a>
-                    <a id="export-pdf-btn" class="btn btn-dark mr-2" href="{{ route('admin.products.export-pdf') }}">
+                    <button type="button" class="btn btn-dark mr-2" data-toggle="modal" data-target="#exportPdfModal">
                         <i class="fas fa-file-pdf"></i> {{ __('general.export_pdf') ?? 'Export PDF' }}
-                    </a>
+                    </button>
                     <a class="btn btn-success" href="{{ route('admin.products.create') }}">
                         <i class="fas fa-plus"></i> {{ __('product.create') }}
                     </a>
@@ -98,6 +98,38 @@
             <!-- Loading Overlay -->
             <div class="overlay" id="loading-overlay" style="display: none;">
                 <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export PDF Modal -->
+<div class="modal fade" id="exportPdfModal" tabindex="-1" role="dialog" aria-labelledby="exportPdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportPdfModalLabel">{{ __('product.export_options') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="custom-control custom-radio mb-2">
+                        <input class="custom-control-input" type="radio" id="exportAll" name="exportStockFilter" value="false" checked>
+                        <label for="exportAll" class="custom-control-label">{{ __('product.export_all') }}</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="exportStockOnly" name="exportStockFilter" value="true">
+                        <label for="exportStockOnly" class="custom-control-label">{{ __('product.export_stock_only') }}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('general.cancel') }}</button>
+                <button type="button" class="btn btn-primary" id="confirm-export-pdf">
+                    <i class="fas fa-file-pdf"></i> {{ __('general.export') }}
+                </button>
             </div>
         </div>
     </div>
@@ -150,14 +182,23 @@
             table.on('preXhr.dt', function (e, settings, data) {
                 data.category_id = $('#category_id').val();
                 data.brand_id = $('#brand_id').val();
+            });
+
+            // Handle Confirm Export PDF
+            $('#confirm-export-pdf').on('click', function() {
+                var categoryId = $('#category_id').val();
+                var brandId = $('#brand_id').val();
+                var stockOnly = $('input[name="exportStockFilter"]:checked').val();
                 
-                // Update Export PDF link
                 var exportUrl = "{{ route('admin.products.export-pdf') }}";
                 var params = $.param({
-                    category_id: data.category_id,
-                    brand_id: data.brand_id
+                    category_id: categoryId,
+                    brand_id: brandId,
+                    stock_only: stockOnly
                 });
-                $('#export-pdf-btn').attr('href', exportUrl + '?' + params);
+                
+                window.location.href = exportUrl + '?' + params;
+                $('#exportPdfModal').modal('hide');
             });
 
             // Hide overlay when table is drawn
