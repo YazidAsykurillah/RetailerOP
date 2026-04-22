@@ -187,11 +187,11 @@
             </div>
         </div>
 
-        <!-- Payment Schedule -->
+        <!-- Payment History -->
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-calendar-alt"></i> Payment Schedule
+                    <i class="fas fa-calendar-alt"></i> Payment History
                 </h3>
             </div>
             <div class="card-body p-0">
@@ -207,7 +207,15 @@
                     <tbody>
                         @foreach($transaction->payments as $payment)
                         <tr>
-                            <td>{{ $payment->payment_date->format('d/m/Y') }}</td>
+                            <td>
+                                {{ $payment->payment_date->format('d/m/Y') }}
+                                <button type="button" class="btn btn-xs btn-link text-info edit-payment-date" 
+                                        data-id="{{ $payment->id }}" 
+                                        data-date="{{ $payment->payment_date->format('Y-m-d') }}"
+                                        title="Edit Date">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
                             <td>{{ ucfirst($payment->payment_method) }}</td>
                             <td class="text-right">{{ number_format($payment->amount, 0, ',', '.') }}</td>
                             <td class="text-center">
@@ -305,6 +313,35 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Payment Date Modal -->
+<div class="modal fade" id="editPaymentDateModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentDateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="editPaymentDateLabel">Edit Payment Date</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editPaymentDateForm">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" id="edit_payment_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit_payment_date">Payment Date</label>
+                        <input type="date" class="form-control" id="edit_payment_date" name="payment_date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info" id="updatePaymentDateBtn">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('js')
@@ -335,6 +372,46 @@
                     const message = xhr.responseJSON?.message || 'Something went wrong';
                     toastr.error(message);
                     $btn.prop('disabled', false).text('Save Payment');
+                }
+            });
+        });
+
+        // Edit Payment Date logic
+        $('.edit-payment-date').on('click', function() {
+            const id = $(this).data('id');
+            const date = $(this).data('date');
+            
+            $('#edit_payment_id').val(id);
+            $('#edit_payment_date').val(date);
+            $('#editPaymentDateModal').modal('show');
+        });
+
+        $('#editPaymentDateForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const id = $('#edit_payment_id').val();
+            const $btn = $('#updatePaymentDateBtn');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Updating...');
+
+            $.ajax({
+                url: `/admin/payments/${id}/update-date`,
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message || 'Failed to update date');
+                        $btn.prop('disabled', false).text('Update');
+                    }
+                },
+                error: function(xhr) {
+                    const message = xhr.responseJSON?.message || 'Something went wrong';
+                    toastr.error(message);
+                    $btn.prop('disabled', false).text('Update');
                 }
             });
         });

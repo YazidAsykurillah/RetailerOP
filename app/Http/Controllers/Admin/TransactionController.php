@@ -339,4 +339,32 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Update the payment date of a transaction payment.
+     */
+    public function updatePaymentDate(Request $request, $id)
+    {
+        $payment = TransactionPayment::findOrFail($id);
+
+        $request->validate([
+            'payment_date' => 'required|date',
+        ]);
+
+        try {
+            $payment->update([
+                'payment_date' => $request->payment_date,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Payment date updated successfully'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Failed to update payment date') . ': ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
