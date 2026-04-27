@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', __('variant.manage_variants') . ' - ' . $product->name)
+@section('title', __('variant.list') . ' - ' . $product->name)
 
 @section('content_header')
-    <h1>{{ __('variant.manage_variants') }}</h1>
+    <h1>{{ __('variant.list') }}</h1>
 @stop
 
 @section('content')
