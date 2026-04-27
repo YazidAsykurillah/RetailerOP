@@ -266,7 +266,8 @@
                                 @endphp
                                 <div style="font-size: 9px; line-height: 1.1;">
                                     ({{ round($percent) }}%)<br>
-                                    {{ number_format($totalItemDiscount, 0, ',', '.') }}
+                                    <!-- Don't display total item discount -->
+                                    <!-- {{ number_format($totalItemDiscount, 0, ',', '.') }} -->
                                 </div>
                             @else
                                 0
