@@ -265,7 +265,7 @@
                                     $percent = $itemGross > 0 ? ($totalItemDiscount / $itemGross) * 100 : 0;
                                 @endphp
                                 <div style="font-size: 9px; line-height: 1.1;">
-                                    ({{ round($percent) }}%)<br>
+                                    {{ round($percent) }}%<br>
                                     <!-- Don't display total item discount -->
                                     <!-- {{ number_format($totalItemDiscount, 0, ',', '.') }} -->
                                 </div>
