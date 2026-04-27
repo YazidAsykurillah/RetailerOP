@@ -221,7 +221,7 @@
                     </div>
                     <div class="form-group">
                         <label for="topup_amount">Top-up Amount (Rp) <span class="text-danger">*</span></label>
-                        <input type="number" step="1" min="1" class="form-control" id="topup_amount" name="amount" required placeholder="e.g. 100000">
+                        <input type="text" class="form-control" id="topup_amount" name="amount" required placeholder="e.g. 100.000">
                     </div>
                     <div class="form-group">
                         <label for="topup_payment_method">Payment Method <span class="text-danger">*</span></label>
@@ -265,7 +265,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="edit_amount">Amount (Rp)</label>
-                        <input type="number" step="1" min="1" class="form-control" id="edit_amount" name="amount" required>
+                        <input type="text" class="form-control" id="edit_amount" name="amount" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_payment_method">Payment Method</label>
@@ -294,8 +294,27 @@
 
 @section('js')
     {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0/dist/autoNumeric.min.js"></script>
     <script>
         $(document).ready(function(){
+            @can('Manage Deposits')
+            const topUpAmountAN = new AutoNumeric('#topup_amount', {
+                digitGroupSeparator: '.',
+                decimalCharacter: ',',
+                decimalPlaces: 0,
+                minimumValue: '0',
+                unformatOnSubmit: true
+            });
+
+            const editAmountAN = new AutoNumeric('#edit_amount', {
+                digitGroupSeparator: '.',
+                decimalCharacter: ',',
+                decimalPlaces: 0,
+                minimumValue: '0',
+                unformatOnSubmit: true
+            });
+            @endcan
+
             // Transaction table filters
             $('#btn-filter').click(function(){
                 $('#customer-transactions-table').DataTable().draw();
@@ -316,7 +335,12 @@
                 $.ajax({
                     url:  '{{ route("admin.deposits.store", $customer->id) }}',
                     type: 'POST',
-                    data: $(this).serialize(),
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        amount: topUpAmountAN.getNumber(),
+                        payment_method: $('#topup_payment_method').val(),
+                        notes: $('#topup_notes').val()
+                    },
                     success: function(res) {
                         if (res.success) {
                             toastr.success(res.message);
@@ -338,7 +362,7 @@
             // Open edit modal
             $(document).on('click', '.btn-edit-deposit', function() {
                 $('#edit_deposit_id').val($(this).data('id'));
-                $('#edit_amount').val($(this).data('amount'));
+                editAmountAN.set($(this).data('amount'));
                 $('#edit_payment_method').val($(this).data('method'));
                 $('#edit_notes').val($(this).data('notes'));
                 $('#editDepositModal').modal('show');
@@ -354,7 +378,13 @@
                 $.ajax({
                     url:  '{{ url("admin/deposits") }}/' + id,
                     type: 'POST',
-                    data: $(this).serialize(),
+                    data: {
+                        _method: 'PUT',
+                        _token: '{{ csrf_token() }}',
+                        amount: editAmountAN.getNumber(),
+                        payment_method: $('#edit_payment_method').val(),
+                        notes: $('#edit_notes').val()
+                    },
                     success: function(res) {
                         if (res.success) {
                             toastr.success(res.message);
