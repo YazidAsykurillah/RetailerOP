@@ -68,8 +68,8 @@
                         <label>{{ __('general.status') ?? 'Status' }}</label>
                         <select class="form-control" id="status" name="status">
                             <option value="">{{ __('general.all_status') ?? 'All Statuses' }}</option>
-                            <option value="in_stock" {{ request('status') == 'in_stock' ? 'selected' : '' }}>{{ __('stock.status_in_stock') ?? 'In Stock' }}</option>
-                            <option value="low_stock" {{ request('low_stock') == '1' || request('status') == 'low_stock' ? 'selected' : '' }}>{{ __('stock.status_low_stock') ?? 'Low Stock' }}</option>
+                            <option value="in_stock" {{ request('status') == 'in_stock' ? 'selected' : '' }}>{{ __('stock.in_stock') ?? 'In Stock' }}</option>
+                            <option value="low_stock" {{ request('low_stock') == '1' || request('status') == 'low_stock' ? 'selected' : '' }}>{{ __('stock.low_stock') ?? 'Low Stock' }}</option>
                             <option value="out_of_stock" {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>{{ __('stock.out_of_stock') ?? 'Out of Stock' }}</option>
                         </select>
                     </div>
