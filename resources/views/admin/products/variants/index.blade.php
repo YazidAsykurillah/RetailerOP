@@ -44,7 +44,7 @@
                         <i class="fas fa-file-import"></i> {{ __('general.import') }}
                     </a>
                     <a class="btn btn-success" href="{{ route('admin.products.variants.create', $product->id) }}">
-                        <i class="fas fa-plus"></i> {{ __('variant.add_variant') ?? 'Add Variant' }}
+                        <i class="fas fa-plus"></i> {{ __('variant.create') ?? 'Add Variant' }}
                     </a>
                 </div>
             </div>
