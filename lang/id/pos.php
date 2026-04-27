@@ -39,6 +39,7 @@ return [
     'payment_date' => 'Tanggal Pembayaran',
     'initial_payment_note' => 'Catatan pembayaran awal...',
     'remaining_balance' => 'Sisa Tagihan',
+    'deposit_insufficient_full' => 'Insufficient deposit balance',
 
     // Price
     'price_cut' => 'Potongan Harga',

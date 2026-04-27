@@ -435,9 +435,15 @@ return [
         ],
         [
             'text' => 'payment_list',
-            'url' => 'admin/payments',
+            'url'  => 'admin/payments',
             'icon' => 'fas fa-fw fa-money-bill-wave',
-            'can'=>'Access Pos',
+            'can'  => 'Access Pos',
+        ],
+        [
+            'text' => 'deposit_management',
+            'url'  => 'admin/deposits',
+            'icon' => 'fas fa-fw fa-wallet',
+            'can'  => 'Manage Deposits',
         ],
         ['header' => 'account_settings'],
         [

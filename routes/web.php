@@ -83,6 +83,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     // Payment Management Routes
     Route::get('payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
 
+    // Deposit Management Routes
+    Route::get('deposits', [App\Http\Controllers\Admin\DepositController::class, 'index'])->name('deposits.index');
+    Route::post('customers/{customer}/deposits', [App\Http\Controllers\Admin\DepositController::class, 'store'])->name('deposits.store');
+    Route::put('deposits/{deposit}', [App\Http\Controllers\Admin\DepositController::class, 'update'])->name('deposits.update');
+    Route::delete('deposits/{deposit}', [App\Http\Controllers\Admin\DepositController::class, 'destroy'])->name('deposits.destroy');
+
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');

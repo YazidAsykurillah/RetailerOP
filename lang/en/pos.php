@@ -39,6 +39,8 @@ return [
     'payment_date' => 'Payment Date',
     'initial_payment_note' => 'Initial payment note...',
     'remaining_balance' => 'Remaining Balance',
+    'deposit' => 'Deposit',
+    'deposit_insufficient_full' => 'Insufficient deposit balance',
 
     // Price
     'price_cut' => 'Price Cut',

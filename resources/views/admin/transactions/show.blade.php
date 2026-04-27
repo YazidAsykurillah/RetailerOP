@@ -216,7 +216,11 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </td>
-                            <td>{{ ucfirst($payment->payment_method) }}</td>
+                            <td>{{ ucfirst($payment->payment_method) }}
+                                @if($payment->payment_method === 'deposit')
+                                <span class="badge badge-info"><i class="fas fa-wallet"></i> Deposit</span>
+                                @endif
+                            </td>
                             <td class="text-right">{{ number_format($payment->amount, 0, ',', '.') }}</td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $payment->status === 'paid' ? 'success' : 'secondary' }}">
@@ -293,7 +297,19 @@
                             <option value="card">Card</option>
                             <option value="transfer">Bank Transfer</option>
                             <option value="other">Other</option>
+                            @if($transaction->customer_id)
+                            @can('Use Deposit')
+                            <option value="deposit">Deposit (Balance: Rp {{ number_format(optional($transaction->customer)->deposit_balance ?? 0, 0, ',', '.') }})</option>
+                            @endcan
+                            @endif
                         </select>
+                    </div>
+                    <div class="form-group" id="deposit-balance-info" style="display:none">
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-wallet"></i>
+                            <strong>Customer Deposit Balance:</strong>
+                            Rp {{ number_format(optional($transaction->customer)->deposit_balance ?? 0, 0, ',', '.') }}
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="payment_date">Payment Date</label>
@@ -347,6 +363,15 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        // Show/hide deposit balance info
+        $('#payment_method').on('change', function() {
+            if ($(this).val() === 'deposit') {
+                $('#deposit-balance-info').show();
+            } else {
+                $('#deposit-balance-info').hide();
+            }
+        });
+
         $('#paymentForm').on('submit', function(e) {
             e.preventDefault();
             

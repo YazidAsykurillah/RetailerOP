@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Transaction;
@@ -202,29 +203,51 @@ class POSController extends Controller
     public function processTransaction(Request $request)
     {
         $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.variant_id' => 'required|exists:product_variants,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
-            'items.*.discount' => 'nullable|numeric|min:0',
-            'items.*.cut_amount' => 'nullable|numeric|min:0',
-            'subtotal' => 'required|numeric|min:0',
-            'discount' => 'nullable|numeric|min:0',
-            'tax' => 'nullable|numeric|min:0',
-            'grand_total' => 'required|numeric|min:0',
-            'payment_mode' => 'required|in:full,partial',
-            'payment_method' => 'required_if:payment_mode,full|string',
-            'amount_paid' => 'required_if:payment_mode,full|numeric',
-            'payments' => 'required|array|min:1',
-            'payments.*.amount' => 'required|numeric|min:0', // Allow 0 for the initial payment
+            'items'                    => 'required|array|min:1',
+            'items.*.variant_id'       => 'required|exists:product_variants,id',
+            'items.*.quantity'         => 'required|integer|min:1',
+            'items.*.price'            => 'required|numeric|min:0',
+            'items.*.discount'         => 'nullable|numeric|min:0',
+            'items.*.cut_amount'       => 'nullable|numeric|min:0',
+            'subtotal'                 => 'required|numeric|min:0',
+            'discount'                 => 'nullable|numeric|min:0',
+            'tax'                      => 'nullable|numeric|min:0',
+            'grand_total'             => 'required|numeric|min:0',
+            'payment_mode'            => 'required|in:full,partial',
+            'payment_method'          => 'required_if:payment_mode,full|string',
+            'amount_paid'             => 'required_if:payment_mode,full|numeric',
+            'payments'                => 'required|array|min:1',
+            'payments.*.amount'       => 'required|numeric|min:0',
             'payments.*.payment_method' => 'required|string',
             'payments.*.payment_date' => 'required|date',
-            'payments.*.status' => 'required|in:paid,pending',
-            'customer_id' => 'nullable|exists:customers,id',
-            'customer_name' => 'nullable|string|max:255',
-            'customer_phone' => 'nullable|string|max:20',
-            'notes' => 'nullable|string|max:1000',
+            'payments.*.status'       => 'required|in:paid,pending',
+            'customer_id'             => 'nullable|exists:customers,id',
+            'customer_name'           => 'nullable|string|max:255',
+            'customer_phone'          => 'nullable|string|max:20',
+            'notes'                   => 'nullable|string|max:1000',
+            'deposit_amount'          => 'nullable|numeric|min:0',
         ]);
+
+        // Validate deposit usage: requires a registered customer + permission
+        $depositAmount = (float) ($request->deposit_amount ?? 0);
+        if ($depositAmount > 0) {
+            abort_if(!auth()->user()->can('Use Deposit'), 403, 'You do not have permission to use deposit.');
+
+            if (!$request->customer_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Deposit can only be used when a registered customer is selected.',
+                ], 422);
+            }
+
+            $customer = Customer::find($request->customer_id);
+            if ((float) $customer->deposit_balance < $depositAmount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient deposit balance. Available: Rp ' . number_format($customer->deposit_balance, 0, ',', '.'),
+                ], 422);
+            }
+        }
 
         $paymentsTotal = collect($request->payments)->sum('amount');
         if ($request->payment_mode === 'partial' && $paymentsTotal > $request->grand_total) {
@@ -251,8 +274,8 @@ class POSController extends Controller
             }
         }
 
-        // Validate amount paid for full payment
-        if ($request->payment_mode === 'full' && $request->amount_paid < $request->grand_total) {
+        // Validate amount paid for full payment (cash/card + deposit must cover grand total)
+        if ($request->payment_mode === 'full' && ($request->amount_paid + $depositAmount) < $request->grand_total) {
             return response()->json([
                 'success' => false,
                 'message' => __('pos.amount_insufficient'),
@@ -263,22 +286,19 @@ class POSController extends Controller
 
         try {
             // Calculate initial paid amount and status
+            // Include deposit in the net-paid calculation so the initial transaction status is correct.
             $totalPaidNow = collect($request->payments)
                 ->where('status', 'paid')
-                ->sum(function($p) use ($request) {
-                    // For POS checkout, only the last payment carries the change in 'full' mode
-                    // But typically there's only one payment here.
-                    // A more robust way is to calculate total change and subtract it from total paid.
-                    return (float)$p['amount'];
-                });
-            
+                ->sum(fn($p) => (float) $p['amount']);
+
             $totalChange = $request->payment_mode === 'full' ? max(0, $request->amount_paid - $request->grand_total) : 0;
-            $totalNetPaidNow = max(0, $totalPaidNow - $totalChange);
-            
+            // Net from cash/card payments + deposit
+            $totalNetPaidNow = max(0, $totalPaidNow - $totalChange) + $depositAmount;
+
             $paymentStatus = 'unpaid';
             if ($totalNetPaidNow >= $request->grand_total) {
                 $paymentStatus = 'paid';
-            } elseif ($totalPaidNow > 0) {
+            } elseif (($totalPaidNow + $depositAmount) > 0) {
                 $paymentStatus = 'partial';
             }
 
@@ -299,24 +319,49 @@ class POSController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            // Create transaction payments
+            // Create transaction payments (skip zero-amount entries — they happen when deposit covers 100%)
             $totalChangeToAssign = $request->payment_mode === 'full' ? max(0, $request->amount_paid - $request->grand_total) : 0;
             $paymentsCount = count($request->payments);
-            
+
             foreach ($request->payments as $index => $paymentData) {
-                // If there are multiple payments (unlikely in POS full mode but possible in some setups), 
-                // assign the change to the last payment.
+                // Skip zero-amount payment records (deposit-only scenario)
+                if ((float) $paymentData['amount'] <= 0) continue;
+
                 $changeForThisPayment = ($index === $paymentsCount - 1) ? $totalChangeToAssign : 0;
 
                 TransactionPayment::create([
                     'transaction_id' => $transaction->id,
-                    'amount' => $paymentData['amount'],
-                    'change' => $changeForThisPayment,
+                    'amount'         => $paymentData['amount'],
+                    'change'         => $changeForThisPayment,
                     'payment_method' => $paymentData['payment_method'],
-                    'payment_date' => $paymentData['payment_date'],
-                    'status' => $paymentData['status'],
-                    'notes' => $paymentData['notes'] ?? null,
+                    'payment_date'   => $paymentData['payment_date'],
+                    'status'         => $paymentData['status'],
+                    'notes'          => $paymentData['notes'] ?? null,
                 ]);
+            }
+
+            // Handle deposit payment (if customer used their deposit balance)
+            if ($depositAmount > 0) {
+                $customer = Customer::find($request->customer_id);
+                $depositEntry = $customer->useDeposit(
+                    $depositAmount,
+                    $transaction->id,
+                    auth()->id()
+                );
+
+                TransactionPayment::create([
+                    'transaction_id' => $transaction->id,
+                    'amount'         => $depositAmount,
+                    'change'         => 0,
+                    'payment_method' => 'deposit',
+                    'payment_date'   => now()->format('Y-m-d'),
+                    'status'         => 'paid',
+                    'notes'          => 'Paid via customer deposit',
+                    'deposit_id'     => $depositEntry->id,
+                ]);
+
+                // Refresh payment status after deposit payment is added
+                $transaction->refreshPaymentStatus();
             }
 
             // Create transaction items and deduct stock

@@ -97,7 +97,7 @@
             </div>
 
             <div id="full-payment-section">
-                <div class="payment-methods">
+                <div class="payment-methods" id="payment-methods-row">
                     <div class="payment-method active" data-method="cash">
                         <i class="fas fa-money-bill-wave"></i> {{ __('pos.cash') ?? 'Cash' }}
                     </div>
@@ -108,7 +108,37 @@
                         <i class="fas fa-university"></i> {{ __('pos.transfer') ?? 'Transfer' }}
                     </div>
                 </div>
-                
+
+                @can('Use Deposit')
+                {{-- Deposit section: only visible when a customer with balance is selected --}}
+                <div id="deposit-section" style="display:none; margin-top: 8px;">
+                    <div style="background: rgba(40,167,69,0.15); border: 1px solid #28a745; border-radius: 6px; padding: 8px 10px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="m-0" style="font-size: 12px; color: #c8ffc8; font-weight: 600;" for="use-deposit-toggle">
+                                <i class="fas fa-wallet"></i> Use Deposit
+                            </label>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="use-deposit-toggle">
+                                <label class="custom-control-label" for="use-deposit-toggle"></label>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #a0e0a0;" class="mb-1">
+                            Balance: <span id="deposit-balance-display" class="font-weight-bold">0</span>
+                        </div>
+                        <div id="deposit-insufficient-warning" style="display:none; font-size: 11px; color: #ffcccc; margin-top: 2px; background: rgba(220,53,69,0.2); padding: 4px; border-radius: 4px;">
+                            <i class="fas fa-exclamation-triangle"></i> {{ __('pos.deposit_insufficient_full') ?? 'Deposit balance is insufficient for full payment.' }}
+                        </div>
+                        <div id="deposit-input-row" style="display:none;">
+                            <input type="text" class="amount-input" id="deposit-amount-input"
+                                   placeholder="Deposit amount" style="margin-top: 4px; background: rgba(255,255,255,0.1);">
+                            <div style="font-size: 11px; color: #a0e0a0; margin-top: 3px;">
+                                Remaining to pay: <span id="after-deposit-remaining" class="font-weight-bold">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endcan
+
                 <input type="text" class="amount-input" id="amount-paid" placeholder="{{ __('pos.amount_paid') ?? 'Amount Paid' }}">
                 
                 <div class="change-display positive" id="change-display" style="display: none;">
@@ -134,6 +164,9 @@
                                 <option value="cash">{{ __('pos.cash') ?? 'Cash' }}</option>
                                 <option value="card">{{ __('pos.card') ?? 'Card' }}</option>
                                 <option value="transfer">{{ __('pos.transfer') ?? 'Transfer' }}</option>
+                                @can('Use Deposit')
+                                <option value="deposit">{{ __('pos.deposit') ?? 'Deposit' }}</option>
+                                @endcan
                             </select>
                         </div>
                     </div>

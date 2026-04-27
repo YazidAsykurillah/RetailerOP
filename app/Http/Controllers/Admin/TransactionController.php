@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BusinessProfile;
+use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\TransactionPayment;
@@ -296,31 +297,70 @@ class TransactionController extends Controller
         $transaction = Transaction::findOrFail($id);
 
         $remainingBalance = (float) $transaction->outstanding_balance;
-        
-        // We now allow overpayment, which will be recorded as change
-        // No longer returning 422 if amount > balance
 
         $request->validate([
-            'amount' => 'required|numeric|min:0.01',
+            'amount'         => 'required|numeric|min:0.01',
             'payment_method' => 'required|string',
-            'payment_date' => 'required|date',
-            'notes' => 'nullable|string|max:1000',
+            'payment_date'   => 'required|date',
+            'notes'          => 'nullable|string|max:1000',
         ]);
+
+        // Gate: deposit usage requires permission
+        if ($request->payment_method === 'deposit') {
+            abort_if(!auth()->user()->can('Use Deposit'), 403, 'You do not have permission to use deposit.');
+
+            // Must have a linked registered customer
+            if (!$transaction->customer_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Deposit can only be used for transactions with a registered customer.',
+                ], 422);
+            }
+
+            $customer = Customer::find($transaction->customer_id);
+            if ((float) $customer->deposit_balance < (float) $request->amount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient deposit balance. Available: Rp ' . number_format($customer->deposit_balance, 0, ',', '.'),
+                ], 422);
+            }
+        }
 
         DB::beginTransaction();
 
         try {
-            $change = max(0, $request->amount - $remainingBalance);
+            if ($request->payment_method === 'deposit') {
+                // Deduct from customer deposit ledger
+                $customer = Customer::find($transaction->customer_id);
+                $depositEntry = $customer->useDeposit(
+                    (float) $request->amount,
+                    $transaction->id,
+                    auth()->id()
+                );
 
-            TransactionPayment::create([
-                'transaction_id' => $transaction->id,
-                'amount' => $request->amount,
-                'change' => $change,
-                'payment_method' => $request->payment_method,
-                'payment_date' => $request->payment_date,
-                'status' => 'paid',
-                'notes' => $request->notes,
-            ]);
+                TransactionPayment::create([
+                    'transaction_id' => $transaction->id,
+                    'amount'         => $request->amount,
+                    'change'         => 0,
+                    'payment_method' => 'deposit',
+                    'payment_date'   => $request->payment_date,
+                    'status'         => 'paid',
+                    'notes'          => $request->notes,
+                    'deposit_id'     => $depositEntry->id,
+                ]);
+            } else {
+                $change = max(0, $request->amount - $remainingBalance);
+
+                TransactionPayment::create([
+                    'transaction_id' => $transaction->id,
+                    'amount'         => $request->amount,
+                    'change'         => $change,
+                    'payment_method' => $request->payment_method,
+                    'payment_date'   => $request->payment_date,
+                    'status'         => 'paid',
+                    'notes'          => $request->notes,
+                ]);
+            }
 
             $transaction->refreshPaymentStatus();
 

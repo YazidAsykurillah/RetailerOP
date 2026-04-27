@@ -5,6 +5,8 @@ $(function() {
     let selectedPaymentMode = 'full';
     let selectedCustomerId = null;
     let currentCustomerDiscount = 0;
+    let customerDepositBalance = 0;  // deposit balance of selected customer
+    let selectedDepositAmount = 0;   // amount the cashier has chosen to apply
 
     // Check if partial payment is allowed (only for registered customers)
     function updatePaymentModeAbility() {
@@ -22,6 +24,19 @@ $(function() {
         } else {
             $partialInput.prop('disabled', false);
             $partialLabel.removeClass('disabled');
+        }
+
+        // Enable/Disable Deposit option in partial payment dropdown
+        const $depositOption = $('#initial-payment-method option[value="deposit"]');
+        if ($depositOption.length) {
+            if (!selectedCustomerId || customerDepositBalance <= 0) {
+                $depositOption.prop('disabled', true);
+                if ($('#initial-payment-method').val() === 'deposit') {
+                    $('#initial-payment-method').val('cash');
+                }
+            } else {
+                $depositOption.prop('disabled', false);
+            }
         }
     }
 
@@ -141,7 +156,6 @@ $(function() {
          updateRowSubtotal($row);
     }
 
-    // Initialize AutoNumeric for Amount Paid input
     const amountPaidAN = new AutoNumeric('#amount-paid', {
         digitGroupSeparator: '.',
         decimalCharacter: ',',
@@ -156,6 +170,86 @@ $(function() {
         minimumValue: '0',
         modifyValueOnWheel: false
     });
+
+    // Deposit amount AutoNumeric (if the element exists — only rendered for users with Use Deposit permission)
+    let depositAmountAN = null;
+    if ($('#deposit-amount-input').length) {
+        depositAmountAN = new AutoNumeric('#deposit-amount-input', {
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            minimumValue: '0',
+            modifyValueOnWheel: false
+        });
+
+        // When deposit amount input changes, update state + summary
+        $('#deposit-amount-input').on('autoNumeric:rawValueModified', function() {
+            selectedDepositAmount = depositAmountAN.getNumber() || 0;
+            // Cap at available balance and grand total
+            const grandTotal = calculateTransactionData().grandTotal;
+            const maxDeposit = Math.min(customerDepositBalance, grandTotal);
+            if (selectedDepositAmount > maxDeposit) {
+                selectedDepositAmount = maxDeposit;
+                depositAmountAN.set(selectedDepositAmount);
+            }
+            updateAfterDepositRemaining();
+            updateSummary();
+        });
+    }
+
+    // Toggle deposit usage on/off
+    $('#use-deposit-toggle').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#deposit-input-row').show();
+            // Auto-fill with max applicable deposit
+            const grandTotal = calculateTransactionData().grandTotal;
+            const maxDeposit = Math.min(customerDepositBalance, grandTotal);
+            if (depositAmountAN) {
+                depositAmountAN.set(maxDeposit);
+                selectedDepositAmount = maxDeposit;
+            }
+            // Auto-fill Amount Paid with the remaining amount the customer still owes
+            const remaining = Math.max(0, grandTotal - maxDeposit);
+            amountPaidAN.set(remaining);
+            updateAfterDepositRemaining();
+            updateChangeDisplay(grandTotal);
+        } else {
+            $('#deposit-input-row').hide();
+            if (depositAmountAN) {
+                depositAmountAN.set(0);
+            }
+            selectedDepositAmount = 0;
+            amountPaidAN.set(0);
+            updateAfterDepositRemaining();
+            updateChangeDisplay();
+        }
+        updateSummary();
+    });
+
+    function updateDepositSection() {
+        if (customerDepositBalance > 0) {
+            $('#deposit-balance-display').text(new Intl.NumberFormat('id-ID').format(customerDepositBalance));
+            $('#deposit-section').show();
+        } else {
+            resetDepositSection();
+        }
+    }
+
+    function resetDepositSection() {
+        $('#deposit-section').hide();
+        $('#deposit-input-row').hide();
+        $('#deposit-insufficient-warning').hide();
+        $('#use-deposit-toggle').prop('checked', false);
+        if (depositAmountAN) depositAmountAN.set(0);
+        selectedDepositAmount = 0;
+        $('#after-deposit-remaining').text('0');
+    }
+
+    function updateAfterDepositRemaining() {
+        const grandTotal = calculateTransactionData().grandTotal;
+        const remaining = Math.max(0, grandTotal - selectedDepositAmount);
+        $('#after-deposit-remaining').text(new Intl.NumberFormat('id-ID').format(remaining));
+    }
     
     // Initialize Customer Select2
     $('#customer-select').select2({
@@ -221,6 +315,10 @@ $(function() {
             }
         });
         updateSummary();
+        
+        // Show deposit section if customer has balance
+        customerDepositBalance = parseFloat(customer.deposit_balance) || 0;
+        updateDepositSection();
         updatePaymentModeAbility();
     });
 
@@ -239,6 +337,12 @@ $(function() {
         });
         updateSummary();
         updatePaymentModeAbility();
+
+        // Hide deposit section
+        customerDepositBalance = 0;
+        selectedDepositAmount = 0;
+        resetDepositSection();
+
         toastr.info("{{ __('pos.customer_removed') ?? 'Customer removed. Discounts reset.' }}");
     });
 
@@ -516,9 +620,42 @@ $(function() {
         
         let canSubmit = hasItems;
         if (selectedPaymentMode === 'partial') {
-            const balance = data.grandTotal - getPartialTotal();
+            const initialAmount = getPartialTotal();
+            const balance = data.grandTotal - initialAmount;
             if (balance < 0) {
                 canSubmit = false;
+            }
+
+            // Validation for Deposit as initial payment
+            if ($('#initial-payment-method').val() === 'deposit') {
+                if (initialAmount > customerDepositBalance) {
+                    canSubmit = false;
+                    toastr.error("{{ __('pos.insufficient_deposit_balance') ?? 'Insufficient deposit balance.' }}");
+                }
+                if (initialAmount > data.grandTotal) {
+                    canSubmit = false;
+                }
+            }
+        } else {
+            // Full Payment: Cash + Deposit must be >= Grand Total
+            const amountPaid = amountPaidAN.getNumber() || 0;
+            if ((amountPaid + selectedDepositAmount) < data.grandTotal) {
+                canSubmit = false;
+            }
+
+            // User Requirement: If 'Use Deposit' is ON in 'Full Payment' mode, 
+            // the deposit balance MUST cover the entire amount.
+            if ($('#use-deposit-toggle').is(':checked')) {
+                if (customerDepositBalance < data.grandTotal) {
+                    canSubmit = false;
+                    $('#deposit-insufficient-warning').show();
+                    $('#deposit-input-row').hide(); // Hide the input to show it's not applicable
+                } else {
+                    $('#deposit-insufficient-warning').hide();
+                    $('#deposit-input-row').show();
+                }
+            } else {
+                $('#deposit-insufficient-warning').hide();
             }
         }
 
@@ -526,6 +663,7 @@ $(function() {
 
         updateChangeDisplay(data.grandTotal);
         updateRemainingBalance(data.grandTotal);
+        updateAfterDepositRemaining && updateAfterDepositRemaining();
     }
 
     function getPartialTotal() {
@@ -542,6 +680,7 @@ $(function() {
     // Amount paid
     $('#amount-paid').on('autoNumeric:rawValueModified', function() {
         updateChangeDisplay();
+        updateSummary();
     });
 
     // Payment Mode Toggle
@@ -558,7 +697,14 @@ $(function() {
     });
 
     // Update Remaining Balance on input
-    $('#initial-payment-amount').on('autoNumeric:rawValueModified', function() {
+    $('#initial-payment-amount, #initial-payment-method').on('autoNumeric:rawValueModified change', function(e) {
+        // Auto-fill amount if deposit is selected
+        if (e.type === 'change' && $(this).attr('id') === 'initial-payment-method' && $(this).val() === 'deposit') {
+            const grandTotal = calculateTransactionData().grandTotal;
+            const maxApplicable = Math.min(grandTotal, customerDepositBalance);
+            initialPaymentAmountAN.set(maxApplicable);
+        }
+
         updateRemainingBalance();
         updateSummary();
     });
@@ -588,9 +734,11 @@ $(function() {
     function updateChangeDisplay(providedTotal) {
         const total = providedTotal !== undefined ? providedTotal : calculateTransactionData().grandTotal;
         const amountPaid = amountPaidAN.getNumber() || 0;
-        const change = amountPaid - total;
+        // The remaining amount that must be covered by cash/card/transfer
+        const remainingToCover = Math.max(0, total - selectedDepositAmount);
+        const change = amountPaid - remainingToCover;
 
-        if (amountPaid > 0) {
+        if (amountPaid > 0 || selectedDepositAmount > 0) {
             $('#change-display').show();
             if (change >= 0) {
                 $('#change-display').removeClass('negative').addClass('positive');
@@ -658,15 +806,32 @@ $(function() {
         });
         const total = subtotal - totalDiscount;
         const amountPaid = amountPaidAN.getNumber() || 0;
+        // The effective cash paid = amountPaid; total covered = amountPaid + deposit
+        const totalCovered = amountPaid + selectedDepositAmount;
 
-        if (selectedPaymentMode === 'full' && amountPaid < total) {
+        if (selectedPaymentMode === 'full' && totalCovered < total) {
             toastr.error("{{ __('pos.insufficient_amount') ?? 'Amount paid is insufficient!' }}");
             return;
+        }
+
+        // Validate deposit amount
+        if (selectedDepositAmount > 0) {
+            if (!selectedCustomerId) {
+                toastr.error('Deposit can only be used for registered customers.');
+                return;
+            }
+            if (selectedDepositAmount > customerDepositBalance) {
+                toastr.error('Deposit amount exceeds available balance.');
+                return;
+            }
         }
 
         // Collect payments
         const payments = [];
         if (selectedPaymentMode === 'full') {
+            // Always push the cash/card/transfer entry (amount may be 0 if deposit covers 100%).
+            // The backend skips creating a TransactionPayment record for zero-amount entries,
+            // but this entry is needed to satisfy the 'payments required|array|min:1' validation.
             payments.push({
                 amount: amountPaid,
                 payment_method: selectedPaymentMethod,
@@ -676,6 +841,8 @@ $(function() {
             });
         } else {
             const initialAmount = initialPaymentAmountAN.getNumber() || 0;
+            const initialMethod = $('#initial-payment-method').val();
+            
             if (initialAmount < 0) {
                 toastr.error("{{ __('pos.enter_initial_amount') ?? 'Please enter an initial payment amount!' }}");
                 return;
@@ -685,13 +852,39 @@ $(function() {
                 return;
             }
 
-            payments.push({
-                amount: initialAmount,
-                payment_method: $('#initial-payment-method').val(),
-                payment_date: $('#initial-payment-date').val(),
-                notes: $('#initial-payment-note').val(),
-                status: 'paid'
-            });
+            if (initialMethod === 'deposit') {
+                if (initialAmount > customerDepositBalance) {
+                    toastr.error("{{ __('pos.insufficient_deposit_balance') ?? 'Insufficient deposit balance.' }}");
+                    return;
+                }
+                // When using deposit as initial, we send it via deposit_amount
+                // But we still need an entry in payments to pass validation
+                payments.push({
+                    amount: 0,
+                    payment_method: 'cash', // dummy
+                    payment_date: $('#initial-payment-date').val(),
+                    notes: $('#initial-payment-note').val(),
+                    status: 'paid'
+                });
+            } else {
+                payments.push({
+                    amount: initialAmount,
+                    payment_method: initialMethod,
+                    payment_date: $('#initial-payment-date').val(),
+                    notes: $('#initial-payment-note').val(),
+                    status: 'paid'
+                });
+            }
+        }
+
+        // Final split check: if partial and method is deposit, the deposit_amount should be initialAmount
+        let depositToSend = 0;
+        if (selectedPaymentMode === 'full') {
+            depositToSend = selectedDepositAmount;
+        } else {
+            if ($('#initial-payment-method').val() === 'deposit') {
+                depositToSend = initialPaymentAmountAN.getNumber() || 0;
+            }
         }
 
         const $btn = $(this);
@@ -708,13 +901,14 @@ $(function() {
                 tax: 0,
                 grand_total: total,
                 payment_mode: selectedPaymentMode,
-                payment_method: selectedPaymentMethod, // Fallback for full payment
-                amount_paid: amountPaid, // Fallback for full payment
+                payment_method: selectedPaymentMethod,
+                amount_paid: amountPaid,
                 payments: payments,
                 customer_id: selectedCustomerId,
                 customer_name: $('#customer-name').val(),
                 customer_phone: $('#customer-phone').val(),
-                notes: $('#notes').val()
+                notes: $('#notes').val(),
+                deposit_amount: depositToSend > 0 ? depositToSend : 0,
             },
             success: function(response) {
                 if (response.success) {
@@ -791,6 +985,11 @@ $(function() {
         $('#initial-payment-date').val('{{ date("Y-m-d") }}');
         $('#initial-payment-note').val('');
         
+        // Reset deposit
+        customerDepositBalance = 0;
+        selectedDepositAmount = 0;
+        if (typeof resetDepositSection === 'function') resetDepositSection();
+
         // Reset summary and change display
         updateSummary();
         

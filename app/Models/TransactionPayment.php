@@ -14,6 +14,7 @@ class TransactionPayment extends Model
         'payment_date',
         'status',
         'notes',
+        'deposit_id',
     ];
 
     protected $casts = [
@@ -28,5 +29,13 @@ class TransactionPayment extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
+    }
+
+    /**
+     * Get the deposit ledger entry linked to this payment (if paid via deposit).
+     */
+    public function deposit()
+    {
+        return $this->belongsTo(\App\Models\CustomerDeposit::class, 'deposit_id');
     }
 }

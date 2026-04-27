@@ -336,7 +336,12 @@
                 @foreach($transaction->payments as $payment)
                 <tr>
                     <td>
-                        {{ $payment->payment_date->format('d/m/y') }} ({{ ucfirst($payment->payment_method) }})
+                        {{ $payment->payment_date->format('d/m/y') }}
+                        @if($payment->payment_method === 'deposit')
+                            (Deposit)
+                        @else
+                            ({{ ucfirst($payment->payment_method) }})
+                        @endif
                         @if($payment->change > 0)
                             <br><span style="font-size: 8px; opacity: 0.8;">(Change: {{ number_format($payment->change, 0, ',', '.') }})</span>
                         @endif
@@ -346,7 +351,28 @@
                 </tr>
                 @endforeach
             </table>
+            @php
+                $depositPayments = $transaction->payments->where('payment_method', 'deposit');
+                $totalDepositUsed = $depositPayments->sum('amount');
+            @endphp
+            @if($totalDepositUsed > 0 && $transaction->customer_id)
+            <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top: 4px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td>Deposit Used</td>
+                        <td style="text-align: right;">Rp {{ number_format($totalDepositUsed, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Remaining Deposit</td>
+                        <td style="text-align: right; font-weight: bold;">
+                            Rp {{ number_format(optional($transaction->customer)->deposit_balance ?? 0, 0, ',', '.') }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            @endif
         </div>
+
 
         <!-- Footer -->
         <div class="footer">
