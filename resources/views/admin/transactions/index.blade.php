@@ -34,7 +34,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>Rp {{ number_format($todayIncomes, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($todayIncomes, 0, ',', '.') }}</h3>
                 <p>{{ __('dashboard.todays_income') }}</p>
             </div>
             <div class="icon">
@@ -45,11 +45,22 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-primary">
             <div class="inner">
-                <h3>Rp {{ number_format($monthIncomes, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($monthIncomes, 0, ',', '.') }}</h3>
                 <p>{{ __('dashboard.months_income') }}</p>
             </div>
             <div class="icon">
                 <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ number_format($totalSoldVariants) }}</h3>
+                <p>{{ __('general.total_sold_product') }}</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-boxes"></i>
             </div>
         </div>
     </div>

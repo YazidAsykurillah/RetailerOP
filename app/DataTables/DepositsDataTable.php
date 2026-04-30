@@ -22,10 +22,10 @@ class DepositsDataTable extends DataTable
                 return '<span class="badge badge-' . $color . '">' . $row->type_label . '</span>';
             })
             ->addColumn('amount_formatted', fn($row) =>
-                '<span class="font-weight-bold">Rp ' . number_format($row->amount, 0, ',', '.') . '</span>'
+                '<span class="font-weight-bold">' . number_format($row->amount, 0, ',', '.') . '</span>'
             )
             ->addColumn('balance_after_formatted', fn($row) =>
-                'Rp ' . number_format($row->balance_after, 0, ',', '.')
+                ''. number_format($row->balance_after, 0, ',', '.')
             )
             ->addColumn('processed_by_name', fn($row) => $row->processedBy->name ?? '-')
             ->addColumn('action', function ($row) {

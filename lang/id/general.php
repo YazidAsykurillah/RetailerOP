@@ -106,6 +106,7 @@ return [
     'overview' => 'Ringkasan',
     'management' => 'Manajemen',
     'settings' => 'Pengaturan',
+    'total_sold_product'=>'Total Product Terjual',
 
     // Language
     'language' => 'Bahasa',

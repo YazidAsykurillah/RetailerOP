@@ -7,6 +7,32 @@
 @stop
 
 @section('content')
+<!-- Summary Cards -->
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-secondary">
+            <div class="inner">
+                <h3>{{ number_format($totalBrands) }}</h3>
+                <p>Total Brands</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-tags"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ number_format($totalVariantsSold) }}</h3>
+                <p>Total Variants Sold</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="card">

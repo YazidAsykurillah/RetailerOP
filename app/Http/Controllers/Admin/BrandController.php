@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\TransactionItem;
 use App\DataTables\BrandsDataTable;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\Brand\StoreBrandRequest;
@@ -17,7 +18,10 @@ class BrandController extends Controller
      */
     public function index(BrandsDataTable $dataTable)
     {
-        return $dataTable->render('admin.brands.index');
+        $totalBrands = Brand::count();
+        $totalVariantsSold = TransactionItem::sum('quantity');
+
+        return $dataTable->render('admin.brands.index', compact('totalBrands', 'totalVariantsSold'));
     }
 
     /**

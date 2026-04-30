@@ -28,4 +28,5 @@ return [
     'profile' => 'Profil',
     'change_password' => 'Ubah Kata Sandi',
     'business_profile' => 'Profil Bisnis',
+    'deposit_management' => 'Deposit Management',
 ];

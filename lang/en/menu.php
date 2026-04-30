@@ -28,4 +28,5 @@ return [
     'profile' => 'Profile',
     'change_password' => 'Change Password',
     'business_profile' => 'Business Profile',
+    'deposit_management' => 'Deposit Management',
 ];

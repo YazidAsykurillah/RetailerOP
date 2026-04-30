@@ -106,6 +106,7 @@ return [
     'overview' => 'Overview',
     'management' => 'Management',
     'settings' => 'Settings',
+    'total_sold_product'=>'Total Sold Product',
 
     // Language
     'language' => 'Language',

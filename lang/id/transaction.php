@@ -44,4 +44,7 @@ return [
     'items' => 'Item',
     'thank_you' => 'Terima kasih atas pembelian Anda!',
     'label_remaining' => 'Hutang',
+    'previous_outstanding' => 'Hutang Sebelum Transaksi',
+    'current_outstanding' => 'Hutang Transaksi Ini',
+    'total_outstanding' => 'Total Hutang',
 ];

@@ -12,7 +12,7 @@
     <div class="col-lg-4 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>Rp {{ number_format($totalTopUps, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($totalTopUps, 0, ',', '.') }}</h3>
                 <p>Total Top-ups</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-circle-up"></i></div>
@@ -21,7 +21,7 @@
     <div class="col-lg-4 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>Rp {{ number_format($totalUsages, 0, ',', '.') }}</h3>
+                <h3>{{ number_format($totalUsages, 0, ',', '.') }}</h3>
                 <p>Total Used</p>
             </div>
             <div class="icon"><i class="fas fa-shopping-cart"></i></div>
@@ -30,8 +30,8 @@
     <div class="col-lg-4 col-6">
         <div class="small-box bg-primary">
             <div class="inner">
-                <h3>Rp {{ number_format($totalBalance, 0, ',', '.') }}</h3>
-                <p>Outstanding Deposit Balance</p>
+                <h3>{{ number_format($totalBalance, 0, ',', '.') }}</h3>
+                <p>Total Deposit Balance</p>
             </div>
             <div class="icon"><i class="fas fa-wallet"></i></div>
         </div>

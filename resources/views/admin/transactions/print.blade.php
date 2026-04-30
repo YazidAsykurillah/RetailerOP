@@ -373,6 +373,54 @@
             @endif
         </div>
 
+        <!--Outstanding-->
+        <div class="outstanding-information">
+            @php
+                $customerDebt = 0;
+                $previousDebt = 0;
+                $currentDebt = 0;
+                
+                if ($transaction->customer) {
+                    // Previous debt only includes transactions made BEFORE this one
+                    $previousDebt = $transaction->customer->transactions()
+                        ->where('id', '<', $transaction->id)
+                        ->whereIn('payment_status', ['unpaid', 'partial'])
+                        ->get()
+                        ->sum(function ($t) {
+                            return $t->grand_total - $t->amount_paid;
+                        });
+                        
+                    $currentDebt = in_array($transaction->payment_status, ['unpaid', 'partial']) 
+                        ? max(0, $transaction->grand_total - $transaction->amount_paid) 
+                        : 0;
+                        
+                    $customerDebt = $previousDebt + $currentDebt;
+                }
+            @endphp
+            @if($customerDebt > 0 || $previousDebt > 0)
+            <div style="margin-bottom: 10px; font-size: 11px; border-top: 1px dashed #000; padding-top: 5px;">
+                <table style="width: 100%;">
+                    @if($previousDebt > 0)
+                    <tr>
+                        <td style="text-transform: uppercase;">{{ __('transaction.previous_outstanding') }}</td>
+                        <td style="text-align: right;">Rp {{ number_format($previousDebt, 0, ',', '.') }}</td>
+                    </tr>
+                    @endif
+                    @if($currentDebt > 0)
+                    <tr>
+                        <td style="text-transform: uppercase;">{{ __('transaction.current_outstanding')}}</td>
+                        <td style="text-align: right;">Rp {{ number_format($currentDebt, 0, ',', '.') }}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td style="font-weight: bold; text-transform: uppercase; border-top: 1px solid #000; padding-top: 3px;">{{ __('transaction.total_outstanding') }}</td>
+                        <td style="text-align: right; font-weight: bold; border-top: 1px solid #000; padding-top: 3px;">Rp {{ number_format($customerDebt, 0, ',', '.') }}</td>
+                    </tr>
+                </table>
+            </div>
+            @endif
+        </div>
+
 
         <!-- Footer -->
         <div class="footer">

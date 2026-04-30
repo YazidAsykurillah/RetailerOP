@@ -28,12 +28,14 @@ class TransactionController extends Controller
             ->whereYear('payment_date', now()->year)
             ->sum(DB::raw('amount - `change`'));
         $totalTransactions = Transaction::count();
+        $totalSoldVariants = TransactionItem::sum('quantity');
 
         return $dataTable->render('admin.transactions.index', compact(
             'todayIncomes',
             'todayTransactions',
             'monthIncomes',
-            'totalTransactions'
+            'totalTransactions',
+            'totalSoldVariants'
         ));
     }
 

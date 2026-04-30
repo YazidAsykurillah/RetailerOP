@@ -44,4 +44,7 @@ return [
     'items' => 'Items',
     'thank_you' => 'Thank you for your purchase!',
     'label_remaining' => 'Remaining',
+    'previous_outstanding' => 'Previous Outstanding',
+    'current_outstanding' => 'Current Outstanding',
+    'total_outstanding' => 'Total Outstanding',
 ];
