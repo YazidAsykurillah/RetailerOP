@@ -85,7 +85,7 @@
             padding-top: 5px;
         }
         .item-name {
-            font-weight: bold;
+            font-weight: normal;
         }
         .item-variant {
             font-size: 10px;
