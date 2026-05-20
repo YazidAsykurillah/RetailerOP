@@ -23,7 +23,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
         table th, table td {
             border: 1px solid #ddd;
@@ -38,20 +38,6 @@
         table tr:nth-child(even) {
             background-color: #fafafa;
         }
-        .status-badge {
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 10px;
-            text-transform: uppercase;
-        }
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .status-inactive {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
         .footer {
             position: fixed;
             bottom: 0;
@@ -65,9 +51,8 @@
         .text-right {
             text-align: right;
         }
-        .price {
-            font-weight: bold;
-            color: #2c3e50;
+        .page-break {
+            page-break-after: always;
         }
     </style>
 </head>
@@ -77,6 +62,8 @@
         <p>{{ __('general.generated_on') ?? 'Generated on' }}: {{ date('F d, Y H:i:s') }}</p>
     </div>
 
+    @php $rowNumber = 0; @endphp
+    @foreach($productChunks as $chunkIndex => $chunk)
     <table>
         <thead>
             <tr>
@@ -88,9 +75,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($products as $index => $product)
+            @foreach($chunk as $product)
+                @php $rowNumber++; @endphp
                 <tr style="background-color: #f9f9f9; font-weight: bold;">
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $rowNumber }}</td>
                     <td>{{ $product->sku ?: '-' }}</td>
                     <td>{{ $product->name }}</td>
                     <td class="text-right"></td>
@@ -108,6 +96,10 @@
             @endforeach
         </tbody>
     </table>
+    @if($chunkIndex < count($productChunks) - 1)
+        <div class="page-break"></div>
+    @endif
+    @endforeach
 
     <div class="footer">
         <script type="text/php">
@@ -124,3 +116,4 @@
     </div>
 </body>
 </html>
+

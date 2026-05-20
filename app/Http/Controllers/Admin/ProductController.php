@@ -342,18 +342,20 @@ class ProductController extends Controller
                 ];
             }
         });
+
+        // Split products into smaller chunks for the view to render as separate tables.
+        // DomPDF builds an internal Cellmap per <table>, and a single massive table
+        // causes memory exhaustion on shared hosting. 50 products per table keeps it manageable.
+        $productChunks = array_chunk($products, 50);
         
-        // Simple initialization to rule out option-related errors
-        $pdf = Pdf::loadView('admin.products.pdf', compact('products'));
+        $pdf = Pdf::loadView('admin.products.pdf', compact('productChunks'));
         $pdf->setPaper('a4', 'landscape');
         
-        // Use a basic set of stable options
         $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true); // Still needed for page numbers
+        $pdf->setOption('isPhpEnabled', true);
 
         $filename = implode('_', $filenameParts) . '_' . date('YmdHis') . '.pdf';
 
-        // Return a standard Laravel response with Content-Length header, which is much more reliable on shared hosting / reverse proxies than chunked streams.
         return $pdf->download($filename);
     }
 }
