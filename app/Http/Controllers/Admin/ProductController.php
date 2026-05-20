@@ -280,7 +280,12 @@ class ProductController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $query = Product::query();
+        // Increase limits for large exports to avoid timeout and memory issues on shared hosting
+        @ini_set('memory_limit', '512M');
+        @set_time_limit(300);
+
+        // Select only required fields to optimize database/model memory consumption
+        $query = Product::select(['id', 'name', 'sku']);
         $filenameParts = ['product_list'];
 
         if ($request->has('category_id') && $request->category_id) {
@@ -301,19 +306,42 @@ class ProductController extends Controller
 
         $stockOnly = $request->has('stock_only') && $request->stock_only == 'true';
         
+        // Eager load only variants relationship with select columns (category and brand not needed in pdf view)
         if ($stockOnly) {
             $query->whereHas('variants', function($q) {
                 $q->where('stock', '>', 0);
             });
-            $query->with(['category', 'brand', 'variants' => function($q) {
-                $q->where('stock', '>', 0);
+            $query->with(['variants' => function($q) {
+                $q->select(['id', 'product_id', 'name', 'sku', 'price', 'stock'])
+                  ->where('stock', '>', 0);
             }]);
             $filenameParts[] = 'stock_only';
         } else {
-            $query->with(['category', 'brand', 'variants']);
+            $query->with(['variants' => function($q) {
+                $q->select(['id', 'product_id', 'name', 'sku', 'price', 'stock']);
+            }]);
         }
 
-        $products = $query->orderBy('name', 'asc')->get();
+        // Chunk query and map to lightweight stdClass objects to prevent memory leaks from Eloquent models
+        $products = [];
+        $query->orderBy('name', 'asc')->chunk(100, function ($chunk) use (&$products) {
+            foreach ($chunk as $product) {
+                $variants = [];
+                foreach ($product->variants as $variant) {
+                    $variants[] = (object) [
+                        'sku' => $variant->sku,
+                        'name' => $variant->name,
+                        'price' => $variant->price,
+                        'stock' => $variant->stock,
+                    ];
+                }
+                $products[] = (object) [
+                    'sku' => $product->sku,
+                    'name' => $product->name,
+                    'variants' => $variants,
+                ];
+            }
+        });
         
         // Simple initialization to rule out option-related errors
         $pdf = Pdf::loadView('admin.products.pdf', compact('products'));
