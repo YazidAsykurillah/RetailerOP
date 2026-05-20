@@ -248,9 +248,10 @@
                     @foreach($transaction->items as $item)
                     <tr class="item-row">
                         <td>
-                            <div class="item-name">{{ Str::limit($item->product_name, 15) }}</div>
                             @if($item->variant_name)
-                            <div class="item-variant">{{ $item->variant_name }}</div>
+                            <div class="item-name">{{ Str::limit($item->variant_name, 15) }}</div>
+                            @else
+                            <div class="item-name">{{ Str::limit($item->product_name, 15) }}</div>
                             @endif
                         </td>
                         <td class="qty">{{ $item->quantity }}</td>
