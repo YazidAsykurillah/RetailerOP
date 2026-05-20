@@ -249,9 +249,9 @@
                     <tr class="item-row">
                         <td>
                             @if($item->variant_name)
-                            <div class="item-name">{{ Str::limit($item->variant_name, 15) }}</div>
+                            <div class="item-name">{{ $item->variant_name }}</div>
                             @else
-                            <div class="item-name">{{ Str::limit($item->product_name, 15) }}</div>
+                            <div class="item-name">{{ $item->product_name }}</div>
                             @endif
                         </td>
                         <td class="qty">{{ $item->quantity }}</td>
