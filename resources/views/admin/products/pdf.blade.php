@@ -110,7 +110,17 @@
     </table>
 
     <div class="footer">
-        {{ __('general.page') ?? 'Page' }} <script type="text/php">echo $PAGE_NUM;</script> {{ __('general.of') ?? 'of' }} <script type="text/php">echo $PAGE_COUNT;</script>
+        <script type="text/php">
+            if (isset($pdf)) {
+                $text = "Page {PAGE_NUM} / {PAGE_COUNT}";
+                $size = 10;
+                $font = $fontMetrics->getFont("Arial");
+                $width = $fontMetrics->getTextWidth($text, $font, $size) / 2;
+                $x = $pdf->get_width() - $width - 40;
+                $y = $pdf->get_height() - 30;
+                $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
+            }
+        </script>
     </div>
 </body>
 </html>
