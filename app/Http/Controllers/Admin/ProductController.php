@@ -353,11 +353,7 @@ class ProductController extends Controller
 
         $filename = implode('_', $filenameParts) . '_' . date('YmdHis') . '.pdf';
 
-        // Use Laravel's streamDownload for more reliable header handling
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, $filename, [
-            'Content-Type' => 'application/pdf',
-        ]);
+        // Return a standard Laravel response with Content-Length header, which is much more reliable on shared hosting / reverse proxies than chunked streams.
+        return $pdf->download($filename);
     }
 }
