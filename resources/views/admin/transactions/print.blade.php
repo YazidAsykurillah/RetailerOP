@@ -145,7 +145,7 @@
             margin-bottom: 5px;
         }
         .footer .message {
-            font-size: 10px;
+            font-size: 8px;
             color: #000;
         }
         @media print {
