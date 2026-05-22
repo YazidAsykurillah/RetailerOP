@@ -435,7 +435,7 @@
                 @endif
             </div>
             <br>
-            <div style="font-size: 10px;">
+            <div style="font-size: 8px;">
                 {{ $transaction->created_at->format('d/m/Y H:i:s') }}
             </div>
         </div>
