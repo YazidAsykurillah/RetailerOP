@@ -52,7 +52,7 @@ class TransactionsDataTable extends DataTable
                 return $row->user->name ?? '-';
             })
             ->addColumn('action', function ($row) {
-                return '
+                return'
                     <div class="btn-group">
                         <a href="' . route('admin.transactions.edit', $row->id) . '" class="btn btn-xs btn-warning" title="Edit">
                             <i class="fas fa-edit"></i>
@@ -63,7 +63,7 @@ class TransactionsDataTable extends DataTable
                         <a href="' . route('admin.transactions.print', $row->id) . '" class="btn btn-xs btn-secondary" title="Print Receipt" target="_blank">
                             <i class="fas fa-print"></i>
                         </a>
-                        ' . (auth()->user()->can('Delete Transaction') ? '
+                        ' . (auth()->user()->can('Delete Transaction') || $row->payment_status === 'unpaid' ? '
                         <button type="button" class="btn btn-xs btn-danger btn-delete" data-id="' . $row->id . '" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>

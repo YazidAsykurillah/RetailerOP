@@ -250,9 +250,13 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        abort_if(!auth()->user()->can('Delete Transaction'), 403, 'You do not have permission to delete transactions.');
-
         $transaction = Transaction::with('items.productVariant')->findOrFail($id);
+
+        // Allow any authenticated user to delete unpaid transactions;
+        // for paid/partial transactions, require 'Delete Transaction' permission
+        if ($transaction->payment_status !== 'unpaid') {
+            abort_if(!auth()->user()->can('Delete Transaction'), 403, 'You do not have permission to delete transactions.');
+        }
 
         DB::beginTransaction();
 
