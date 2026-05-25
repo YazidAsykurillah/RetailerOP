@@ -313,12 +313,14 @@ class ProductController extends Controller
             });
             $query->with(['variants' => function($q) {
                 $q->select(['id', 'product_id', 'name', 'sku', 'price', 'stock'])
-                  ->where('stock', '>', 0);
+                  ->where('stock', '>', 0)
+                  ->orderBy('name');
             }]);
             $filenameParts[] = 'stock_only';
         } else {
             $query->with(['variants' => function($q) {
-                $q->select(['id', 'product_id', 'name', 'sku', 'price', 'stock']);
+                $q->select(['id', 'product_id', 'name', 'sku', 'price', 'stock'])
+                  ->orderBy('name');
             }]);
         }
 

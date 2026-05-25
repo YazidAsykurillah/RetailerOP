@@ -79,6 +79,9 @@ class TransactionsDataTable extends DataTable
                     $q->where('name', 'like', "%{$keyword}%");
                 });
             })
+            ->filterColumn('outstanding_balance', function($query, $keyword) {
+                $query->whereRaw('(grand_total - amount_paid) like ?', ["%{$keyword}%"]);
+            })
             ->rawColumns(['customer', 'grand_total_formatted', 'amount_paid_formatted', 'outstanding_payment_formatted', 'payment_status_badge', 'payment_mode_badge', 'action']);
     }
 
@@ -167,8 +170,8 @@ class TransactionsDataTable extends DataTable
             Column::computed('payment_mode_badge')->title(__('transaction.payment_mode'))->addClass('text-center')->footer(''),
             Column::computed('payment_status_badge')->title(__('transaction.payment_status'))->addClass('text-center')->footer(''),
             Column::computed('grand_total_formatted')->title(__('transaction.total_amount'))->addClass('text-right')->footer(''),
-            Column::make('amount_paid')->title(__('transaction.paid'))->data('amount_paid_formatted')->addClass('text-right')->footer(''),
-            Column::make('outstanding_balance')->title(__('transaction.balance'))->data('outstanding_payment_formatted')->addClass('text-right')->footer(''),
+            Column::computed('amount_paid_formatted')->title(__('transaction.paid'))->addClass('text-right')->footer(''),
+            Column::computed('outstanding_payment_formatted')->title(__('transaction.balance'))->addClass('text-right')->footer(''),
             
             Column::computed('cashier')->title(__('user.singular'))->footer(''),
             Column::computed('action')
