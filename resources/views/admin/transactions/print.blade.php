@@ -262,7 +262,7 @@
         <div class="summary">
             <table>
                 <tr>
-                    <td class="label">Subtotal</td>
+                    <td class="label">Total Harga</td>
                     <td class="value">{{ number_format($transaction->subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @if($transaction->discount > 0)
