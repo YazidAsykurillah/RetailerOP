@@ -287,7 +287,8 @@
             </table>
         </div>
 
-        <!-- Payment -->
+        <!-- Payment (only show if customer has outstanding balance) -->
+        @if($transaction->grand_total > $transaction->amount_paid)
         <div class="payment">
             <table>
                 <tr>
@@ -298,14 +299,13 @@
                     <td class="label">Total Paid</td>
                     <td class="value">Rp {{ number_format($transaction->amount_paid, 0, ',', '.') }}</td>
                 </tr>
-                @if($transaction->grand_total > $transaction->amount_paid)
                 <tr>
                     <td class="label" style="color: #000; font-weight: bold;">{{ __('transaction.label_remaining') }}</td>
                     <td class="value" style="color: #000; font-weight: bold;">Rp {{ number_format($transaction->grand_total - $transaction->amount_paid, 0, ',', '.') }}</td>
                 </tr>
-                @endif
             </table>
         </div>
+        @endif
 
         <!-- Payment History -->
         <div class="payment-history" style="margin-bottom: 10px; font-size: 10px; border-top: 1px dashed #000; padding-top: 5px;">
