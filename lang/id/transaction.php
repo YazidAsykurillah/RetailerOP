@@ -43,8 +43,8 @@ return [
     'customer' => 'Pelanggan',
     'items' => 'Item',
     'thank_you' => 'Terima kasih atas pembelian Anda!',
-    'label_remaining' => 'Hutang',
-    'previous_outstanding' => 'Hutang Sebelum Transaksi',
-    'current_outstanding' => 'Hutang Transaksi Ini',
-    'total_outstanding' => 'Total Hutang',
+    'label_remaining' => 'Sisa Nota',
+    'previous_outstanding' => 'Nota Sebelumnya',
+    'current_outstanding' => 'Nota Transaksi Ini',
+    'total_outstanding' => 'Total Nota',
 ];

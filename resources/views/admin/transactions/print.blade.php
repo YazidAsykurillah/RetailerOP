@@ -52,44 +52,33 @@
         }
         .items {
             margin-bottom: 10px;
-        }
-        .items table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .items th, .items td {
-            padding: 3px 0;
-            text-align: left;
-        }
-        .items th {
-            border-bottom: 1px solid #000;
             border-top: 1px solid #000;
         }
-        .items .qty {
-            text-align: center;
-            width: 10%;
+        .item-block {
+            padding: 5px 0;
+            border-bottom: 1px solid #000;
         }
-        .items .price {
+        .item-block-name {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .item-block-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 11px;
+        }
+        .item-block-row .left {
+            min-width: 50px;
+        }
+        .item-block-row .center {
+            flex: 1;
+            padding-left: 5px;
+        }
+        .item-block-row .right {
             text-align: right;
-            width: 25%;
-        }
-        .items .discount {
-            text-align: right;
-            width: 20%;
-        }
-        .items .subtotal {
-            text-align: right;
-            width: 25%;
-        }
-        .item-row td {
-            padding-top: 5px;
-        }
-        .item-name {
-            font-weight: normal;
-        }
-        .item-variant {
-            font-size: 10px;
-            color: #000;
+            min-width: 70px;
         }
         .summary {
             border-top: 1px dashed #000;
@@ -234,51 +223,39 @@
 
         <!-- Items -->
         <div class="items">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 20%;">Item</th>
-                        <th class="qty">Qty</th>
-                        <th class="price">Price</th>
-                        <th class="discount">Disc</th>
-                        <th class="subtotal">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($transaction->items as $item)
-                    <tr class="item-row">
-                        <td>
-                            @if($item->variant_name)
-                            <div class="item-name">{{ $item->variant_name }}</div>
-                            @else
-                            <div class="item-name">{{ $item->product_name }}</div>
-                            @endif
-                        </td>
-                        <td class="qty">{{ $item->quantity }}</td>
-                        <td class="price">{{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td class="discount">
-                            @php
-                                $totalItemDiscount = ($item->discount ?? 0) + ($item->cut_amount ?? 0);
-                            @endphp
-                            @if($totalItemDiscount > 0)
-                                @php
-                                    $itemGross = $item->price * $item->quantity;
-                                    $percent = $itemGross > 0 ? ($totalItemDiscount / $itemGross) * 100 : 0;
-                                @endphp
-                                <div style="font-size: 9px; line-height: 1.1;">
-                                    {{ round($percent) }}%<br>
-                                    <!-- Don't display total item discount -->
-                                    <!-- {{ number_format($totalItemDiscount, 0, ',', '.') }} -->
-                                </div>
-                            @else
-                                0
-                            @endif
-                        </td>
-                        <td class="subtotal">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            @foreach($transaction->items as $item)
+            <div class="item-block">
+                {{-- Line 1: Product/Variant Name --}}
+                <div class="item-block-name">
+                    {{ $item->variant_name ?: $item->product_name }}
+                </div>
+
+                {{-- Line 2: Qty + Unit Price + Gross Subtotal --}}
+                @php
+                    $itemGross = $item->price * $item->quantity;
+                @endphp
+                <div class="item-block-row">
+                    <span class="left">{{ $item->quantity }} pcs</span>
+                    <span class="center">@ {{ number_format($item->price, 0, ',', '.') }}</span>
+                    <span class="right">{{ number_format($itemGross, 0, ',', '.') }}</span>
+                </div>
+
+                {{-- Line 3: Discount (only if > 0) --}}
+                @php
+                    $totalItemDiscount = ($item->discount ?? 0) + ($item->cut_amount ?? 0);
+                @endphp
+                @if($totalItemDiscount > 0)
+                    @php
+                        $percent = $itemGross > 0 ? ($totalItemDiscount / $itemGross) * 100 : 0;
+                    @endphp
+                    <div class="item-block-row">
+                        <span class="left"></span>
+                        <span class="center">disc {{ round($percent) }}%</span>
+                        <span class="right">({{ number_format($totalItemDiscount, 0, ',', '.') }})</span>
+                    </div>
+                @endif
+            </div>
+            @endforeach
         </div>
 
         <!-- Summary -->
@@ -294,7 +271,7 @@
                 @endphp
                 <tr>
                     <td class="label">Discount ({{ round($discountPercent) }}%)</td>
-                    <!-- <td class="value">-{{ number_format($transaction->discount, 0, ',', '.') }}</td> -->
+                    <td class="value">{{ number_format($transaction->discount, 0, ',', '.') }}</td>
                 </tr>
                 @endif
                 @if($transaction->tax > 0)
