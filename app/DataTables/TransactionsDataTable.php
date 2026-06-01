@@ -18,8 +18,15 @@ class TransactionsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
+            ->addColumn('invoice_info', function ($row) {
+                $variants = $row->items->map(function ($item) {
+                    return $item->product_name . ' (' . $item->variant_name . ')';
+                })->implode(', ');
+                return '<strong>' . e($row->invoice_no) . '</strong>'
+                    . ($variants ? '<br><small class="text-muted">' . e($variants) . '</small>' : '');
+            })
             ->addColumn('date', function ($row) {
-                return $row->created_at->format('d M Y H:i');
+                return $row->created_at->format('d-m-Y H:i');
             })
             ->addColumn('customer', function ($row) {
                 return $row->customer_name ?: '<span class="text-muted">' . __('pos.walk_in_customer') . '</span>';
@@ -35,18 +42,21 @@ class TransactionsDataTable extends DataTable
                 $color = $outstanding > 0 ? 'text-danger' : 'text-success';
                 return '<span class="font-weight-bold ' . $color . '">' . number_format($outstanding, 0, ',', '.') . '</span>';
             })
-            ->addColumn('payment_status_badge', function ($row) {
+            ->addColumn('payment_info', function ($row) {
                 $statusColors = [
                     'paid' => 'success',
                     'partial' => 'warning',
                     'unpaid' => 'danger',
                 ];
                 $statusColor = $statusColors[$row->payment_status] ?? 'secondary';
-                return '<span class="badge badge-' . $statusColor . '">' . $row->payment_status_label . '</span>';
-            })
-            ->addColumn('payment_mode_badge', function ($row) {
-                $color = $row->payment_mode === 'full' ? 'info' : 'warning';
-                return '<span class="badge badge-pill badge-' . $color . '">' . $row->payment_mode . '</span>';
+                $statusBadge = '<span class="badge badge-' . $statusColor . '">' . $row->payment_status_label . '</span>';
+
+                $modeColor = $row->payment_mode === 'full' ? 'info' : 'warning';
+                $modeBadge = '<span class="badge badge-pill badge-' . $modeColor . '">' . $row->payment_mode . '</span>';
+
+                return '<div class="d-flex flex-column align-items-center" style="gap:4px;">'
+                    . $statusBadge . $modeBadge
+                    . '</div>';
             })
             ->addColumn('cashier', function ($row) {
                 return $row->user->name ?? '-';
@@ -71,6 +81,15 @@ class TransactionsDataTable extends DataTable
                     </div>
                 ';
             })
+            ->filterColumn('invoice_info', function($query, $keyword) {
+                $query->where(function($q) use ($keyword) {
+                    $q->where('invoice_no', 'like', "%{$keyword}%")
+                      ->orWhereHas('items', function($q2) use ($keyword) {
+                          $q2->where('product_name', 'like', "%{$keyword}%")
+                             ->orWhere('variant_name', 'like', "%{$keyword}%");
+                      });
+                });
+            })
             ->filterColumn('customer', function($query, $keyword) {
                 $query->where('customer_name', 'like', "%{$keyword}%");
             })
@@ -82,7 +101,7 @@ class TransactionsDataTable extends DataTable
             ->filterColumn('outstanding_balance', function($query, $keyword) {
                 $query->whereRaw('(grand_total - amount_paid) like ?', ["%{$keyword}%"]);
             })
-            ->rawColumns(['customer', 'grand_total_formatted', 'amount_paid_formatted', 'outstanding_payment_formatted', 'payment_status_badge', 'payment_mode_badge', 'action']);
+            ->rawColumns(['customer', 'grand_total_formatted', 'amount_paid_formatted', 'outstanding_payment_formatted', 'payment_info', 'invoice_info', 'action']);
     }
 
     /**
@@ -93,7 +112,7 @@ class TransactionsDataTable extends DataTable
         $query = $model->newQuery()
             ->select('transactions.*')
             ->selectRaw('(grand_total - amount_paid) as outstanding_balance')
-            ->with(['user', 'customer']);
+            ->with(['user', 'customer', 'items']);
 
         // Filter by date range
         if (request()->has('date_from') && request('date_from')) {
@@ -146,13 +165,13 @@ class TransactionsDataTable extends DataTable
                             typeof i === "number" ?
                                 i : 0;
                     };
-                    var total = api.column(6, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
-                    var paid = api.column(7, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
-                    var outstanding = api.column(8, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                    var total = api.column(5, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                    var paid = api.column(6, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                    var outstanding = api.column(7, { page: "current" }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
 
-                    $(api.column(6).footer()).html("<span class=\"font-weight-bold\">" + new Intl.NumberFormat("id-ID").format(total) + "</span>");
-                    $(api.column(7).footer()).html("<span class=\"font-weight-bold text-success\">" + new Intl.NumberFormat("id-ID").format(paid) + "</span>");
-                    $(api.column(8).footer()).html("<span class=\"font-weight-bold text-danger\">" + new Intl.NumberFormat("id-ID").format(outstanding) + "</span>");
+                    $(api.column(5).footer()).html("<span class=\"font-weight-bold\">" + new Intl.NumberFormat("id-ID").format(total) + "</span>");
+                    $(api.column(6).footer()).html("<span class=\"font-weight-bold text-success\">" + new Intl.NumberFormat("id-ID").format(paid) + "</span>");
+                    $(api.column(7).footer()).html("<span class=\"font-weight-bold text-danger\">" + new Intl.NumberFormat("id-ID").format(outstanding) + "</span>");
                 }'
             ]);
     }
@@ -164,11 +183,10 @@ class TransactionsDataTable extends DataTable
     {
         return [
             Column::computed('DT_RowIndex', '#')->width(50)->footer(''),
-            Column::make('invoice_no')->title(__('transaction.invoice_no'))->footer(''),
+            Column::computed('invoice_info')->title(__('transaction.invoice_no'))->searchable()->footer(''),
             Column::computed('date')->title(__('transaction.date'))->footer(''),
             Column::computed('customer')->title(__('customer.singular'))->footer(''),
-            Column::computed('payment_mode_badge')->title(__('transaction.payment_mode'))->addClass('text-center')->footer(''),
-            Column::computed('payment_status_badge')->title(__('transaction.payment_status'))->addClass('text-center')->footer(''),
+            Column::computed('payment_info')->title(__('transaction.payment'))->addClass('text-center')->footer(''),
             Column::computed('grand_total_formatted')->title(__('transaction.total_amount'))->addClass('text-right')->footer(''),
             Column::computed('amount_paid_formatted')->title(__('transaction.paid'))->addClass('text-right')->footer(''),
             Column::computed('outstanding_payment_formatted')->title(__('transaction.balance'))->addClass('text-right')->footer(''),

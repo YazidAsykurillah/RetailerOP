@@ -18,6 +18,7 @@ return [
     'balance' => 'Balance',
 
     // Payment
+    'payment' => 'Payment',
     'payment_mode' => 'Payment Mode',
     'payment_status' => 'Payment Status',
     'payment_method' => 'Payment Method',

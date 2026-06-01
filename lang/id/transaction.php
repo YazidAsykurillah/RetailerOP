@@ -18,6 +18,7 @@ return [
     'balance' => 'Sisa',
 
     // Payment
+    'payment' => 'Pembayaran',
     'payment_mode' => 'Mode Pembayaran',
     'payment_status' => 'Status Pembayaran',
     'payment_method' => 'Metode Pembayaran',
