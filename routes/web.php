@@ -80,6 +80,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::get('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'edit'])->name('business-profile.edit');
     Route::put('/business-profile', [App\Http\Controllers\Admin\BusinessProfileController::class, 'update'])->name('business-profile.update');
 
+    // Report Routes
+    Route::get('reports/receivables', [App\Http\Controllers\Admin\ReceivableController::class, 'index'])->name('reports.receivables');
+
     // Payment Management Routes
     Route::get('payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
 

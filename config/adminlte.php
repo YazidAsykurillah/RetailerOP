@@ -434,17 +434,28 @@ return [
             'can'=>'Access Pos',
         ],
         [
-            'text' => 'payment_list',
-            'url'  => 'admin/payments',
-            'icon' => 'fas fa-fw fa-money-bill-wave',
-            'can'  => 'Access Pos',
-        ],
-        [
             'text' => 'deposit_management',
             'url'  => 'admin/deposits',
             'icon' => 'fas fa-fw fa-wallet',
             'can'  => 'Manage Deposits',
         ],
+        [
+            'header' => 'reports',
+            'can'=>'Access Reports'
+        ],
+        [
+            'text' => 'receivables',
+            'url'  => 'admin/reports/receivables',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'can'  => 'Access Reports',
+        ],
+        [
+            'text' => 'payment_list',
+            'url'  => 'admin/payments',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'can'  => 'Access Reports',
+        ],
+
         ['header' => 'account_settings'],
         [
             'text' => 'profile',

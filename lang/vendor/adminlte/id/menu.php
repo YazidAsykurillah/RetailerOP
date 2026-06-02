@@ -18,7 +18,7 @@ return [
     'information' => 'Informasi',
 
     // Application Menu Items
-    'dashboard' => 'Dasbor',
+    'dashboard' => 'Dashboard',
     'user_management' => 'Manajemen Pengguna',
     'role_management' => 'Manajemen Peran',
     'permission_management' => 'Manajemen Izin',
@@ -41,4 +41,6 @@ return [
     'transaction_history' => 'Riwayat Transaksi',
     'business_profile' => 'Profil Bisnis',
     'search' => 'Cari',
+    'reports' => 'LAPORAN',
+    'receivables' => 'Piutang',
 ];

@@ -36,6 +36,7 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'Manage Purchases']);
         Permission::firstOrCreate(['name' => 'Manage Customers']);
         Permission::firstOrCreate(['name' => 'Manage Settings']);
+        Permission::firstOrCreate(['name' => 'Access Reports']);
 
         // Create Roles and Assign Permissions
 
@@ -50,7 +51,7 @@ class RolePermissionSeeder extends Seeder
             'Manage Products', 'Manage Orders', 'Access Store Management',
             'Manage Categories', 'Manage Brands', 'Manage Suppliers', 'Manage Customers', 'Manage Variant Types',
             'Access Inventory', 'Manage Stock', 'Access Pos','Manage Purchases', 'Manage Customers',
-            'Manage Settings'
+            'Manage Settings', 'Access Reports'
         ]);
 
         // Cashier

@@ -40,4 +40,6 @@ return [
     'transaction_history' => 'Transaction History',
     'business_profile' => 'Business Profile',
     'search' => 'Search',
+    'reports' => 'REPORTS',
+    'receivables' => 'Customer Outstanding',
 ];

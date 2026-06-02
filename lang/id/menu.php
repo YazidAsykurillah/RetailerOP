@@ -2,7 +2,7 @@
 
 return [
     'search' => 'Cari',
-    'dashboard' => 'Dasbor',
+    'dashboard' => 'Dasboard',
     'user_management' => 'Manajemen Pengguna',
     'role_management' => 'Manajemen Peran',
     'permission_management' => 'Manajemen Izin',
@@ -29,4 +29,6 @@ return [
     'change_password' => 'Ubah Kata Sandi',
     'business_profile' => 'Profil Bisnis',
     'deposit_management' => 'Deposit Management',
+    'reports' => 'LAPORAN',
+    'receivables' => 'Piutang',
 ];
