@@ -61,6 +61,19 @@ class TransactionController extends Controller
     }
 
     /**
+     * Print transaction as PDF.
+     */
+    public function printPdf($id)
+    {
+        $transaction = Transaction::with(['items.productVariant.product', 'user', 'payments'])->findOrFail($id);
+        $businessProfile = BusinessProfile::first();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.transactions.pdf', compact('transaction', 'businessProfile'));
+        
+        return $pdf->download('Transaction_' . $transaction->invoice_no . '.pdf');
+    }
+
+    /**
      * Show the form for editing the specified transaction.
      */
     public function edit($id)

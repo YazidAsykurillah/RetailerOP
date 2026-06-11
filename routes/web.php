@@ -95,6 +95,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     // Transaction History Routes
     Route::resource('transactions', App\Http\Controllers\Admin\TransactionController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::get('/transactions/{transaction}/print', [App\Http\Controllers\Admin\TransactionController::class, 'printReceipt'])->name('transactions.print');
+    Route::get('/transactions/{transaction}/pdf', [App\Http\Controllers\Admin\TransactionController::class, 'printPdf'])->name('transactions.pdf');
     Route::post('/transactions/{transaction}/payments', [App\Http\Controllers\Admin\TransactionController::class, 'addPayment'])->name('transactions.add-payment');
     Route::patch('/payments/{payment}/update-date', [App\Http\Controllers\Admin\TransactionController::class, 'updatePaymentDate'])->name('transactions.update-payment-date');
 });

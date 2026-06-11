@@ -73,6 +73,9 @@ class TransactionsDataTable extends DataTable
                         <a href="' . route('admin.transactions.print', $row->id) . '" class="btn btn-xs btn-secondary" title="Print Receipt" target="_blank">
                             <i class="fas fa-print"></i>
                         </a>
+                        <a href="' . route('admin.transactions.pdf', $row->id) . '" class="btn btn-xs btn-danger" title="Download PDF" target="_blank">
+                            <i class="fas fa-file-pdf"></i>
+                        </a>
                         ' . (auth()->user()->can('Delete Transaction') || $row->payment_status === 'unpaid' ? '
                         <button type="button" class="btn btn-xs btn-danger btn-delete" data-id="' . $row->id . '" title="Delete">
                             <i class="fas fa-trash"></i>
