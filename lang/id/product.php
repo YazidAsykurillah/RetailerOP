@@ -46,4 +46,5 @@ return [
     'export_all' => 'Ekspor Semua Produk',
     'export_stock_only' => 'Ekspor Produk dengan Stok Saja',
     'include_empty_stock' => 'Sertakan produk dengan stok kosong',
+    'cannot_delete_has_history' => 'Produk memiliki riwayat transaksi atau varian, tidak dapat dihapus'
 ];

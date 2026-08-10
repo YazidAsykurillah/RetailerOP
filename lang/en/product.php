@@ -47,4 +47,5 @@ return [
     'export_all' => 'Export All Products',
     'export_stock_only' => 'Export with Stock Only',
     'include_empty_stock' => 'Include empty stock products',
+    'cannot_delete_has_history' => 'Product has transaction history or variant, cannot delete'
 ];
