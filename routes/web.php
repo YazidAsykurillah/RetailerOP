@@ -34,6 +34,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
     Route::post('products/import', [App\Http\Controllers\Admin\ProductController::class, 'processImport'])->name('products.process-import');
     Route::get('products/download-template', [App\Http\Controllers\Admin\ProductController::class, 'downloadTemplate'])->name('products.download-template');
     Route::delete('products/bulk-delete', [App\Http\Controllers\Admin\ProductController::class, 'bulkDestroy'])->name('products.bulk-destroy');
+    Route::get('products/export-excel', [App\Http\Controllers\Admin\ProductController::class, 'exportExcel'])->name('products.export-excel');
     Route::get('products/export-pdf', [App\Http\Controllers\Admin\ProductController::class, 'exportPdf'])->name('products.export-pdf');
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
     Route::get('products/{product}/variants/import', [App\Http\Controllers\Admin\ProductVariantController::class, 'import'])->name('products.variants.import');

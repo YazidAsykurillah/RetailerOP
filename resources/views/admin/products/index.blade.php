@@ -76,7 +76,7 @@
                         <i class="fas fa-file-import"></i> {{ __('general.import') ?? 'Import' }}
                     </a>
                     <button type="button" class="btn btn-dark mr-2" data-toggle="modal" data-target="#exportPdfModal">
-                        <i class="fas fa-file-pdf"></i> {{ __('general.export_pdf') ?? 'Export PDF' }}
+                        <i class="fas fa-file-export"></i> {{ __('general.export') ?? 'Export' }}
                     </button>
                     <a class="btn btn-success" href="{{ route('admin.products.create') }}">
                         <i class="fas fa-plus"></i> {{ __('product.create') }}
@@ -127,8 +127,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('general.cancel') }}</button>
+                <button type="button" class="btn btn-success" id="confirm-export-excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                </button>
                 <button type="button" class="btn btn-primary" id="confirm-export-pdf">
-                    <i class="fas fa-file-pdf"></i> {{ __('general.export') }}
+                    <i class="fas fa-file-pdf"></i> PDF
                 </button>
             </div>
         </div>
@@ -182,6 +185,23 @@
             table.on('preXhr.dt', function (e, settings, data) {
                 data.category_id = $('#category_id').val();
                 data.brand_id = $('#brand_id').val();
+            });
+
+            // Handle Confirm Export Excel
+            $('#confirm-export-excel').on('click', function() {
+                var categoryId = $('#category_id').val();
+                var brandId = $('#brand_id').val();
+                var stockOnly = $('input[name="exportStockFilter"]:checked').val();
+                
+                var exportUrl = "{{ route('admin.products.export-excel') }}";
+                var params = $.param({
+                    category_id: categoryId,
+                    brand_id: brandId,
+                    stock_only: stockOnly
+                });
+                
+                window.location.href = exportUrl + '?' + params;
+                $('#exportPdfModal').modal('hide');
             });
 
             // Handle Confirm Export PDF

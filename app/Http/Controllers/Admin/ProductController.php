@@ -360,4 +360,38 @@ class ProductController extends Controller
 
         return $pdf->download($filename);
     }
+
+    /**
+     * Export products to Excel.
+     */
+    public function exportExcel(Request $request)
+    {
+        $filenameParts = ['product_list'];
+
+        if ($request->has('category_id') && $request->category_id) {
+            $category = Category::find($request->category_id);
+            if ($category) {
+                $filenameParts[] = Str::slug($category->name);
+            }
+        }
+
+        if ($request->has('brand_id') && $request->brand_id) {
+            $brand = Brand::find($request->brand_id);
+            if ($brand) {
+                $filenameParts[] = Str::slug($brand->name);
+            }
+        }
+
+        if ($request->has('stock_only') && $request->stock_only == 'true') {
+            $filenameParts[] = 'stock_only';
+        }
+
+        $filename = implode('_', $filenameParts) . '_' . date('YmdHis') . '.xlsx';
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ProductExport($request), 
+            $filename
+        );
+    }
 }
+
