@@ -54,6 +54,16 @@
         .page-break {
             page-break-after: always;
         }
+        .product-row {
+            background-color: #f9f9f9;
+            font-weight: bold;
+        }
+        .variant-row {
+            font-size: 11px;
+        }
+        .variant-sku {
+            padding-left: 15px;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +87,7 @@
         <tbody>
             @foreach($chunk as $product)
                 @php $rowNumber++; @endphp
-                <tr style="background-color: #f9f9f9; font-weight: bold;">
+                <tr class="product-row">
                     <td>{{ $rowNumber }}</td>
                     <td>{{ $product->sku ?: '-' }}</td>
                     <td>{{ $product->name }}</td>
@@ -85,9 +95,9 @@
                     <td class="text-right"></td>
                 </tr>
                 @foreach($product->variants as $variant)
-                    <tr style="font-size: 11px;">
+                    <tr class="variant-row">
                         <td></td>
-                        <td style="padding-left: 15px;">{{ $variant->sku ?: '-' }}</td>
+                        <td class="variant-sku">{{ $variant->sku ?: '-' }}</td>
                         <td>{{ $variant->name ?: (__('variant.standard') ?? 'Standard') }}</td>
                         <td class="text-right">{{ number_format($variant->price, 0, ',', '.') }}</td>
                         <td class="text-right">{{ $variant->stock }}</td>
